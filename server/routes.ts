@@ -92,9 +92,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   app.get("/api/featured-products", async (req: Request, res: Response) => {
-    const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
-    const products = await storage.getFeaturedProducts(limit);
-    res.json(products);
+    try {
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 8;
+      
+      if (isNaN(limit) || limit < 1) {
+        return res.status(400).json({ message: "Invalid limit parameter" });
+      }
+      
+      const products = await storage.getFeaturedProducts(limit);
+      
+      res.json({
+        products: products,
+        pagination: {
+          total: products.length,
+          page: 1,
+          limit: limit,
+          totalPages: 1
+        }
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch featured products" });
+    }
   });
   
   // Admin Product Management
@@ -216,9 +234,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   app.get("/api/recent-blog-posts", async (req: Request, res: Response) => {
-    const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
-    const posts = await storage.getRecentBlogPosts(limit);
-    res.json(posts);
+    try {
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 3;
+      
+      if (isNaN(limit) || limit < 1) {
+        return res.status(400).json({ message: "Invalid limit parameter" });
+      }
+      
+      const posts = await storage.getRecentBlogPosts(limit);
+      
+      res.json({
+        posts: posts,
+        pagination: {
+          total: posts.length,
+          page: 1,
+          limit: limit,
+          totalPages: 1
+        }
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch recent blog posts" });
+    }
   });
   
   // Admin Blog Post Management

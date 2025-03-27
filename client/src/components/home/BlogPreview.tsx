@@ -5,10 +5,24 @@ import { Button } from "@/components/ui/button";
 import { ArrowRightIcon, CalendarIcon } from "@/lib/icons";
 import { format } from "date-fns";
 
+// Define the API response structure
+interface BlogPostsResponse {
+  posts: BlogPost[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
+
 export default function BlogPreview() {
-  const { data: posts, isLoading, error } = useQuery<BlogPost[]>({
+  const { data: postsResponse, isLoading, error } = useQuery<BlogPostsResponse>({
     queryKey: ['/api/recent-blog-posts'],
   });
+  
+  // Extract posts from the response
+  const posts = postsResponse?.posts;
 
   if (isLoading) {
     return (

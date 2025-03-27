@@ -6,12 +6,26 @@ import { Button } from "@/components/ui/button";
 import ProductCard from "@/components/product/ProductCard";
 import { ArrowRightIcon } from "@/lib/icons";
 
+// Define the API response structure
+interface ProductsResponse {
+  products: Product[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
+
 export default function Products() {
   const [activeFilter, setActiveFilter] = useState('all');
   
-  const { data: products, isLoading, error } = useQuery<Product[]>({
+  const { data: productsResponse, isLoading, error } = useQuery<ProductsResponse>({
     queryKey: ['/api/featured-products'],
   });
+  
+  // Extract products from the response
+  const products = productsResponse?.products;
 
   const filteredProducts = products && activeFilter !== 'all'
     ? products.filter(product => {

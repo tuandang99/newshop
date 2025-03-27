@@ -2,6 +2,17 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { Product, Category } from "@shared/schema";
+
+// Define the API response structure
+interface ProductsResponse {
+  products: Product[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
 import ProductCard from "./ProductCard";
 import { Button } from "@/components/ui/button";
 
@@ -19,9 +30,12 @@ export default function ProductList({ categorySlug }: ProductListProps) {
     queryKey: ['/api/categories'],
   });
   
-  const { data: allProducts, isLoading, error } = useQuery<Product[]>({
+  const { data: productsResponse, isLoading, error } = useQuery<ProductsResponse>({
     queryKey: ['/api/products'],
   });
+  
+  // Extract products from the response
+  const allProducts = productsResponse?.products;
   
   // Find category if categorySlug is provided
   const category = categorySlug && categories
@@ -47,7 +61,7 @@ export default function ProductList({ categorySlug }: ProductListProps) {
         
         return true;
       })
-    : allProducts;
+    : [];
   
   // Sort products based on selected option
   const sortedProducts = products ? [...products].sort((a, b) => {

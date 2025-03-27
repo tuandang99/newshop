@@ -6,10 +6,24 @@ import { CalendarIcon, ArrowRightIcon } from "@/lib/icons";
 import { format } from "date-fns";
 import { Helmet } from "react-helmet";
 
+// Define the API response structure
+interface BlogPostsResponse {
+  posts: BlogPost[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
+
 export default function Blog() {
-  const { data: posts, isLoading, error } = useQuery<BlogPost[]>({
+  const { data: postsResponse, isLoading, error } = useQuery<BlogPostsResponse>({
     queryKey: ['/api/blog-posts'],
   });
+  
+  // Extract posts from the response
+  const posts = postsResponse?.posts;
 
   if (isLoading) {
     return (
