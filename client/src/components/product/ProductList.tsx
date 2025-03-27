@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { Product, Category } from "@shared/schema";
 import ProductCard from "./ProductCard";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,9 @@ interface ProductListProps {
 
 export default function ProductList({ categorySlug }: ProductListProps) {
   const [sort, setSort] = useState("featured");
+  const [location] = useLocation();
+  const searchParams = new URLSearchParams(location.split('?')[1] || '');
+  const searchQuery = searchParams.get('search');
   
   const { data: categories } = useQuery<Category[]>({
     queryKey: ['/api/categories'],
@@ -24,11 +28,24 @@ export default function ProductList({ categorySlug }: ProductListProps) {
     ? categories.find(cat => cat.slug === categorySlug)
     : undefined;
   
-  // Filter products by category if needed
-  const products = categorySlug && allProducts
+  // Filter products by category and/or search query
+  const products = allProducts
     ? allProducts.filter(product => {
-        const categoryId = category?.id;
-        return categoryId ? product.categoryId === categoryId : true;
+        // Filter by category if specified
+        if (categorySlug) {
+          const categoryId = category?.id;
+          if (categoryId && product.categoryId !== categoryId) {
+            return false;
+          }
+        }
+        
+        // Filter by search query if specified
+        if (searchQuery) {
+          return product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                 product.description.toLowerCase().includes(searchQuery.toLowerCase());
+        }
+        
+        return true;
       })
     : allProducts;
   
@@ -40,7 +57,7 @@ export default function ProductList({ categorySlug }: ProductListProps) {
       case "price-high":
         return b.price - a.price;
       case "rating":
-        return b.rating - a.rating;
+        return (b.rating || 0) - (a.rating || 0);
       default: // featured
         return 0; // Keep original order
     }
@@ -85,7 +102,12 @@ export default function ProductList({ categorySlug }: ProductListProps) {
     <div className="w-full">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
         <h2 className="text-2xl font-bold font-poppins mb-2 md:mb-0">
-          {category ? category.name : "All Products"} 
+          {category 
+            ? category.name 
+            : searchQuery 
+              ? `Search Results: "${searchQuery}"` 
+              : "All Products"
+          } 
           <span className="text-sm font-normal text-neutral-500 ml-2">
             ({sortedProducts.length} products)
           </span>

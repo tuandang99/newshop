@@ -9,6 +9,7 @@ export default function Products() {
   const [location] = useLocation();
   const searchParams = new URLSearchParams(location.split('?')[1] || '');
   const categorySlug = searchParams.get('category') || undefined;
+  const searchQuery = searchParams.get('search');
   
   const { data: categories } = useQuery<Category[]>({
     queryKey: ['/api/categories'],
@@ -18,13 +19,16 @@ export default function Products() {
     ? categories.find(cat => cat.slug === categorySlug) 
     : null;
   
-  const pageTitle = category 
-    ? `${category.name} - NatureNutri` 
-    : "All Products - NatureNutri";
+  let pageTitle = "All Products - NatureNutri";
+  let metaDescription = "Browse our complete selection of organic, healthy food products. Find nuts, granola bars, cereals and more.";
   
-  const metaDescription = category
-    ? `Explore our selection of organic ${category.name.toLowerCase()} at NatureNutri.`
-    : "Browse our complete selection of organic, healthy food products. Find nuts, granola bars, cereals and more.";
+  if (category) {
+    pageTitle = `${category.name} - NatureNutri`;
+    metaDescription = `Explore our selection of organic ${category.name.toLowerCase()} at NatureNutri.`;
+  } else if (searchQuery) {
+    pageTitle = `Search Results: "${searchQuery}" - NatureNutri`;
+    metaDescription = `Discover products matching "${searchQuery}" in our organic food collection.`;
+  }
   
   return (
     <>

@@ -4,12 +4,23 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/CartContext";
 import { LeafIcon, Search, ShoppingCart, Menu, ChevronDown } from "@/lib/icons";
+import { useQuery } from "@tanstack/react-query";
+import { Product } from "@shared/schema";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Navbar() {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const { items, toggleCart } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileProductsOpen, setMobileProductsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  const { toast } = useToast();
+
+  // Get all products for search
+  const { data: products } = useQuery<Product[]>({
+    queryKey: ['/api/products'],
+  });
 
   const cartItemsCount = items.reduce((total, item) => total + item.quantity, 0);
 
@@ -24,6 +35,29 @@ export default function Navbar() {
   const isActive = (path: string) => {
     return location === path ? "text-primary" : "text-neutral-900 hover:text-primary";
   };
+  
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim() === "") {
+      toast({
+        title: "Search query is empty",
+        description: "Please enter a product name to search",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setShowSearchResults(false);
+    setLocation(`/products?search=${encodeURIComponent(searchQuery)}`);
+    setSearchQuery("");
+  };
+  
+  const filteredProducts = products 
+    ? products.filter(product => 
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()) && 
+        searchQuery.length > 0
+      ).slice(0, 5) 
+    : [];
 
   return (
     <nav className="bg-white shadow-sm sticky top-0 z-40">
@@ -64,12 +98,40 @@ export default function Navbar() {
           </div>
           <div className="flex items-center space-x-4">
             <div className="relative hidden md:block">
-              <Input 
-                type="text" 
-                placeholder="Search products..." 
-                className="pl-10 pr-4 py-2 rounded-full bg-neutral-100 focus:ring-2 focus:ring-primary w-64" 
-              />
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <form onSubmit={handleSearch} className="relative">
+                <Input 
+                  type="text" 
+                  placeholder="Search products..." 
+                  className="pl-10 pr-4 py-2 rounded-full bg-neutral-100 focus:ring-2 focus:ring-primary w-64" 
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setShowSearchResults(e.target.value.length > 0);
+                  }}
+                  onBlur={() => {
+                    setTimeout(() => setShowSearchResults(false), 200);
+                  }}
+                />
+                <button type="submit" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                  <Search className="h-4 w-4" />
+                </button>
+                
+                {/* Search results dropdown */}
+                {showSearchResults && filteredProducts.length > 0 && (
+                  <div className="absolute top-full mt-1 w-full bg-white shadow-lg rounded-md py-2 z-50">
+                    {filteredProducts.map((product) => (
+                      <Link 
+                        key={product.id} 
+                        href={`/products/${product.slug}`}
+                        className="block px-4 py-2 text-sm hover:bg-neutral-100 truncate"
+                        onClick={() => setShowSearchResults(false)}
+                      >
+                        {product.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </form>
             </div>
             <Button 
               variant="ghost" 
@@ -100,14 +162,43 @@ export default function Navbar() {
           <div className="md:hidden py-4">
             <div className="flex flex-col space-y-4">
               <div className="pb-2">
-                <div className="relative">
+                <form onSubmit={handleSearch} className="relative">
                   <Input 
                     type="text" 
                     placeholder="Search products..." 
                     className="pl-10 pr-4 py-2 rounded-full bg-neutral-100 focus:ring-2 focus:ring-primary w-full" 
+                    value={searchQuery}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                      setShowSearchResults(e.target.value.length > 0);
+                    }}
+                    onBlur={() => {
+                      setTimeout(() => setShowSearchResults(false), 200);
+                    }}
                   />
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                </div>
+                  <button type="submit" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                    <Search className="h-4 w-4" />
+                  </button>
+                  
+                  {/* Search results dropdown */}
+                  {showSearchResults && filteredProducts.length > 0 && (
+                    <div className="absolute top-full mt-1 w-full bg-white shadow-lg rounded-md py-2 z-50">
+                      {filteredProducts.map((product) => (
+                        <Link 
+                          key={product.id} 
+                          href={`/products/${product.slug}`}
+                          className="block px-4 py-2 text-sm hover:bg-neutral-100 truncate"
+                          onClick={() => {
+                            setShowSearchResults(false);
+                            setMobileMenuOpen(false);
+                          }}
+                        >
+                          {product.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </form>
               </div>
               <Link href="/" className="text-neutral-900 hover:text-primary font-medium py-2 transition">
                 Home
