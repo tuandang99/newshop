@@ -92,11 +92,22 @@ export default function Admin() {
   // Add product mutation
   const addProductMutation = useMutation({
     mutationFn: async (data: ProductFormValues) => {
-      return apiRequest(
-        'POST',
-        '/api/admin/products',
-        data
-      );
+      // Use fetch directly to include the admin-key header
+      const response = await fetch('/api/admin/products', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Admin-Key': adminKey
+        },
+        body: JSON.stringify(data)
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to add product');
+      }
+      
+      return response.json();
     },
     onSuccess: () => {
       toast({
@@ -119,11 +130,22 @@ export default function Admin() {
   // Add blog post mutation
   const addBlogMutation = useMutation({
     mutationFn: async (data: BlogFormValues) => {
-      return apiRequest(
-        'POST',
-        '/api/admin/blog-posts',
-        data
-      );
+      // Use fetch directly to include the admin-key header
+      const response = await fetch('/api/admin/blog-posts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Admin-Key': adminKey
+        },
+        body: JSON.stringify(data)
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to add blog post');
+      }
+      
+      return response.json();
     },
     onSuccess: () => {
       toast({
