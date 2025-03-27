@@ -46,7 +46,14 @@ export function sendAdminMessage(message: string): Promise<boolean> {
       return;
     }
 
-    bot.sendMessage(chatId, message, { parse_mode: 'HTML' })
+    // Ensure chatId is treated as a number if it's numeric
+    // This handles negative chat IDs correctly (for groups/channels)
+    const numericChatId = parseInt(chatId);
+    const targetChatId = isNaN(numericChatId) ? chatId : numericChatId;
+
+    log(`Sending message to chat ID: ${targetChatId}`, 'telegram');
+    
+    bot.sendMessage(targetChatId, message, { parse_mode: 'HTML' })
       .then(() => {
         log('Telegram notification sent successfully', 'telegram');
         resolve(true);
