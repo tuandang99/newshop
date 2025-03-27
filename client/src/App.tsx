@@ -13,39 +13,20 @@ import Blog from "@/pages/Blog";
 import BlogPost from "@/pages/BlogPost";
 import Contact from "@/pages/Contact";
 
-// Admin Pages
-import AdminDashboard from "@/pages/admin/AdminDashboard";
-import AdminProducts from "@/pages/admin/AdminProducts";
-import AdminCategories from "@/pages/admin/AdminCategories";
-import AdminOrders from "@/pages/admin/AdminOrders";
-import AdminBlog from "@/pages/admin/AdminBlog";
-
 function Router() {
   return (
-    <Switch>
-      {/* Admin Routes */}
-      <Route path="/admin" component={AdminDashboard} />
-      <Route path="/admin/products" component={AdminProducts} />
-      <Route path="/admin/categories" component={AdminCategories} />
-      <Route path="/admin/orders" component={AdminOrders} />
-      <Route path="/admin/blog" component={AdminBlog} />
-      
-      {/* Main Site Routes */}
-      <Route path="/">
-        <MainLayout>
-          <Switch>
-            <Route path="/" component={Home} />
-            <Route path="/products" component={Products} />
-            <Route path="/products/:slug" component={ProductDetail} />
-            <Route path="/about" component={About} />
-            <Route path="/blog" component={Blog} />
-            <Route path="/blog/:slug" component={BlogPost} />
-            <Route path="/contact" component={Contact} />
-            <Route component={NotFound} />
-          </Switch>
-        </MainLayout>
-      </Route>
-    </Switch>
+    <MainLayout>
+      <Switch>
+        <Route path="/" component={Home} />
+        <Route path="/products" component={Products} />
+        <Route path="/products/:slug" component={ProductDetail} />
+        <Route path="/about" component={About} />
+        <Route path="/blog" component={Blog} />
+        <Route path="/blog/:slug" component={BlogPost} />
+        <Route path="/contact" component={Contact} />
+        <Route component={NotFound} />
+      </Switch>
+    </MainLayout>
   );
 }
 
