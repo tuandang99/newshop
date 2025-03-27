@@ -1,6 +1,8 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+// Import Telegram module to ensure it's initialized
+import "./telegram";
 
 const app = express();
 app.use(express.json());
