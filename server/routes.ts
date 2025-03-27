@@ -1,7 +1,7 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertOrderSchema, insertContactSchema, CartItem, insertProductSchema, insertBlogPostSchema } from "@shared/schema";
+import { insertOrderSchema, insertContactSchema, CartItem, insertProductSchema, baseBlogPostSchema } from "@shared/schema";
 import { ZodError } from "zod";
 import fetch from "node-fetch";
 import { sendOrderNotification } from "./telegram";
@@ -224,13 +224,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Admin Blog Post Management
   app.post("/api/admin/blog-posts", adminAuth, async (req: Request, res: Response) => {
     try {
-      // Convert date string to Date object before validation
-      let blogPostData = { ...req.body };
+      // We're using the base schema which doesn't have date preprocessing
+      const blogPostData = { ...req.body };
       if (typeof blogPostData.date === 'string') {
         blogPostData.date = new Date(blogPostData.date);
       }
       
-      const validatedData = insertBlogPostSchema.parse(blogPostData);
+      const validatedData = baseBlogPostSchema.parse(blogPostData);
       const blogPost = await storage.createBlogPost(validatedData);
       res.status(201).json(blogPost);
     } catch (error) {
@@ -252,17 +252,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Validate blog post data with partial schema
       try {
-        // Convert date string to Date object before validation
+        // Handle date conversion manually
         let blogPostData = { ...req.body };
         if (typeof blogPostData.date === 'string') {
           blogPostData.date = new Date(blogPostData.date);
         }
         
         // Create a partial schema based on which fields are provided
-        const partialSchema = insertBlogPostSchema.partial();
-        partialSchema.parse(blogPostData);
+        const partialSchema = baseBlogPostSchema.partial();
+        const validatedData = partialSchema.parse(blogPostData);
         
-        const updatedBlogPost = await storage.updateBlogPost(id, blogPostData);
+        const updatedBlogPost = await storage.updateBlogPost(id, validatedData);
         
         if (!updatedBlogPost) {
           return res.status(404).json({ message: "Blog post not found" });

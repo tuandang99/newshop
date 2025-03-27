@@ -65,7 +65,7 @@ export const blogPosts = pgTable("blog_posts", {
 });
 
 // Create a base schema from the table
-const baseBlogPostSchema = createInsertSchema(blogPosts).pick({
+export const baseBlogPostSchema = createInsertSchema(blogPosts).pick({
   title: true,
   slug: true,
   content: true,
