@@ -3,10 +3,21 @@ import { Link, useLocation } from "wouter";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/CartContext";
-import { LeafIcon, Search, ShoppingCart, Menu, ChevronDown } from "@/lib/icons";
+import { LeafIcon, SearchIcon, ShoppingCartIcon, MenuIcon, ChevronDownIcon } from "@/lib/icons";
 import { useQuery } from "@tanstack/react-query";
 import { Product } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
+
+// Define the API response structure
+interface ProductsResponse {
+  products: Product[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
 
 export default function Navbar() {
   const [location, setLocation] = useLocation();
@@ -18,9 +29,12 @@ export default function Navbar() {
   const { toast } = useToast();
 
   // Get all products for search
-  const { data: products } = useQuery<Product[]>({
+  const { data: productsResponse } = useQuery<ProductsResponse>({
     queryKey: ['/api/products'],
   });
+  
+  // Extract products from the response
+  const products = productsResponse?.products;
 
   const cartItemsCount = items.reduce((total, item) => total + item.quantity, 0);
 
@@ -75,7 +89,7 @@ export default function Navbar() {
               <div className="relative group">
                 <Link href="/products" className={`${isActive("/products")} font-medium transition flex items-center`}>
                   Products
-                  <ChevronDown className="ml-1 h-4 w-4" />
+                  <ChevronDownIcon className="ml-1 h-4 w-4" />
                 </Link>
                 {/* Added margin-top gap to make hovering easier and improved hover transition */}
                 <div className="absolute left-0 mt-0 pt-5 w-48 z-10 hidden group-hover:block">
@@ -116,7 +130,7 @@ export default function Navbar() {
                   }}
                 />
                 <button type="submit" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                  <Search className="h-4 w-4" />
+                  <SearchIcon className="h-4 w-4" />
                 </button>
                 
                 {/* Search results dropdown */}
@@ -142,7 +156,7 @@ export default function Navbar() {
               onClick={toggleCart}
               className="relative p-2 hover:bg-neutral-100 rounded-full transition"
             >
-              <ShoppingCart className="h-6 w-6" />
+              <ShoppingCartIcon className="h-6 w-6" />
               {cartItemsCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-amber-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                   {cartItemsCount}
@@ -155,7 +169,7 @@ export default function Navbar() {
               onClick={toggleMobileMenu} 
               className="md:hidden"
             >
-              <Menu className="h-6 w-6" />
+              <MenuIcon className="h-6 w-6" />
             </Button>
           </div>
         </div>
@@ -180,7 +194,7 @@ export default function Navbar() {
                     }}
                   />
                   <button type="submit" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                    <Search className="h-4 w-4" />
+                    <SearchIcon className="h-4 w-4" />
                   </button>
                   
                   {/* Search results dropdown */}
@@ -212,7 +226,7 @@ export default function Navbar() {
                   className="text-neutral-900 hover:text-primary font-medium py-2 transition w-full text-left flex justify-between items-center"
                 >
                   Products
-                  <ChevronDown className="h-4 w-4" />
+                  <ChevronDownIcon className="h-4 w-4" />
                 </button>
                 {mobileProductsOpen && (
                   <div className="pl-4 py-2 space-y-2">
