@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { insertOrderSchema, insertContactSchema } from "@shared/schema";
 import { ZodError } from "zod";
 import fetch from "node-fetch";
+import { sendOrderNotification } from "./telegram";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // API routes with prefix /api
@@ -94,50 +95,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const orderData = insertOrderSchema.parse(req.body);
       const order = await storage.createOrder(orderData);
       
-      // Send Telegram notification
-      const telegramBotToken = process.env.TELEGRAM_BOT_TOKEN;
-      const telegramChatId = process.env.TELEGRAM_CHAT_ID;
-      
-      if (telegramBotToken && telegramChatId) {
-        try {
-          const cartItems = JSON.parse(orderData.items);
-          const cartItemsList = cartItems.map((item: any) => 
-            `- ${item.name} x${item.quantity} ($${(item.price * item.quantity).toFixed(2)})`
-          ).join('\n');
-          
-          const message = `
-🛒 *New Order!*
-
-*Customer:* ${orderData.name}
-*Email:* ${orderData.email}
-*Phone:* ${orderData.phone}
-*Address:* ${orderData.address}
-
-*Order Items:*
-${cartItemsList}
-
-*Total:* $${orderData.total.toFixed(2)}
-          `.trim();
-          
-          await fetch(
-            `https://api.telegram.org/bot${telegramBotToken}/sendMessage`,
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                chat_id: telegramChatId,
-                text: message,
-                parse_mode: 'Markdown',
-              }),
-            }
-          );
-        } catch (error) {
-          console.error('Failed to send Telegram notification:', error);
+      // Send notification using our Telegram service
+      try {
+        const notificationSent = await sendOrderNotification(order);
+        if (notificationSent) {
+          console.log(`Telegram notification sent for order #${order.id}`);
+        } else {
+          console.log(`Failed to send Telegram notification for order #${order.id}`);
         }
-      } else {
-        console.log('Telegram notification skipped: missing bot token or chat ID');
+      } catch (error) {
+        console.error('Error in Telegram notification:', error);
       }
       
       res.status(201).json(order);
