@@ -35,6 +35,7 @@ import {
   ShoppingBag,
   FileText,
   Settings,
+  Eye,
 } from "lucide-react";
 
 // Export all icons with consistent naming convention
@@ -71,6 +72,7 @@ export const ProductsIcon = (props: LucideProps) => <Package {...props} />;
 export const OrdersIcon = (props: LucideProps) => <ShoppingBag {...props} />;
 export const BlogIcon = (props: LucideProps) => <FileText {...props} />;
 export const SettingsIcon = (props: LucideProps) => <Settings {...props} />;
+export const EyeIcon = (props: LucideProps) => <Eye {...props} />;
 
 // Re-export with additional names for backward compatibility
 export { X } from "lucide-react";

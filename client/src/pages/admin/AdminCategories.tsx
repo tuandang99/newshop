@@ -32,6 +32,7 @@ import { PlusIcon, SearchIcon, EditIcon, TrashIcon } from "@/lib/icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { Category, Product } from "@shared/schema";
 
 const categorySchema = z.object({
   name: z.string().min(2, {
@@ -55,17 +56,17 @@ export default function AdminCategories() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<any>(null);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
 
-  const { data: categories = [], isLoading } = useQuery({ 
+  const { data: categories = [], isLoading } = useQuery<Category[]>({ 
     queryKey: ['/api/categories'], 
   });
 
-  const { data: products = [] } = useQuery({ 
+  const { data: products = [] } = useQuery<Product[]>({ 
     queryKey: ['/api/products'], 
   });
 
-  const filteredCategories = categories.filter((category: any) => 
+  const filteredCategories = categories.filter((category) => 
     category.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     category.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     category.slug.toLowerCase().includes(searchTerm.toLowerCase())
@@ -96,7 +97,7 @@ export default function AdminCategories() {
     setIsAddDialogOpen(true);
   };
 
-  const handleEditCategory = (category: any) => {
+  const handleEditCategory = (category: Category) => {
     setSelectedCategory(category);
     editForm.reset({
       name: category.name,
@@ -107,13 +108,13 @@ export default function AdminCategories() {
     setIsEditDialogOpen(true);
   };
 
-  const handleDeleteCategory = (category: any) => {
+  const handleDeleteCategory = (category: Category) => {
     setSelectedCategory(category);
     setIsDeleteDialogOpen(true);
   };
 
   const getProductCountByCategory = (categoryId: number) => {
-    return products.filter((product: any) => product.categoryId === categoryId).length;
+    return products.filter((product) => product.categoryId === categoryId).length;
   };
 
   // Placeholder functions for form submissions
@@ -197,7 +198,7 @@ export default function AdminCategories() {
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredCategories.map((category: any) => (
+                filteredCategories.map((category) => (
                   <TableRow key={category.id}>
                     <TableCell className="font-medium">{category.name}</TableCell>
                     <TableCell>{category.slug}</TableCell>
