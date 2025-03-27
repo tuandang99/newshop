@@ -23,11 +23,17 @@ export interface IStorage {
   getProductsByCategory(categoryId: number): Promise<Product[]>;
   getProductBySlug(slug: string): Promise<Product | undefined>;
   getFeaturedProducts(limit?: number): Promise<Product[]>;
+  createProduct(product: InsertProduct): Promise<Product>;
+  updateProduct(id: number, product: Partial<InsertProduct>): Promise<Product | undefined>;
+  deleteProduct(id: number): Promise<boolean>;
   
   // Blog Posts
   getBlogPosts(): Promise<BlogPost[]>;
   getBlogPostBySlug(slug: string): Promise<BlogPost | undefined>;
   getRecentBlogPosts(limit?: number): Promise<BlogPost[]>;
+  createBlogPost(blogPost: InsertBlogPost): Promise<BlogPost>;
+  updateBlogPost(id: number, blogPost: Partial<InsertBlogPost>): Promise<BlogPost | undefined>;
+  deleteBlogPost(id: number): Promise<boolean>;
   
   // Testimonials
   getTestimonials(): Promise<Testimonial[]>;
@@ -71,6 +77,18 @@ export class MemStorage implements IStorage {
     
     // Initialize with sample data
     this.initializeData();
+  }
+  
+  // Helper method to ensure product values are all set
+  private ensureProductFields(product: InsertProduct): InsertProduct {
+    return {
+      ...product,
+      oldPrice: product.oldPrice === undefined ? null : product.oldPrice,
+      rating: product.rating === undefined ? 5 : product.rating,
+      isNew: product.isNew === undefined ? false : product.isNew,
+      isOrganic: product.isOrganic === undefined ? true : product.isOrganic,
+      isBestseller: product.isBestseller === undefined ? false : product.isBestseller
+    };
   }
 
   private initializeData() {
@@ -218,7 +236,8 @@ export class MemStorage implements IStorage {
     
     productsData.forEach(product => {
       const id = this.productId++;
-      this.products.set(id, { ...product, id });
+      const completeProduct = this.ensureProductFields(product);
+      this.products.set(id, { ...completeProduct, id });
     });
     
     // Add blog posts
@@ -314,6 +333,37 @@ export class MemStorage implements IStorage {
       .slice(0, limit);
   }
   
+  async createProduct(product: InsertProduct): Promise<Product> {
+    const id = this.productId++;
+    const completeProduct = this.ensureProductFields(product);
+    const newProduct: Product = {
+      ...completeProduct,
+      id
+    };
+    this.products.set(id, newProduct);
+    return newProduct;
+  }
+  
+  async updateProduct(id: number, product: Partial<InsertProduct>): Promise<Product | undefined> {
+    const existingProduct = this.products.get(id);
+    
+    if (!existingProduct) {
+      return undefined;
+    }
+    
+    const updatedProduct = {
+      ...existingProduct,
+      ...product
+    };
+    
+    this.products.set(id, updatedProduct);
+    return updatedProduct;
+  }
+  
+  async deleteProduct(id: number): Promise<boolean> {
+    return this.products.delete(id);
+  }
+  
   // Blog methods
   async getBlogPosts(): Promise<BlogPost[]> {
     return Array.from(this.blogPosts.values())
@@ -328,6 +378,36 @@ export class MemStorage implements IStorage {
     return Array.from(this.blogPosts.values())
       .sort((a, b) => b.date.getTime() - a.date.getTime())
       .slice(0, limit);
+  }
+  
+  async createBlogPost(blogPost: InsertBlogPost): Promise<BlogPost> {
+    const id = this.blogPostId++;
+    const newBlogPost: BlogPost = {
+      ...blogPost,
+      id
+    };
+    this.blogPosts.set(id, newBlogPost);
+    return newBlogPost;
+  }
+  
+  async updateBlogPost(id: number, blogPost: Partial<InsertBlogPost>): Promise<BlogPost | undefined> {
+    const existingBlogPost = this.blogPosts.get(id);
+    
+    if (!existingBlogPost) {
+      return undefined;
+    }
+    
+    const updatedBlogPost = {
+      ...existingBlogPost,
+      ...blogPost
+    };
+    
+    this.blogPosts.set(id, updatedBlogPost);
+    return updatedBlogPost;
+  }
+  
+  async deleteBlogPost(id: number): Promise<boolean> {
+    return this.blogPosts.delete(id);
   }
   
   // Testimonial methods

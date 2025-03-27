@@ -1,10 +1,22 @@
-import type { Express, Request, Response } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertOrderSchema, insertContactSchema, CartItem } from "@shared/schema";
+import { insertOrderSchema, insertContactSchema, CartItem, insertProductSchema, insertBlogPostSchema } from "@shared/schema";
 import { ZodError } from "zod";
 import fetch from "node-fetch";
 import { sendOrderNotification } from "./telegram";
+
+// Simple authentication middleware for admin routes
+const adminAuth = (req: Request, res: Response, next: NextFunction) => {
+  const adminKey = req.headers['admin-key'];
+  
+  // Very basic auth - in a real app, use proper authentication
+  if (adminKey === 'secret-admin-key') {
+    next();
+  } else {
+    res.status(401).json({ message: "Unauthorized - Admin access required" });
+  }
+};
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // API routes with prefix /api
@@ -60,6 +72,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(products);
   });
   
+  // Admin Product Management
+  app.post("/api/admin/products", adminAuth, async (req: Request, res: Response) => {
+    try {
+      const productData = insertProductSchema.parse(req.body);
+      const product = await storage.createProduct(productData);
+      res.status(201).json(product);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: "Invalid product data", errors: error.errors });
+      }
+      throw error;
+    }
+  });
+  
+  app.put("/api/admin/products/:id", adminAuth, async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid product ID" });
+      }
+      
+      // Partial validation of product data
+      const productData = req.body;
+      const updatedProduct = await storage.updateProduct(id, productData);
+      
+      if (!updatedProduct) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+      
+      res.json(updatedProduct);
+    } catch (error) {
+      throw error;
+    }
+  });
+  
+  app.delete("/api/admin/products/:id", adminAuth, async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid product ID" });
+      }
+      
+      const success = await storage.deleteProduct(id);
+      
+      if (!success) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+      
+      res.status(204).end();
+    } catch (error) {
+      throw error;
+    }
+  });
+  
   // Blog posts
   app.get("/api/blog-posts", async (req: Request, res: Response) => {
     const posts = await storage.getBlogPosts();
@@ -81,6 +149,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
     const posts = await storage.getRecentBlogPosts(limit);
     res.json(posts);
+  });
+  
+  // Admin Blog Post Management
+  app.post("/api/admin/blog-posts", adminAuth, async (req: Request, res: Response) => {
+    try {
+      const blogPostData = insertBlogPostSchema.parse(req.body);
+      const blogPost = await storage.createBlogPost(blogPostData);
+      res.status(201).json(blogPost);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: "Invalid blog post data", errors: error.errors });
+      }
+      throw error;
+    }
+  });
+  
+  app.put("/api/admin/blog-posts/:id", adminAuth, async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid blog post ID" });
+      }
+      
+      // Partial validation of blog post data
+      const blogPostData = req.body;
+      const updatedBlogPost = await storage.updateBlogPost(id, blogPostData);
+      
+      if (!updatedBlogPost) {
+        return res.status(404).json({ message: "Blog post not found" });
+      }
+      
+      res.json(updatedBlogPost);
+    } catch (error) {
+      throw error;
+    }
+  });
+  
+  app.delete("/api/admin/blog-posts/:id", adminAuth, async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid blog post ID" });
+      }
+      
+      const success = await storage.deleteBlogPost(id);
+      
+      if (!success) {
+        return res.status(404).json({ message: "Blog post not found" });
+      }
+      
+      res.status(204).end();
+    } catch (error) {
+      throw error;
+    }
   });
   
   // Testimonials
