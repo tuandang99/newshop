@@ -40,8 +40,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Products
   app.get("/api/products", async (req: Request, res: Response) => {
-    const products = await storage.getProducts();
-    res.json(products);
+    try {
+      const page = req.query.page ? parseInt(req.query.page as string) : 1;
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+      
+      if (isNaN(page) || isNaN(limit) || page < 1 || limit < 1) {
+        return res.status(400).json({ message: "Invalid pagination parameters" });
+      }
+      
+      const allProducts = await storage.getProducts();
+      
+      // Manual pagination since we're using in-memory storage
+      const startIndex = (page - 1) * limit;
+      const endIndex = page * limit;
+      const paginatedProducts = allProducts.slice(startIndex, endIndex);
+      
+      res.json({
+        products: paginatedProducts,
+        pagination: {
+          total: allProducts.length,
+          page,
+          limit,
+          totalPages: Math.ceil(allProducts.length / limit)
+        }
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch products" });
+    }
   });
   
   app.get("/api/products/category/:categoryId", async (req: Request, res: Response) => {
@@ -82,7 +107,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (error instanceof ZodError) {
         return res.status(400).json({ message: "Invalid product data", errors: error.errors });
       }
-      throw error;
+      console.error("Error creating product:", error);
+      res.status(500).json({ message: "Failed to create product" });
     }
   });
   
@@ -94,17 +120,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid product ID" });
       }
       
-      // Partial validation of product data
-      const productData = req.body;
-      const updatedProduct = await storage.updateProduct(id, productData);
-      
-      if (!updatedProduct) {
-        return res.status(404).json({ message: "Product not found" });
+      // Validate product data - even though it's partial, we should still validate what's provided
+      try {
+        // Apply partial validation to the fields that are present
+        const providedFields = Object.keys(req.body);
+        
+        // Create a partial schema based on which fields are provided
+        const partialSchema = insertProductSchema.partial();
+        partialSchema.parse(req.body);
+        
+        const productData = req.body;
+        const updatedProduct = await storage.updateProduct(id, productData);
+        
+        if (!updatedProduct) {
+          return res.status(404).json({ message: "Product not found" });
+        }
+        
+        res.json(updatedProduct);
+      } catch (validationError) {
+        if (validationError instanceof ZodError) {
+          return res.status(400).json({ 
+            message: "Invalid product data", 
+            errors: validationError.errors 
+          });
+        }
+        throw validationError;
       }
-      
-      res.json(updatedProduct);
     } catch (error) {
-      throw error;
+      console.error("Error updating product:", error);
+      res.status(500).json({ message: "Internal server error" });
     }
   });
   
@@ -124,14 +168,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.status(204).end();
     } catch (error) {
-      throw error;
+      console.error("Error deleting product:", error);
+      res.status(500).json({ message: "Internal server error" });
     }
   });
   
   // Blog posts
   app.get("/api/blog-posts", async (req: Request, res: Response) => {
-    const posts = await storage.getBlogPosts();
-    res.json(posts);
+    try {
+      const page = req.query.page ? parseInt(req.query.page as string) : 1;
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+      
+      if (isNaN(page) || isNaN(limit) || page < 1 || limit < 1) {
+        return res.status(400).json({ message: "Invalid pagination parameters" });
+      }
+      
+      const allPosts = await storage.getBlogPosts();
+      
+      // Manual pagination since we're using in-memory storage
+      const startIndex = (page - 1) * limit;
+      const endIndex = page * limit;
+      const paginatedPosts = allPosts.slice(startIndex, endIndex);
+      
+      res.json({
+        posts: paginatedPosts,
+        pagination: {
+          total: allPosts.length,
+          page,
+          limit,
+          totalPages: Math.ceil(allPosts.length / limit)
+        }
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch blog posts" });
+    }
   });
   
   app.get("/api/blog-posts/:slug", async (req: Request, res: Response) => {
@@ -154,14 +224,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Admin Blog Post Management
   app.post("/api/admin/blog-posts", adminAuth, async (req: Request, res: Response) => {
     try {
-      const blogPostData = insertBlogPostSchema.parse(req.body);
-      const blogPost = await storage.createBlogPost(blogPostData);
+      // Convert date string to Date object before validation
+      let blogPostData = { ...req.body };
+      if (typeof blogPostData.date === 'string') {
+        blogPostData.date = new Date(blogPostData.date);
+      }
+      
+      const validatedData = insertBlogPostSchema.parse(blogPostData);
+      const blogPost = await storage.createBlogPost(validatedData);
       res.status(201).json(blogPost);
     } catch (error) {
       if (error instanceof ZodError) {
         return res.status(400).json({ message: "Invalid blog post data", errors: error.errors });
       }
-      throw error;
+      console.error("Error creating blog post:", error);
+      res.status(500).json({ message: "Failed to create blog post" });
     }
   });
   
@@ -173,17 +250,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid blog post ID" });
       }
       
-      // Partial validation of blog post data
-      const blogPostData = req.body;
-      const updatedBlogPost = await storage.updateBlogPost(id, blogPostData);
-      
-      if (!updatedBlogPost) {
-        return res.status(404).json({ message: "Blog post not found" });
+      // Validate blog post data with partial schema
+      try {
+        // Convert date string to Date object before validation
+        let blogPostData = { ...req.body };
+        if (typeof blogPostData.date === 'string') {
+          blogPostData.date = new Date(blogPostData.date);
+        }
+        
+        // Create a partial schema based on which fields are provided
+        const partialSchema = insertBlogPostSchema.partial();
+        partialSchema.parse(blogPostData);
+        
+        const updatedBlogPost = await storage.updateBlogPost(id, blogPostData);
+        
+        if (!updatedBlogPost) {
+          return res.status(404).json({ message: "Blog post not found" });
+        }
+        
+        res.json(updatedBlogPost);
+      } catch (validationError) {
+        if (validationError instanceof ZodError) {
+          return res.status(400).json({ 
+            message: "Invalid blog post data", 
+            errors: validationError.errors 
+          });
+        }
+        throw validationError;
       }
-      
-      res.json(updatedBlogPost);
     } catch (error) {
-      throw error;
+      console.error("Error updating blog post:", error);
+      res.status(500).json({ message: "Internal server error" });
     }
   });
   
@@ -203,7 +300,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.status(204).end();
     } catch (error) {
-      throw error;
+      console.error("Error deleting blog post:", error);
+      res.status(500).json({ message: "Internal server error" });
     }
   });
   
@@ -230,6 +328,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log('Telegram notification sent for order #' + order.id);
       } catch (error) {
         console.error('Failed to send Telegram notification:', error);
+        // Continue with the order process even if telegram fails
       }
       
       res.status(201).json(order);
@@ -237,7 +336,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (error instanceof ZodError) {
         return res.status(400).json({ message: "Invalid order data", errors: error.errors });
       }
-      throw error;
+      console.error("Error creating order:", error);
+      res.status(500).json({ message: "Failed to process order" });
     }
   });
   
@@ -251,7 +351,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (error instanceof ZodError) {
         return res.status(400).json({ message: "Invalid contact form data", errors: error.errors });
       }
-      throw error;
+      console.error("Error submitting contact form:", error);
+      res.status(500).json({ message: "Failed to submit contact form" });
     }
   });
   

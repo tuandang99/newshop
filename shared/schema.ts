@@ -64,7 +64,8 @@ export const blogPosts = pgTable("blog_posts", {
   date: timestamp("date").notNull(),
 });
 
-export const insertBlogPostSchema = createInsertSchema(blogPosts).pick({
+// Create a base schema from the table
+const baseBlogPostSchema = createInsertSchema(blogPosts).pick({
   title: true,
   slug: true,
   content: true,
@@ -72,6 +73,14 @@ export const insertBlogPostSchema = createInsertSchema(blogPosts).pick({
   image: true,
   category: true,
   date: true,
+});
+
+// Create a modified schema that transforms string dates to Date objects
+export const insertBlogPostSchema = baseBlogPostSchema.extend({
+  date: z.preprocess(
+    (arg) => (typeof arg === 'string' ? new Date(arg) : arg),
+    z.date()
+  )
 });
 
 export type InsertBlogPost = z.infer<typeof insertBlogPostSchema>;

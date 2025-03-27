@@ -81,14 +81,23 @@ export class MemStorage implements IStorage {
   
   // Helper method to ensure product values are all set
   private ensureProductFields(product: InsertProduct): InsertProduct {
-    return {
-      ...product,
-      oldPrice: product.oldPrice === undefined ? null : product.oldPrice,
-      rating: product.rating === undefined ? 5 : product.rating,
-      isNew: product.isNew === undefined ? false : product.isNew,
-      isOrganic: product.isOrganic === undefined ? true : product.isOrganic,
-      isBestseller: product.isBestseller === undefined ? false : product.isBestseller
+    // Create a product with all optional fields set to non-optional values
+    const completeProduct: InsertProduct = {
+      name: product.name,
+      slug: product.slug,
+      description: product.description,
+      price: product.price,
+      image: product.image,
+      categoryId: product.categoryId,
+      // Set defaults for optional fields
+      oldPrice: product.oldPrice ?? null,
+      rating: product.rating ?? 5,
+      isNew: product.isNew ?? false,
+      isOrganic: product.isOrganic ?? true,
+      isBestseller: product.isBestseller ?? false
     };
+    
+    return completeProduct;
   }
 
   private initializeData() {
@@ -236,8 +245,24 @@ export class MemStorage implements IStorage {
     
     productsData.forEach(product => {
       const id = this.productId++;
-      const completeProduct = this.ensureProductFields(product);
-      this.products.set(id, { ...completeProduct, id });
+      
+      // Create a product with explicit type casting to ensure correct types
+      const newProduct: Product = {
+        id,
+        name: product.name,
+        slug: product.slug,
+        description: product.description,
+        price: product.price,
+        oldPrice: product.oldPrice ?? null,
+        image: product.image,
+        categoryId: product.categoryId,
+        rating: product.rating ?? 5,
+        isNew: product.isNew ?? false,
+        isOrganic: product.isOrganic ?? true,
+        isBestseller: product.isBestseller ?? false
+      };
+      
+      this.products.set(id, newProduct);
     });
     
     // Add blog posts
@@ -328,18 +353,48 @@ export class MemStorage implements IStorage {
   }
   
   async getFeaturedProducts(limit = 8): Promise<Product[]> {
-    return Array.from(this.products.values())
+    const allProducts = Array.from(this.products.values());
+    
+    // Ensure all products have properly typed fields
+    const typedProducts: Product[] = allProducts.map(product => ({
+      id: product.id,
+      name: product.name,
+      slug: product.slug,
+      description: product.description,
+      price: product.price,
+      oldPrice: product.oldPrice ?? null,
+      image: product.image,
+      categoryId: product.categoryId,
+      rating: product.rating ?? 5,
+      isNew: product.isNew ?? false,
+      isOrganic: product.isOrganic ?? true,
+      isBestseller: product.isBestseller ?? false
+    }));
+    
+    return typedProducts
       .sort(() => Math.random() - 0.5)
       .slice(0, limit);
   }
   
   async createProduct(product: InsertProduct): Promise<Product> {
     const id = this.productId++;
-    const completeProduct = this.ensureProductFields(product);
+    
+    // Create a properly typed product with explicit fields
     const newProduct: Product = {
-      ...completeProduct,
-      id
+      id,
+      name: product.name,
+      slug: product.slug,
+      description: product.description,
+      price: product.price,
+      oldPrice: product.oldPrice ?? null,
+      image: product.image,
+      categoryId: product.categoryId,
+      rating: product.rating ?? 5,
+      isNew: product.isNew ?? false,
+      isOrganic: product.isOrganic ?? true,
+      isBestseller: product.isBestseller ?? false
     };
+    
     this.products.set(id, newProduct);
     return newProduct;
   }
@@ -351,9 +406,20 @@ export class MemStorage implements IStorage {
       return undefined;
     }
     
-    const updatedProduct = {
-      ...existingProduct,
-      ...product
+    // Create a properly typed product with all fields explicitly set
+    const updatedProduct: Product = {
+      id,
+      name: product.name !== undefined ? product.name : existingProduct.name,
+      slug: product.slug !== undefined ? product.slug : existingProduct.slug,
+      description: product.description !== undefined ? product.description : existingProduct.description,
+      price: product.price !== undefined ? product.price : existingProduct.price,
+      oldPrice: product.oldPrice !== undefined ? product.oldPrice : existingProduct.oldPrice,
+      image: product.image !== undefined ? product.image : existingProduct.image,
+      categoryId: product.categoryId !== undefined ? product.categoryId : existingProduct.categoryId,
+      rating: product.rating !== undefined ? product.rating : existingProduct.rating,
+      isNew: product.isNew !== undefined ? product.isNew : existingProduct.isNew,
+      isOrganic: product.isOrganic !== undefined ? product.isOrganic : existingProduct.isOrganic,
+      isBestseller: product.isBestseller !== undefined ? product.isBestseller : existingProduct.isBestseller
     };
     
     this.products.set(id, updatedProduct);
