@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { X, Plus, Minus, ShoppingCart } from "@/lib/icons";
+import { CloseIcon, PlusIcon, MinusIcon, ShoppingCartIcon } from "@/lib/icons";
 import { useCart } from "@/context/CartContext";
 import CheckoutModal from "./checkout-modal";
 
@@ -44,14 +44,14 @@ export default function CartDrawer() {
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-semibold font-poppins">Your Cart</h2>
             <Button variant="ghost" size="icon" onClick={toggleCart}>
-              <X className="h-6 w-6" />
+              <CloseIcon className="h-6 w-6" />
             </Button>
           </div>
           
           <div className="space-y-4 mb-6">
             {items.length === 0 ? (
               <div className="py-8 text-center">
-                <ShoppingCart className="h-12 w-12 text-neutral-300 mx-auto mb-3" />
+                <ShoppingCartIcon className="h-12 w-12 text-neutral-300 mx-auto mb-3" />
                 <p className="text-neutral-500">Your cart is empty</p>
                 <Button 
                   variant="link" 
@@ -78,7 +78,7 @@ export default function CartDrawer() {
                         className="h-6 w-6 text-neutral-500 hover:text-primary"
                         onClick={() => updateQuantity(item.id, item.quantity - 1)}
                       >
-                        <Minus className="h-3 w-3" />
+                        <MinusIcon className="h-3 w-3" />
                       </Button>
                       <span className="mx-2">{item.quantity}</span>
                       <Button 
@@ -87,7 +87,7 @@ export default function CartDrawer() {
                         className="h-6 w-6 text-neutral-500 hover:text-primary"
                         onClick={() => updateQuantity(item.id, item.quantity + 1)}
                       >
-                        <Plus className="h-3 w-3" />
+                        <PlusIcon className="h-3 w-3" />
                       </Button>
                       <span className="ml-auto">${(item.price * item.quantity).toFixed(2)}</span>
                     </div>
@@ -98,7 +98,7 @@ export default function CartDrawer() {
                     className="ml-2 text-neutral-400 hover:text-red-500"
                     onClick={() => removeItem(item.id)}
                   >
-                    <X className="h-4 w-4" />
+                    <CloseIcon className="h-4 w-4" />
                   </Button>
                 </div>
               ))
