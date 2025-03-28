@@ -16,17 +16,19 @@ import Admin from "@/pages/Admin";
 
 function Router() {
   return (
-    <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/products" component={Products} />
-      <Route path="/products/:slug" component={ProductDetail} />
-      <Route path="/about" component={About} />
-      <Route path="/blog" component={Blog} />
-      <Route path="/blog/:slug" component={BlogPost} />
-      <Route path="/contact" component={Contact} />
-      <Route path="/admin" component={Admin} />
-      <Route component={NotFound} />
-    </Switch>
+    <MainLayout>
+      <Switch>
+        <Route path="/" component={Home} />
+        <Route path="/products" component={Products} />
+        <Route path="/products/:slug" component={ProductDetail} />
+        <Route path="/about" component={About} />
+        <Route path="/blog" component={Blog} />
+        <Route path="/blog/:slug" component={BlogPost} />
+        <Route path="/contact" component={Contact} />
+        <Route path="/admin" component={Admin} />
+        <Route component={NotFound} />
+      </Switch>
+    </MainLayout>
   );
 }
 
