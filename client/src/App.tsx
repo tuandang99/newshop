@@ -13,8 +13,6 @@ import Blog from "@/pages/Blog";
 import BlogPost from "@/pages/BlogPost";
 import Contact from "@/pages/Contact";
 import Admin from "@/pages/Admin";
-import { Footer } from "@/components/Footer";
-import { ZaloButton } from "@/components/ZaloButton"; // Added import
 
 function Router() {
   return (
@@ -40,19 +38,9 @@ function App() {
       <CartProvider>
         <Router />
         <Toaster />
-        <ZaloButton /> {/* Added ZaloButton */}
       </CartProvider>
     </QueryClientProvider>
   );
 }
 
 export default App;
-
-// Dummy ZaloButton component (replace with your actual implementation)
-export const ZaloButton = () => {
-  return (
-    <a href="https://zalo.me/" target="_blank" rel="noopener noreferrer">
-      <img src="/zalo-icon.svg" alt="Zalo" style={{ width: '32px', height: '32px', position: 'fixed', bottom: '20px', right: '20px' }} />
-    </a>
-  );
-};
