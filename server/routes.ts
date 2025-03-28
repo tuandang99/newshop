@@ -6,12 +6,15 @@ import { ZodError } from "zod";
 import fetch from "node-fetch";
 import { sendOrderNotification } from "./telegram";
 
+// Environment variable for admin key or fallback to a default for development
+const ADMIN_KEY = process.env.ADMIN_KEY || "secret-admin-key";
+
 // Simple authentication middleware for admin routes
 const adminAuth = (req: Request, res: Response, next: NextFunction) => {
   const adminKey = req.headers['admin-key'];
   
   // Very basic auth - in a real app, use proper authentication
-  if (adminKey === 'secret-admin-key') {
+  if (adminKey === ADMIN_KEY) {
     next();
   } else {
     res.status(401).json({ message: "Unauthorized - Admin access required" });
@@ -345,6 +348,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/testimonials", async (req: Request, res: Response) => {
     const testimonials = await storage.getTestimonials();
     res.json(testimonials);
+  });
+  
+  // Admin Key Verification
+  app.post("/api/admin/verify", async (req: Request, res: Response) => {
+    const adminKey = req.headers['admin-key'];
+    
+    if (adminKey === ADMIN_KEY) {
+      return res.status(200).json({ message: "Admin key is valid" });
+    } else {
+      return res.status(401).json({ message: "Invalid admin key" });
+    }
   });
   
   // Orders with Telegram integration

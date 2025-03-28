@@ -1,9 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { apiRequest } from "../lib/queryClient";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -12,8 +11,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import MainLayout from "@/components/layouts/MainLayout";
 import { Helmet } from "react-helmet";
+import { useLocation } from "wouter";
 
 // Product form schema
 const productFormSchema = z.object({
@@ -45,11 +44,36 @@ const blogFormSchema = z.object({
 
 type BlogFormValues = z.infer<typeof blogFormSchema>;
 
+// Admin key authentication schema
+const authSchema = z.object({
+  adminKey: z.string().min(6, "Admin key must be at least 6 characters"),
+});
+
+type AuthFormValues = z.infer<typeof authSchema>;
+
 export default function Admin() {
-  const [adminKey, setAdminKey] = useState(localStorage.getItem("adminKey") || "");
-  const [authenticated, setAuthenticated] = useState(!!localStorage.getItem("adminKey"));
+  const [adminKey, setAdminKey] = useState<string>("");
+  const [authenticated, setAuthenticated] = useState<boolean>(false);
+  const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Check if admin is authenticated on page load
+  useEffect(() => {
+    const storedKey = localStorage.getItem("adminKey");
+    if (storedKey) {
+      setAdminKey(storedKey);
+      validateAdminKey(storedKey);
+    }
+  }, []);
+
+  // Auth form
+  const authForm = useForm<AuthFormValues>({
+    resolver: zodResolver(authSchema),
+    defaultValues: {
+      adminKey: "",
+    }
+  });
 
   // Product form
   const productForm = useForm<ProductFormValues>({
@@ -165,11 +189,46 @@ export default function Admin() {
     }
   });
 
+  // Verify admin key against the backend
+  const validateAdminKey = async (key: string) => {
+    try {
+      const response = await fetch('/api/admin/verify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Admin-Key': key
+        }
+      });
+
+      if (response.ok) {
+        setAuthenticated(true);
+        localStorage.setItem("adminKey", key);
+        setAdminKey(key);
+        return true;
+      } else {
+        localStorage.removeItem("adminKey");
+        setAuthenticated(false);
+        toast({
+          title: "Authentication Failed",
+          description: "Invalid admin key",
+          variant: "destructive"
+        });
+        return false;
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to verify admin key",
+        variant: "destructive"
+      });
+      return false;
+    }
+  };
+
   // Handle admin login
-  const handleLogin = () => {
-    if (adminKey) {
-      localStorage.setItem("adminKey", adminKey);
-      setAuthenticated(true);
+  const handleLogin = async (values: AuthFormValues) => {
+    const success = await validateAdminKey(values.adminKey);
+    if (success) {
       toast({
         title: "Authenticated",
         description: "You are now logged in as admin"
@@ -186,6 +245,7 @@ export default function Admin() {
       title: "Logged Out",
       description: "You have been logged out"
     });
+    setLocation("/");
   };
 
   // Handle product form submission
@@ -208,7 +268,7 @@ export default function Admin() {
 
   if (!authenticated) {
     return (
-      <MainLayout>
+      <>
         <Helmet>
           <title>Admin Login - NatureNutri</title>
         </Helmet>
@@ -219,34 +279,43 @@ export default function Admin() {
               <CardDescription>Enter your admin key to access the admin panel</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid gap-4">
-                <div className="grid gap-2">
-                  <Input 
-                    placeholder="Admin Key" 
-                    type="password" 
-                    value={adminKey} 
-                    onChange={(e) => setAdminKey(e.target.value)} 
+              <Form {...authForm}>
+                <form onSubmit={authForm.handleSubmit(handleLogin)} className="space-y-4">
+                  <FormField
+                    control={authForm.control}
+                    name="adminKey"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Admin Key</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="Enter your admin key" 
+                            type="password" 
+                            {...field} 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                </div>
-              </div>
+                  <Button 
+                    type="submit" 
+                    className="w-full"
+                    disabled={authForm.formState.isSubmitting}
+                  >
+                    {authForm.formState.isSubmitting ? "Logging in..." : "Login"}
+                  </Button>
+                </form>
+              </Form>
             </CardContent>
-            <CardFooter>
-              <Button 
-                className="w-full" 
-                onClick={handleLogin}
-                disabled={!adminKey}
-              >
-                Login
-              </Button>
-            </CardFooter>
           </Card>
         </div>
-      </MainLayout>
+      </>
     );
   }
 
   return (
-    <MainLayout>
+    <>
       <Helmet>
         <title>Admin Dashboard - NatureNutri</title>
       </Helmet>
@@ -649,6 +718,6 @@ export default function Admin() {
           </TabsContent>
         </Tabs>
       </div>
-    </MainLayout>
+    </>
   );
 }
