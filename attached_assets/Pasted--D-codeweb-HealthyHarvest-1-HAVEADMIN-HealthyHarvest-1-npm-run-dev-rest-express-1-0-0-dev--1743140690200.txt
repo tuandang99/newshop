@@ -1,0 +1,138 @@
+
+D:\codeweb\HealthyHarvest-1_HAVEADMIN\HealthyHarvest-1>npm run dev
+
+> rest-express@1.0.0 dev
+> tsx server/index.ts
+
+12:43:05 PM [telegram] Telegram bot not initialized: Missing TELEGRAM_BOT_TOKEN or TELEGRAM_ADMIN_CHAT_ID
+Environment variables: {
+  ALLUSERSPROFILE: 'C:\\ProgramData',
+  APPDATA: 'C:\\Users\\tuanv\\AppData\\Roaming',
+  CHROME_CRASHPAD_PIPE_NAME: '\\\\.\\pipe\\crashpad_3092_BYZVELPUHJGBEPKA',
+  COLOR: '1',
+  COLORTERM: 'truecolor',
+  CommonProgramFiles: 'C:\\Program Files\\Common Files',
+  'CommonProgramFiles(x86)': 'C:\\Program Files (x86)\\Common Files',
+  CommonProgramW6432: 'C:\\Program Files\\Common Files',
+  COMPUTERNAME: 'DESKTOP-5FDMFLB',
+  ComSpec: 'C:\\WINDOWS\\system32\\cmd.exe',
+  DriverData: 'C:\\Windows\\System32\\Drivers\\DriverData',
+  EDITOR: 'C:\\WINDOWS\\notepad.exe',
+  EFC_25416: '1',
+  GIT_ASKPASS: 'c:\\Users\\tuanv\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app\\extensions\\git\\dist\\askpass.sh',
+  HOME: 'C:\\Users\\tuanv',
+  HOMEDRIVE: 'C:',
+  HOMEPATH: '\\Users\\tuanv',
+  INIT_CWD: 'D:\\codeweb\\HealthyHarvest-1_HAVEADMIN\\HealthyHarvest-1',
+  LANG: 'en_US.UTF-8',
+  LOCALAPPDATA: 'C:\\Users\\tuanv\\AppData\\Local',
+  LOGONSERVER: '\\\\DESKTOP-5FDMFLB',
+  NODE: 'C:\\Program Files\\nodejs\\node.exe',
+  NODE_EXE: 'C:\\Program Files\\nodejs\\\\node.exe',
+  NPM_CLI_JS: 'C:\\Program Files\\nodejs\\\\node_modules\\npm\\bin\\npm-cli.js',
+  npm_command: 'run-script',
+  npm_config_cache: 'C:\\Users\\tuanv\\AppData\\Local\\npm-cache',
+  npm_config_globalconfig: 'C:\\Users\\tuanv\\AppData\\Roaming\\npm\\etc\\npmrc',
+  npm_config_global_prefix: 'C:\\Users\\tuanv\\AppData\\Roaming\\npm',
+  npm_config_init_module: 'C:\\Users\\tuanv\\.npm-init.js',
+  npm_config_local_prefix: 'D:\\codeweb\\HealthyHarvest-1_HAVEADMIN\\HealthyHarvest-1',
+  npm_config_node_gyp: 'C:\\Program Files\\nodejs\\node_modules\\npm\\node_modules\\node-gyp\\bin\\node-gyp.js',
+  npm_config_noproxy: '',
+  npm_config_npm_version: '10.9.2',
+  npm_config_prefix: 'C:\\Users\\tuanv\\AppData\\Roaming\\npm',
+  npm_config_userconfig: 'C:\\Users\\tuanv\\.npmrc',
+  npm_config_user_agent: 'npm/10.9.2 node/v22.14.0 win32 x64 workspaces/false',
+  npm_execpath: 'C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js',
+  npm_lifecycle_event: 'dev',
+  npm_lifecycle_script: 'tsx server/index.ts',
+  npm_node_execpath: 'C:\\Program Files\\nodejs\\node.exe',
+  npm_package_json: 'D:\\codeweb\\HealthyHarvest-1_HAVEADMIN\\HealthyHarvest-1\\package.json',
+  npm_package_name: 'rest-express',
+  npm_package_version: '1.0.0',
+  NPM_PREFIX_JS: 'C:\\Program Files\\nodejs\\\\node_modules\\npm\\bin\\npm-prefix.js',
+  NPM_PREFIX_NPM_CLI_JS: 'C:\\Users\\tuanv\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npm-cli.js',
+  NUMBER_OF_PROCESSORS: '16',
+  OneDrive: 'C:\\Users\\tuanv\\OneDrive',
+  OneDriveConsumer: 'C:\\Users\\tuanv\\OneDrive',
+  ORIGINAL_XDG_CURRENT_DESKTOP: 'undefined',
+  OS: 'Windows_NT',
+  Path: 'D:\\codeweb\\HealthyHarvest-1_HAVEADMIN\\HealthyHarvest-1\\node_modules\\.bin;D:\\codeweb\\HealthyHarvest-1_HAVEADMIN\\node_modules\\.bin;D:\\codeweb\\node_modules\\.bin;D:\\node_modules\\.bin;C:\\Program Files\\nodejs\\node_modules\\npm\\node_modules\\@npmcli\\run-script\\lib\\node-gyp-bin;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\Program Files\\NVIDIA Corporation\\NVIDIA app\\NvDLISR;C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common;C:\\Program Files\\Git\\cmd;C:\\Program Files\\nodejs\\;C:\\Users\\tuanv\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\;C:\\Users\\tuanv\\AppData\\Local\\Programs\\Python\\Python313\\;C:\\Users\\tuanv\\AppData\\Local\\Microsoft\\WindowsApps;D:\\Pycharm\\PyCharm Community Edition 2024.3.4\\bin;;C:\\Users\\tuanv\\AppData\\Local\\Programs\\Microsoft VS Code\\bin;C:\\Users\\tuanv\\AppData\\Roaming\\npm;C:\\Program Files\\node.js\\;;c:\\Users\\tuanv\\AppData\\Roaming\\Code\\User\\globalStorage\\github.copilot-chat\\debugCommand',
+  PATHEXT: '.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC',
+  PROCESSOR_ARCHITECTURE: 'AMD64',
+  PROCESSOR_IDENTIFIER: 'Intel64 Family 6 Model 183 Stepping 1, GenuineIntel',
+  PROCESSOR_LEVEL: '6',
+  PROCESSOR_REVISION: 'b701',
+  ProgramData: 'C:\\ProgramData',
+  ProgramFiles: 'C:\\Program Files',
+  'ProgramFiles(x86)': 'C:\\Program Files (x86)',
+  ProgramW6432: 'C:\\Program Files',
+  PROMPT: '$P$G',
+  PSModulePath: 'C:\\Program Files\\WindowsPowerShell\\Modules;C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0\\Modules',
+  PUBLIC: 'C:\\Users\\Public',
+  'PyCharm Community Edition': 'D:\\Pycharm\\PyCharm Community Edition 2024.3.4\\bin;',
+  SESSIONNAME: 'Console',
+  SystemDrive: 'C:',
+  SystemRoot: 'C:\\WINDOWS',
+  TEMP: 'C:\\Users\\tuanv\\AppData\\Local\\Temp',
+  TERM_PROGRAM: 'vscode',
+  TERM_PROGRAM_VERSION: '1.98.2',
+  TMP: 'C:\\Users\\tuanv\\AppData\\Local\\Temp',
+  USERDOMAIN: 'DESKTOP-5FDMFLB',
+  USERDOMAIN_ROAMINGPROFILE: 'DESKTOP-5FDMFLB',
+  USERNAME: 'tuanv',
+  USERPROFILE: 'C:\\Users\\tuanv',
+  VBOX_MSI_INSTALL_PATH: 'D:\\virtualbox\\',
+  VSCODE_GIT_ASKPASS_EXTRA_ARGS: '',
+  VSCODE_GIT_ASKPASS_MAIN: 'c:\\Users\\tuanv\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app\\extensions\\git\\dist\\askpass-main.js',
+  VSCODE_GIT_ASKPASS_NODE: 'C:\\Users\\tuanv\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe',
+  VSCODE_GIT_IPC_HANDLE: '\\\\.\\pipe\\vscode-git-6c00e47985-sock',
+  windir: 'C:\\WINDOWS'
+}
+node:events:496
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen ENOTSUP: operation not supported on socket 0.0.0.0:5000
+    at Server.setupListenHandle [as _listen2] (node:net:1915:21)
+    at listenInCluster (node:net:1994:12)
+    at node:net:2203:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1973:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ENOTSUP',
+  errno: -4049,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 5000
+}
+
+Node.js v22.14.0
+
+D:\codeweb\HealthyHarvest-1_HAVEADMIN\HealthyHarvest-1>npm run dev
+
+> rest-express@1.0.0 dev
+> tsx server/index.ts
+
+12:44:05 PM [telegram] Telegram bot not initialized: Missing TELEGRAM_BOT_TOKEN or TELEGRAM_ADMIN_CHAT_ID
+Environment variables: undefined
+node:events:496
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen ENOTSUP: operation not supported on socket 0.0.0.0:5000
+    at Server.setupListenHandle [as _listen2] (node:net:1915:21)
+    at listenInCluster (node:net:1994:12)
+    at node:net:2203:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1973:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ENOTSUP',
+  errno: -4049,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 5000
+}
+
+Node.js v22.14.0
