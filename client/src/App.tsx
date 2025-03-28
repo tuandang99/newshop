@@ -14,7 +14,7 @@ import BlogPost from "@/pages/BlogPost";
 import Contact from "@/pages/Contact";
 import Admin from "@/pages/Admin";
 import { Footer } from "@/components/Footer";
-import { ZaloButton } from "@/components/ZaloButton"; // Added import
+import { ZaloButton } from "@/components/ZaloButton";
 
 function Router() {
   return (
@@ -40,7 +40,7 @@ function App() {
       <CartProvider>
         <Router />
         <Toaster />
-        <ZaloButton /> {/* Added ZaloButton */}
+        <ZaloButton />
       </CartProvider>
     </QueryClientProvider>
   );
