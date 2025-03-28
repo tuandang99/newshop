@@ -47,12 +47,3 @@ function App() {
 }
 
 export default App;
-
-// Dummy ZaloButton component (replace with your actual implementation)
-export const ZaloButton = () => {
-  return (
-    <a href="https://zalo.me/" target="_blank" rel="noopener noreferrer">
-      <img src="/zalo-icon.svg" alt="Zalo" style={{ width: '32px', height: '32px', position: 'fixed', bottom: '20px', right: '20px' }} />
-    </a>
-  );
-};
