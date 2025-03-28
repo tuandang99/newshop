@@ -75,12 +75,12 @@ export default function Navbar() {
 
   return (
     <nav className="bg-white shadow-sm sticky top-0 z-40">
-      <div className="container mx-auto px-4 py-3">
+      <div className="container mx-auto px-2 sm:px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <Link href="/" className="flex items-center">
-              <LeafIcon className="text-primary text-3xl mr-2" />
-              <span className="text-xl font-bold font-poppins text-primary">NatureNutri</span>
+              <LeafIcon className="text-primary text-3xl mr-1" />
+              <span className="text-xl font-bold font-poppins text-primary truncate max-w-[120px] sm:max-w-none">NatureNutri</span>
             </Link>
             <div className="hidden md:flex ml-10 space-x-6">
               <Link href="/" className={`${isActive("/")} font-medium transition`}>
@@ -113,7 +113,7 @@ export default function Navbar() {
               </Link>
             </div>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             <div className="relative hidden md:block">
               <form onSubmit={handleSearch} className="relative">
                 <Input 
@@ -154,9 +154,10 @@ export default function Navbar() {
               variant="ghost" 
               size="icon" 
               onClick={toggleCart}
-              className="relative p-2 hover:bg-neutral-100 rounded-full transition"
+              className="relative p-1 sm:p-2 hover:bg-neutral-100 rounded-full transition"
+              aria-label="Shopping cart"
             >
-              <ShoppingCartIcon className="h-6 w-6" />
+              <ShoppingCartIcon className="h-5 w-5 sm:h-6 sm:w-6" />
               {cartItemsCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-amber-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                   {cartItemsCount}
@@ -167,9 +168,10 @@ export default function Navbar() {
               variant="ghost" 
               size="icon" 
               onClick={toggleMobileMenu} 
-              className="md:hidden"
+              className="md:hidden p-1 sm:p-2"
+              aria-label="Menu"
             >
-              <MenuIcon className="h-6 w-6" />
+              <MenuIcon className="h-5 w-5 sm:h-6 sm:w-6" />
             </Button>
           </div>
         </div>
