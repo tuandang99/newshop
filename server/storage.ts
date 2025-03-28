@@ -274,7 +274,13 @@ export class MemStorage implements IStorage {
         excerpt: "Discover the impressive health benefits of incorporating various nuts into your daily diet.",
         image: "https://images.unsplash.com/photo-1498837167922-ddd27525d352?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80",
         category: "Nutrition",
-        date: new Date("2023-06-15")
+        date: new Date("2023-06-15"),
+        tags: "nuts,health,nutrition,wellness",
+        author: "Dr. Emily Chen",
+        metaTitle: "Nuts Health Benefits - 5 Ways They Improve Your Health",
+        metaDescription: "Learn about the five science-backed ways that nuts can boost your overall health and wellbeing. From heart health to weight management.",
+        featured: true,
+        status: "published"
       },
       {
         title: "Healthy Breakfast Ideas Using Granola",
@@ -283,7 +289,13 @@ export class MemStorage implements IStorage {
         excerpt: "Start your day right with these delicious and nutritious breakfast recipes featuring granola.",
         image: "https://images.unsplash.com/photo-1523598455533-144bae6cf56e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80",
         category: "Recipes",
-        date: new Date("2023-06-08")
+        date: new Date("2023-06-08"),
+        tags: "breakfast,granola,recipes,healthy eating",
+        author: "Julia Martinez",
+        metaTitle: "5 Delicious Granola Breakfast Ideas for Busy Mornings",
+        metaDescription: "Discover five quick and nutritious breakfast recipes using granola that will keep you energized throughout the day.",
+        featured: false,
+        status: "published"
       },
       {
         title: "Why Organic Farming Matters",
@@ -292,13 +304,36 @@ export class MemStorage implements IStorage {
         excerpt: "Learn about the environmental and health benefits of supporting organic farming practices.",
         image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80",
         category: "Sustainability",
-        date: new Date("2023-05-30")
+        date: new Date("2023-05-30"),
+        tags: "organic,sustainability,farming,environment",
+        author: "Michael Johnson",
+        metaTitle: "The Importance of Organic Farming for Our Environment",
+        metaDescription: "Explore the critical role organic farming plays in protecting our environment, supporting biodiversity, and building sustainable food systems.",
+        featured: true,
+        status: "published"
       }
     ];
     
     blogPostsData.forEach(post => {
       const id = this.blogPostId++;
-      this.blogPosts.set(id, { ...post, id });
+      // Create a properly typed blog post with explicit fields
+      const newBlogPost: BlogPost = {
+        id,
+        title: post.title,
+        slug: post.slug,
+        content: post.content,
+        excerpt: post.excerpt,
+        image: post.image,
+        category: post.category,
+        date: post.date,
+        tags: post.tags || null,
+        author: post.author || null,
+        metaTitle: post.metaTitle || null,
+        metaDescription: post.metaDescription || null,
+        featured: post.featured !== undefined ? post.featured : false,
+        status: post.status || "published"
+      };
+      this.blogPosts.set(id, newBlogPost);
     });
     
     // Add testimonials
@@ -448,10 +483,25 @@ export class MemStorage implements IStorage {
   
   async createBlogPost(blogPost: InsertBlogPost): Promise<BlogPost> {
     const id = this.blogPostId++;
+    
+    // Create a properly typed blog post with explicit fields
     const newBlogPost: BlogPost = {
-      ...blogPost,
-      id
+      id,
+      title: blogPost.title,
+      slug: blogPost.slug,
+      content: blogPost.content,
+      excerpt: blogPost.excerpt,
+      image: blogPost.image,
+      category: blogPost.category,
+      date: blogPost.date,
+      tags: blogPost.tags || null,
+      author: blogPost.author || null,
+      metaTitle: blogPost.metaTitle || null,
+      metaDescription: blogPost.metaDescription || null,
+      featured: blogPost.featured !== undefined ? blogPost.featured : false,
+      status: blogPost.status || "published"
     };
+    
     this.blogPosts.set(id, newBlogPost);
     return newBlogPost;
   }
@@ -463,9 +513,22 @@ export class MemStorage implements IStorage {
       return undefined;
     }
     
-    const updatedBlogPost = {
-      ...existingBlogPost,
-      ...blogPost
+    // Create a properly typed blog post with all fields explicitly set
+    const updatedBlogPost: BlogPost = {
+      id,
+      title: blogPost.title !== undefined ? blogPost.title : existingBlogPost.title,
+      slug: blogPost.slug !== undefined ? blogPost.slug : existingBlogPost.slug,
+      content: blogPost.content !== undefined ? blogPost.content : existingBlogPost.content,
+      excerpt: blogPost.excerpt !== undefined ? blogPost.excerpt : existingBlogPost.excerpt,
+      image: blogPost.image !== undefined ? blogPost.image : existingBlogPost.image,
+      category: blogPost.category !== undefined ? blogPost.category : existingBlogPost.category,
+      date: blogPost.date !== undefined ? blogPost.date : existingBlogPost.date,
+      tags: blogPost.tags !== undefined ? blogPost.tags : existingBlogPost.tags,
+      author: blogPost.author !== undefined ? blogPost.author : existingBlogPost.author,
+      metaTitle: blogPost.metaTitle !== undefined ? blogPost.metaTitle : existingBlogPost.metaTitle,
+      metaDescription: blogPost.metaDescription !== undefined ? blogPost.metaDescription : existingBlogPost.metaDescription,
+      featured: blogPost.featured !== undefined ? blogPost.featured : existingBlogPost.featured,
+      status: blogPost.status !== undefined ? blogPost.status : existingBlogPost.status
     };
     
     this.blogPosts.set(id, updatedBlogPost);

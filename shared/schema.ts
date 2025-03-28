@@ -61,6 +61,12 @@ export const blogPosts = pgTable("blog_posts", {
   excerpt: text("excerpt").notNull(),
   image: text("image").notNull(),
   category: text("category").notNull(),
+  tags: text("tags"),
+  author: text("author"),
+  metaTitle: text("meta_title"),
+  metaDescription: text("meta_description"),
+  featured: boolean("featured").default(false),
+  status: text("status").default("published"),
   date: timestamp("date").notNull(),
 });
 
@@ -72,15 +78,27 @@ export const baseBlogPostSchema = createInsertSchema(blogPosts).pick({
   excerpt: true,
   image: true,
   category: true,
+  tags: true,
+  author: true,
+  metaTitle: true,
+  metaDescription: true,
+  featured: true,
+  status: true,
   date: true,
 });
 
-// Create a modified schema that transforms string dates to Date objects
+// Create a modified schema that transforms string dates to Date objects and makes some fields optional
 export const insertBlogPostSchema = baseBlogPostSchema.extend({
   date: z.preprocess(
     (arg) => (typeof arg === 'string' ? new Date(arg) : arg),
     z.date()
-  )
+  ),
+  tags: z.string().optional(),
+  author: z.string().optional(),
+  metaTitle: z.string().optional(),
+  metaDescription: z.string().optional(),
+  featured: z.boolean().optional(),
+  status: z.enum(["published", "draft", "archived"]).optional(),
 });
 
 export type InsertBlogPost = z.infer<typeof insertBlogPostSchema>;

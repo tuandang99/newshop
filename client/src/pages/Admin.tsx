@@ -13,6 +13,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useToast } from "@/hooks/use-toast";
 import { Helmet } from "react-helmet";
 import { useLocation } from "wouter";
+import MDEditor from '@uiw/react-md-editor';
+import '@/components/ui/markdown-styles.css';
 
 // Product form schema
 const productFormSchema = z.object({
@@ -40,6 +42,12 @@ const blogFormSchema = z.object({
   image: z.string().url("Must be a valid URL"),
   category: z.string().min(1, "Category is required"),
   date: z.string().transform(val => new Date(val).toISOString()),
+  tags: z.string().optional(),
+  author: z.string().optional(),
+  metaTitle: z.string().optional(),
+  metaDescription: z.string().optional(),
+  featured: z.boolean().optional().default(false),
+  status: z.enum(["published", "draft", "archived"]).default("published"),
 });
 
 type BlogFormValues = z.infer<typeof blogFormSchema>;
@@ -104,6 +112,12 @@ export default function Admin() {
       image: "",
       category: "",
       date: new Date().toISOString().split('T')[0],
+      tags: "",
+      author: "",
+      metaTitle: "",
+      metaDescription: "",
+      featured: false,
+      status: "published",
     }
   });
 
@@ -649,11 +663,14 @@ export default function Admin() {
                         <FormItem>
                           <FormLabel>Content (Markdown supported)</FormLabel>
                           <FormControl>
-                            <Textarea 
-                              placeholder="Blog post content" 
-                              className="min-h-[200px]" 
-                              {...field} 
-                            />
+                            <div data-color-mode="light" className="w-full">
+                              <MDEditor
+                                value={field.value}
+                                onChange={(value) => field.onChange(value || '')}
+                                height={400}
+                                preview="edit"
+                              />
+                            </div>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -703,6 +720,110 @@ export default function Admin() {
                         </FormItem>
                       )}
                     />
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <FormField
+                        control={blogForm.control}
+                        name="author"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Author</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Author name" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={blogForm.control}
+                        name="tags"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Tags (comma separated)</FormLabel>
+                            <FormControl>
+                              <Input placeholder="organic,nutrition,tips" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <FormField
+                        control={blogForm.control}
+                        name="metaTitle"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Meta Title (SEO)</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Meta title for SEO" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={blogForm.control}
+                        name="metaDescription"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Meta Description (SEO)</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Meta description for SEO" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <FormField
+                        control={blogForm.control}
+                        name="featured"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-row items-start space-x-3 space-y-0 p-4 border rounded-md">
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                              <FormLabel>Featured Post</FormLabel>
+                              <p className="text-sm text-muted-foreground">Feature this post on the homepage</p>
+                            </div>
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={blogForm.control}
+                        name="status"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Status</FormLabel>
+                            <FormControl>
+                              <select 
+                                className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                {...field}
+                                value={field.value}
+                                onChange={(e) => field.onChange(e.target.value)}
+                              >
+                                <option value="published">Published</option>
+                                <option value="draft">Draft</option>
+                                <option value="archived">Archived</option>
+                              </select>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                     
                     <Button 
                       type="submit" 

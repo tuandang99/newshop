@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { CalendarIcon, ArrowLeftIcon, ArrowRightIcon } from "@/lib/icons";
 import { format } from "date-fns";
 import { Helmet } from "react-helmet";
+import MDEditor from '@uiw/react-md-editor';
+import '@/components/ui/markdown-styles.css';
 
 export default function BlogPost() {
   const { slug } = useParams();
@@ -52,33 +54,7 @@ export default function BlogPost() {
     );
   }
 
-  // Parse markdown-style content (very basic implementation)
-  const formatContent = (content: string) => {
-    return content
-      .split('\n\n')
-      .map((paragraph, index) => {
-        // Handle headers
-        if (paragraph.startsWith('# ')) {
-          return <h2 key={index} className="text-2xl font-bold mt-6 mb-4">{paragraph.substring(2)}</h2>;
-        } else if (paragraph.startsWith('## ')) {
-          return <h3 key={index} className="text-xl font-bold mt-5 mb-3">{paragraph.substring(3)}</h3>;
-        } else if (paragraph.startsWith('### ')) {
-          return <h4 key={index} className="text-lg font-bold mt-4 mb-2">{paragraph.substring(4)}</h4>;
-        }
-        
-        // Handle bold text
-        let formattedText = paragraph;
-        formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-        
-        return (
-          <p 
-            key={index} 
-            className="mb-4 text-neutral-700"
-            dangerouslySetInnerHTML={{ __html: formattedText }}
-          />
-        );
-      });
-  };
+  // No need for formatContent anymore as we'll use MDEditor
 
   return (
     <>
@@ -115,8 +91,8 @@ export default function BlogPost() {
               className="w-full h-auto rounded-lg mb-8"
             />
             
-            <div className="prose prose-lg max-w-none">
-              {formatContent(post.content)}
+            <div className="prose prose-lg max-w-none" data-color-mode="light">
+              <MDEditor.Markdown source={post.content} />
             </div>
             
             <div className="border-t border-neutral-200 mt-10 pt-6">
