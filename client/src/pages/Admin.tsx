@@ -1,11 +1,11 @@
 
-const changeKeySchema = z.object({
-  newKey: z.string().min(6, "Key must be at least 6 characters"),
-});
-
 import { useState, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
+
+const changeKeySchema = z.object({
+  newKey: z.string().min(6, "Key must be at least 6 characters"),
+});
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
