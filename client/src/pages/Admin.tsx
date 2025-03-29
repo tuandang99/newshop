@@ -9,7 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Helmet } from "react-helmet";
 import { useLocation } from "wouter";
@@ -59,6 +59,14 @@ const authSchema = z.object({
 
 type AuthFormValues = z.infer<typeof authSchema>;
 
+// Schema for changing the admin key
+const changeKeySchema = z.object({
+  newKey: z.string().min(6, "New admin key must be at least 6 characters"),
+});
+
+type ChangeKeyFormValues = z.infer<typeof changeKeySchema>;
+
+
 export default function Admin() {
   const [adminKey, setAdminKey] = useState<string>("");
   const [authenticated, setAuthenticated] = useState<boolean>(false);
@@ -80,6 +88,14 @@ export default function Admin() {
     resolver: zodResolver(authSchema),
     defaultValues: {
       adminKey: "",
+    }
+  });
+
+  //Change Key Form
+  const changeKeyForm = useForm<ChangeKeyFormValues>({
+    resolver: zodResolver(changeKeySchema),
+    defaultValues: {
+      newKey: "",
     }
   });
 
@@ -139,12 +155,12 @@ export default function Admin() {
         },
         body: JSON.stringify(data)
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to add product');
       }
-      
+
       return response.json();
     },
     onSuccess: () => {
@@ -177,12 +193,12 @@ export default function Admin() {
         },
         body: JSON.stringify(data)
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to add blog post');
       }
-      
+
       return response.json();
     },
     onSuccess: () => {
@@ -239,6 +255,41 @@ export default function Admin() {
     }
   };
 
+  //Handle change key mutation
+  const changeKeyMutation = useMutation({
+    mutationFn: async (data: ChangeKeyFormValues) => {
+      const response = await fetch('/api/admin/changeKey', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Admin-Key': adminKey
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to change admin key');
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: 'Admin Key Changed',
+        description: 'Your admin key has been successfully updated.',
+      });
+      changeKeyForm.reset();
+    },
+    onError: (error) => {
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to change admin key',
+        variant: 'destructive',
+      });
+    },
+  });
+
+
   // Handle admin login
   const handleLogin = async (values: AuthFormValues) => {
     const success = await validateAdminKey(values.adminKey);
@@ -248,6 +299,11 @@ export default function Admin() {
         description: "You are now logged in as admin"
       });
     }
+  };
+
+  // Handle change key submission
+  const handleChangeKey = (values: ChangeKeyFormValues) => {
+    changeKeyMutation.mutate(values);
   };
 
   // Handle logout
@@ -339,6 +395,42 @@ export default function Admin() {
           <Button variant="outline" onClick={handleLogout}>Logout</Button>
         </div>
 
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Change Admin Key</CardTitle>
+            <CardDescription>Update your admin access key</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Form {...changeKeyForm}>
+              <form onSubmit={changeKeyForm.handleSubmit(handleChangeKey)} className="space-y-4">
+                <FormField
+                  control={changeKeyForm.control}
+                  name="newKey"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>New Admin Key</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder="Enter new admin key"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button
+                  type="submit"
+                  disabled={changeKeyForm.formState.isSubmitting || changeKeyMutation.isPending}
+                >
+                  {changeKeyForm.formState.isSubmitting || changeKeyMutation.isPending ? "Updating..." : "Update Key"}
+                </Button>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+
         <Tabs defaultValue="products">
           <TabsList className="mb-6">
             <TabsTrigger value="products">Products</TabsTrigger>
@@ -380,7 +472,7 @@ export default function Admin() {
                           </FormItem>
                         )}
                       />
-                      
+
                       <FormField
                         control={productForm.control}
                         name="slug"
@@ -395,7 +487,7 @@ export default function Admin() {
                         )}
                       />
                     </div>
-                    
+
                     <FormField
                       control={productForm.control}
                       name="description"
@@ -413,7 +505,7 @@ export default function Admin() {
                         </FormItem>
                       )}
                     />
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <FormField
                         control={productForm.control}
@@ -434,7 +526,7 @@ export default function Admin() {
                           </FormItem>
                         )}
                       />
-                      
+
                       <FormField
                         control={productForm.control}
                         name="oldPrice"
@@ -459,7 +551,7 @@ export default function Admin() {
                           </FormItem>
                         )}
                       />
-                      
+
                       <FormField
                         control={productForm.control}
                         name="categoryId"
@@ -486,7 +578,7 @@ export default function Admin() {
                         )}
                       />
                     </div>
-                    
+
                     <FormField
                       control={productForm.control}
                       name="image"
@@ -500,7 +592,7 @@ export default function Admin() {
                         </FormItem>
                       )}
                     />
-                    
+
                     <FormField
                       control={productForm.control}
                       name="rating"
@@ -521,7 +613,7 @@ export default function Admin() {
                         </FormItem>
                       )}
                     />
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <FormField
                         control={productForm.control}
@@ -540,7 +632,7 @@ export default function Admin() {
                           </FormItem>
                         )}
                       />
-                      
+
                       <FormField
                         control={productForm.control}
                         name="isOrganic"
@@ -558,7 +650,7 @@ export default function Admin() {
                           </FormItem>
                         )}
                       />
-                      
+
                       <FormField
                         control={productForm.control}
                         name="isBestseller"
@@ -577,7 +669,7 @@ export default function Admin() {
                         )}
                       />
                     </div>
-                    
+
                     <Button 
                       type="submit" 
                       className="w-full" 
@@ -626,7 +718,7 @@ export default function Admin() {
                           </FormItem>
                         )}
                       />
-                      
+
                       <FormField
                         control={blogForm.control}
                         name="slug"
@@ -641,7 +733,7 @@ export default function Admin() {
                         )}
                       />
                     </div>
-                    
+
                     <FormField
                       control={blogForm.control}
                       name="excerpt"
@@ -655,7 +747,7 @@ export default function Admin() {
                         </FormItem>
                       )}
                     />
-                    
+
                     <FormField
                       control={blogForm.control}
                       name="content"
@@ -676,7 +768,7 @@ export default function Admin() {
                         </FormItem>
                       )}
                     />
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField
                         control={blogForm.control}
@@ -691,7 +783,7 @@ export default function Admin() {
                           </FormItem>
                         )}
                       />
-                      
+
                       <FormField
                         control={blogForm.control}
                         name="date"
@@ -706,7 +798,7 @@ export default function Admin() {
                         )}
                       />
                     </div>
-                    
+
                     <FormField
                       control={blogForm.control}
                       name="image"
@@ -720,7 +812,7 @@ export default function Admin() {
                         </FormItem>
                       )}
                     />
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField
                         control={blogForm.control}
@@ -735,7 +827,7 @@ export default function Admin() {
                           </FormItem>
                         )}
                       />
-                      
+
                       <FormField
                         control={blogForm.control}
                         name="tags"
@@ -750,7 +842,7 @@ export default function Admin() {
                         )}
                       />
                     </div>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField
                         control={blogForm.control}
@@ -765,7 +857,7 @@ export default function Admin() {
                           </FormItem>
                         )}
                       />
-                      
+
                       <FormField
                         control={blogForm.control}
                         name="metaDescription"
@@ -780,7 +872,7 @@ export default function Admin() {
                         )}
                       />
                     </div>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField
                         control={blogForm.control}
@@ -800,7 +892,7 @@ export default function Admin() {
                           </FormItem>
                         )}
                       />
-                      
+
                       <FormField
                         control={blogForm.control}
                         name="status"
@@ -824,7 +916,7 @@ export default function Admin() {
                         )}
                       />
                     </div>
-                    
+
                     <Button 
                       type="submit" 
                       className="w-full" 
