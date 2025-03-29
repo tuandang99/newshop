@@ -258,7 +258,7 @@ export default function Admin() {
   //Handle change key mutation
   const changeKeyMutation = useMutation({
     mutationFn: async (data: ChangeKeyFormValues) => {
-      const response = await fetch('/api/admin/changeKey', {
+      const response = await fetch('/api/admin/key', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
