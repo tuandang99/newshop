@@ -15,10 +15,11 @@ import {
 } from "@shared/schema";
 
 const pool = mysql.createPool({
-  host: process.env.MYSQL_HOST || 'localhost',
-  user: process.env.MYSQL_USER || 'root',
-  password: process.env.MYSQL_PASSWORD || '',
-  database: process.env.MYSQL_DATABASE || 'naturenutriv2',
+  host: process.env.MARIADB_HOST || '0.0.0.0',
+  port: parseInt(process.env.MARIADB_PORT || '3306'),
+  user: process.env.MARIADB_USER || 'root',
+  password: process.env.MARIADB_PASSWORD || '',
+  database: process.env.MARIADB_DATABASE || 'naturenutriv2',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
