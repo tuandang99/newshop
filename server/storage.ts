@@ -30,6 +30,24 @@ async function initDb() {
   const conn = await pool.getConnection();
   try {
     await conn.query(`
+      CREATE TABLE IF NOT EXISTS admin_keys (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        \`key\` VARCHAR(255) NOT NULL UNIQUE,
+        label VARCHAR(255) NOT NULL,
+        active BOOLEAN DEFAULT TRUE
+      )
+    `);
+
+    // Insert default admin key if none exists
+    const [keys] = await conn.query('SELECT COUNT(*) as count FROM admin_keys');
+    if ((keys as any[])[0].count === 0) {
+      await conn.query(
+        'INSERT INTO admin_keys (`key`, label) VALUES (?, ?)',
+        [process.env.ADMIN_KEY || 'secret-admin-key', 'Default Admin Key']
+      );
+    }
+
+    await conn.query(`
       CREATE TABLE IF NOT EXISTS categories (
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(255) NOT NULL,

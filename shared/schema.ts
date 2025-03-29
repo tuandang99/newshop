@@ -90,6 +90,16 @@ export type ContactSubmission = InsertContact & {
   createdAt: Date;
 };
 
+// Admin Key
+export const insertAdminKeySchema = z.object({
+  key: z.string(),
+  label: z.string(),
+  active: z.boolean().default(true),
+});
+
+export type InsertAdminKey = z.infer<typeof insertAdminKeySchema>;
+export type AdminKey = InsertAdminKey & { id: number };
+
 // Cart Item type (not stored in database, used for frontend)
 export const cartItemSchema = z.object({
   id: z.number(),

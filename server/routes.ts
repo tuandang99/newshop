@@ -10,14 +10,23 @@ import { sendOrderNotification } from "./telegram";
 const ADMIN_KEY = process.env.ADMIN_KEY || "secret-admin-key";
 
 // Simple authentication middleware for admin routes
-const adminAuth = (req: Request, res: Response, next: NextFunction) => {
+const adminAuth = async (req: Request, res: Response, next: NextFunction) => {
   const adminKey = req.headers['admin-key'];
   
-  // Very basic auth - in a real app, use proper authentication
-  if (adminKey === ADMIN_KEY) {
-    next();
-  } else {
-    res.status(401).json({ message: "Unauthorized - Admin access required" });
+  if (!adminKey) {
+    return res.status(401).json({ message: "Admin key required" });
+  }
+
+  try {
+    const isValid = await storage.verifyAdminKey(adminKey as string);
+    if (isValid) {
+      next();
+    } else {
+      res.status(401).json({ message: "Unauthorized - Invalid admin key" });
+    }
+  } catch (error) {
+    console.error("Error verifying admin key:", error);
+    res.status(500).json({ message: "Error verifying admin key" });
   }
 };
 
