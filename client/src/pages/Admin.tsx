@@ -265,10 +265,9 @@ export default function Admin() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Admin-Key': adminKey || '',
-          'Admin-Key': adminKey
+          'Admin-Key': adminKey || ''
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify({ newKey: data.newKey })
       });
 
       if (!response.ok) {
