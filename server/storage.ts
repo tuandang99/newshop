@@ -1,3 +1,4 @@
+import mysql from 'mysql2/promise';
 import {
   type Category,
   type InsertCategory,
@@ -13,561 +14,205 @@ import {
   type InsertContact,
 } from "@shared/schema";
 
-export interface IStorage {
-  // Categories
-  getCategories(): Promise<Category[]>;
-  getCategoryBySlug(slug: string): Promise<Category | undefined>;
-  
-  // Products
-  getProducts(): Promise<Product[]>;
-  getProductsByCategory(categoryId: number): Promise<Product[]>;
-  getProductBySlug(slug: string): Promise<Product | undefined>;
-  getFeaturedProducts(limit?: number): Promise<Product[]>;
-  createProduct(product: InsertProduct): Promise<Product>;
-  updateProduct(id: number, product: Partial<InsertProduct>): Promise<Product | undefined>;
-  deleteProduct(id: number): Promise<boolean>;
-  
-  // Blog Posts
-  getBlogPosts(): Promise<BlogPost[]>;
-  getBlogPostBySlug(slug: string): Promise<BlogPost | undefined>;
-  getRecentBlogPosts(limit?: number): Promise<BlogPost[]>;
-  createBlogPost(blogPost: InsertBlogPost): Promise<BlogPost>;
-  updateBlogPost(id: number, blogPost: Partial<InsertBlogPost>): Promise<BlogPost | undefined>;
-  deleteBlogPost(id: number): Promise<boolean>;
-  
-  // Testimonials
-  getTestimonials(): Promise<Testimonial[]>;
-  
-  // Orders
-  createOrder(order: InsertOrder): Promise<Order>;
-  
-  // Contact
-  submitContactForm(contact: InsertContact): Promise<ContactSubmission>;
+const pool = mysql.createPool({
+  host: process.env.MYSQL_HOST || 'localhost',
+  user: process.env.MYSQL_USER || 'root',
+  password: process.env.MYSQL_PASSWORD || '',
+  database: process.env.MYSQL_DATABASE || 'naturenutriv2',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
+});
+
+// Initialize database tables
+async function initDb() {
+  const conn = await pool.getConnection();
+  try {
+    await conn.query(`
+      CREATE TABLE IF NOT EXISTS categories (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        slug VARCHAR(255) NOT NULL UNIQUE,
+        image TEXT NOT NULL
+      )
+    `);
+
+    await conn.query(`
+      CREATE TABLE IF NOT EXISTS products (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        slug VARCHAR(255) NOT NULL UNIQUE,
+        description TEXT NOT NULL,
+        price DOUBLE NOT NULL,
+        old_price DOUBLE NULL,
+        image TEXT NOT NULL,
+        category_id INT NOT NULL,
+        rating DOUBLE DEFAULT 5,
+        is_new BOOLEAN DEFAULT FALSE,
+        is_organic BOOLEAN DEFAULT TRUE,
+        is_bestseller BOOLEAN DEFAULT FALSE,
+        FOREIGN KEY (category_id) REFERENCES categories(id)
+      )
+    `);
+
+    await conn.query(`
+      CREATE TABLE IF NOT EXISTS blog_posts (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        slug VARCHAR(255) NOT NULL UNIQUE,
+        content TEXT NOT NULL,
+        excerpt TEXT NOT NULL,
+        image TEXT NOT NULL,
+        category VARCHAR(255) NOT NULL,
+        tags TEXT NULL,
+        author VARCHAR(255) NULL,
+        meta_title VARCHAR(255) NULL,
+        meta_description TEXT NULL,
+        featured BOOLEAN DEFAULT FALSE,
+        status VARCHAR(50) DEFAULT 'published',
+        date DATETIME NOT NULL
+      )
+    `);
+
+    await conn.query(`
+      CREATE TABLE IF NOT EXISTS testimonials (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        avatar TEXT NOT NULL,
+        rating DOUBLE NOT NULL,
+        comment TEXT NOT NULL
+      )
+    `);
+
+    await conn.query(`
+      CREATE TABLE IF NOT EXISTS orders (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        phone VARCHAR(50) NOT NULL,
+        address TEXT NOT NULL,
+        items TEXT NOT NULL,
+        total DOUBLE NOT NULL,
+        status VARCHAR(50) NOT NULL DEFAULT 'pending',
+        created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    await conn.query(`
+      CREATE TABLE IF NOT EXISTS contact_submissions (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        subject VARCHAR(255) NOT NULL,
+        message TEXT NOT NULL,
+        created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+  } finally {
+    conn.release();
+  }
 }
 
-export class MemStorage implements IStorage {
-  private categories: Map<number, Category>;
-  private products: Map<number, Product>;
-  private blogPosts: Map<number, BlogPost>;
-  private testimonials: Map<number, Testimonial>;
-  private orders: Map<number, Order>;
-  private contactSubmissions: Map<number, ContactSubmission>;
-  
-  private categoryId: number;
-  private productId: number;
-  private blogPostId: number;
-  private testimonialId: number;
-  private orderId: number;
-  private contactId: number;
+// Initialize the database
+initDb().catch(console.error);
 
-  constructor() {
-    this.categories = new Map();
-    this.products = new Map();
-    this.blogPosts = new Map();
-    this.testimonials = new Map();
-    this.orders = new Map();
-    this.contactSubmissions = new Map();
-    
-    this.categoryId = 1;
-    this.productId = 1;
-    this.blogPostId = 1;
-    this.testimonialId = 1;
-    this.orderId = 1;
-    this.contactId = 1;
-    
-    // Initialize with sample data
-    this.initializeData();
-  }
-  
-  // Helper method to ensure product values are all set
-  private ensureProductFields(product: InsertProduct): InsertProduct {
-    // Create a product with all optional fields set to non-optional values
-    const completeProduct: InsertProduct = {
-      name: product.name,
-      slug: product.slug,
-      description: product.description,
-      price: product.price,
-      image: product.image,
-      categoryId: product.categoryId,
-      // Set defaults for optional fields
-      oldPrice: product.oldPrice ?? null,
-      rating: product.rating ?? 5,
-      isNew: product.isNew ?? false,
-      isOrganic: product.isOrganic ?? true,
-      isBestseller: product.isBestseller ?? false
-    };
-    
-    return completeProduct;
-  }
-
-  private initializeData() {
-    // Add categories
-    const categoriesData: InsertCategory[] = [
-      {
-        name: "Nuts & Seeds",
-        slug: "nuts-seeds",
-        image: "https://images.unsplash.com/photo-1606914501449-5a96b6ce24ca?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300&q=80"
-      },
-      {
-        name: "Granola Bars",
-        slug: "granola-bars",
-        image: "https://images.unsplash.com/photo-1625944230945-1b7dd3b949ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300&q=80"
-      },
-      {
-        name: "Cereals",
-        slug: "cereals",
-        image: "https://images.unsplash.com/photo-1516747773440-e114f698cdbd?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300&q=80"
-      },
-      {
-        name: "Dried Fruits",
-        slug: "dried-fruits",
-        image: "https://images.unsplash.com/photo-1583075450908-3a71981979f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300&q=80"
-      },
-      {
-        name: "Superfoods",
-        slug: "superfoods",
-        image: "https://images.unsplash.com/photo-1612706179950-0693fad5c93b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300&q=80"
-      }
-    ];
-    
-    categoriesData.forEach(category => {
-      const id = this.categoryId++;
-      this.categories.set(id, { ...category, id });
-    });
-    
-    // Add products
-    const productsData: InsertProduct[] = [
-      {
-        name: "Mixed Premium Nuts",
-        slug: "mixed-premium-nuts",
-        description: "Organic assortment of almonds, cashews, and walnuts",
-        price: 12.99,
-        oldPrice: 15.99,
-        image: "https://images.unsplash.com/photo-1608797178974-15b35a64ede9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=500&q=80",
-        categoryId: 1,
-        rating: 4.8,
-        isNew: true,
-        isOrganic: true,
-        isBestseller: false
-      },
-      {
-        name: "Honey Granola Bars",
-        slug: "honey-granola-bars",
-        description: "Crunchy granola with organic honey, 6-pack",
-        price: 8.49,
-        oldPrice: null,
-        image: "https://images.unsplash.com/photo-1628676633317-1fe213131fcf?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=500&q=80",
-        categoryId: 2,
-        rating: 4.7,
-        isNew: false,
-        isOrganic: true,
-        isBestseller: false
-      },
-      {
-        name: "Ancient Grain Cereal",
-        slug: "ancient-grain-cereal",
-        description: "Quinoa, amaranth and chia seed breakfast mix",
-        price: 9.99,
-        oldPrice: 11.99,
-        image: "https://images.unsplash.com/photo-1623428187969-5da2dcea5ebf?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=500&q=80",
-        categoryId: 3,
-        rating: 4.9,
-        isNew: false,
-        isOrganic: true,
-        isBestseller: false
-      },
-      {
-        name: "Mixed Dried Berries",
-        slug: "mixed-dried-berries",
-        description: "Goji, cranberries, and blueberries superfood mix",
-        price: 14.99,
-        oldPrice: null,
-        image: "https://images.unsplash.com/photo-1599639957043-f9b395235a27?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=500&q=80",
-        categoryId: 4,
-        rating: 4.6,
-        isNew: false,
-        isOrganic: true,
-        isBestseller: false
-      },
-      {
-        name: "Energy Trail Mix",
-        slug: "energy-trail-mix",
-        description: "Nuts, seeds and dark chocolate energy booster",
-        price: 10.99,
-        oldPrice: null,
-        image: "https://images.unsplash.com/photo-1582663801721-f176239fc911?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=500&q=80",
-        categoryId: 1,
-        rating: 4.8,
-        isNew: false,
-        isOrganic: true,
-        isBestseller: false
-      },
-      {
-        name: "Organic Chia Seeds",
-        slug: "organic-chia-seeds",
-        description: "Premium organic chia seeds, rich in omega-3",
-        price: 7.99,
-        oldPrice: 9.99,
-        image: "https://images.unsplash.com/photo-1584549239366-3c5e56d73d34?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=500&q=80",
-        categoryId: 5,
-        rating: 4.7,
-        isNew: false,
-        isOrganic: true,
-        isBestseller: false
-      },
-      {
-        name: "Protein Granola Bars",
-        slug: "protein-granola-bars",
-        description: "High protein bars with nuts and dark chocolate",
-        price: 11.49,
-        oldPrice: null,
-        image: "https://images.unsplash.com/photo-1599002354738-65a7d5c28766?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=500&q=80",
-        categoryId: 2,
-        rating: 4.9,
-        isNew: false,
-        isOrganic: true,
-        isBestseller: true
-      },
-      {
-        name: "Gluten-Free Granola",
-        slug: "gluten-free-granola",
-        description: "Crunchy gluten-free granola with maple syrup",
-        price: 9.29,
-        oldPrice: null,
-        image: "https://images.unsplash.com/photo-1584487500215-a56becac2c77?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=500&q=80",
-        categoryId: 3,
-        rating: 4.5,
-        isNew: false,
-        isOrganic: true,
-        isBestseller: false
-      }
-    ];
-    
-    productsData.forEach(product => {
-      const id = this.productId++;
-      
-      // Create a product with explicit type casting to ensure correct types
-      const newProduct: Product = {
-        id,
-        name: product.name,
-        slug: product.slug,
-        description: product.description,
-        price: product.price,
-        oldPrice: product.oldPrice ?? null,
-        image: product.image,
-        categoryId: product.categoryId,
-        rating: product.rating ?? 5,
-        isNew: product.isNew ?? false,
-        isOrganic: product.isOrganic ?? true,
-        isBestseller: product.isBestseller ?? false
-      };
-      
-      this.products.set(id, newProduct);
-    });
-    
-    // Add blog posts
-    const blogPostsData: InsertBlogPost[] = [
-      {
-        title: "5 Ways Nuts Can Boost Your Health",
-        slug: "5-ways-nuts-can-boost-your-health",
-        content: "Nuts are packed with nutrients that can have a positive impact on your health. Here are five ways that nuts can boost your health:\n\n1. **Heart Health**: Nuts contain unsaturated fats, which can help lower bad cholesterol levels and reduce the risk of heart disease.\n\n2. **Weight Management**: Despite being high in calories, nuts can actually help with weight management. Their protein and fiber content can keep you feeling full for longer.\n\n3. **Brain Function**: The omega-3 fatty acids found in nuts like walnuts are essential for brain function and development.\n\n4. **Anti-Inflammatory Properties**: Nuts contain various compounds that may help reduce inflammation in the body.\n\n5. **Blood Sugar Control**: The healthy fats, protein, and fiber in nuts can help regulate blood sugar levels.",
-        excerpt: "Discover the impressive health benefits of incorporating various nuts into your daily diet.",
-        image: "https://images.unsplash.com/photo-1498837167922-ddd27525d352?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80",
-        category: "Nutrition",
-        date: new Date("2023-06-15"),
-        tags: "nuts,health,nutrition,wellness",
-        author: "Dr. Emily Chen",
-        metaTitle: "Nuts Health Benefits - 5 Ways They Improve Your Health",
-        metaDescription: "Learn about the five science-backed ways that nuts can boost your overall health and wellbeing. From heart health to weight management.",
-        featured: true,
-        status: "published"
-      },
-      {
-        title: "Healthy Breakfast Ideas Using Granola",
-        slug: "healthy-breakfast-ideas-using-granola",
-        content: "Granola is a versatile and nutritious breakfast option that can be enjoyed in various ways. Here are some healthy breakfast ideas using granola:\n\n1. **Yogurt Parfait**: Layer granola with Greek yogurt and fresh berries for a protein-packed breakfast.\n\n2. **Smoothie Bowl**: Top a thick smoothie with granola for added crunch and nutrients.\n\n3. **Overnight Oats**: Mix granola with oats, milk, and chia seeds, and let it sit overnight for a ready-to-eat breakfast.\n\n4. **Baked Apples**: Fill cored apples with granola and bake for a warm, comforting breakfast.\n\n5. **Banana Boats**: Split a banana lengthwise and fill with granola, nut butter, and a drizzle of honey.",
-        excerpt: "Start your day right with these delicious and nutritious breakfast recipes featuring granola.",
-        image: "https://images.unsplash.com/photo-1523598455533-144bae6cf56e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80",
-        category: "Recipes",
-        date: new Date("2023-06-08"),
-        tags: "breakfast,granola,recipes,healthy eating",
-        author: "Julia Martinez",
-        metaTitle: "5 Delicious Granola Breakfast Ideas for Busy Mornings",
-        metaDescription: "Discover five quick and nutritious breakfast recipes using granola that will keep you energized throughout the day.",
-        featured: false,
-        status: "published"
-      },
-      {
-        title: "Why Organic Farming Matters",
-        slug: "why-organic-farming-matters",
-        content: "Organic farming is becoming increasingly important in today's world. Here's why it matters:\n\n1. **Environmental Protection**: Organic farming practices help protect soil, water, and air quality by avoiding synthetic pesticides and fertilizers.\n\n2. **Biodiversity**: Organic farms tend to have greater biodiversity, which contributes to a healthier ecosystem.\n\n3. **Health Benefits**: Foods grown organically may contain fewer pesticide residues and have higher nutrient levels.\n\n4. **Climate Change Mitigation**: Organic farming can help sequester carbon in the soil, reducing greenhouse gas emissions.\n\n5. **Rural Communities**: Organic farming can help support rural communities by providing sustainable livelihoods.",
-        excerpt: "Learn about the environmental and health benefits of supporting organic farming practices.",
-        image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80",
-        category: "Sustainability",
-        date: new Date("2023-05-30"),
-        tags: "organic,sustainability,farming,environment",
-        author: "Michael Johnson",
-        metaTitle: "The Importance of Organic Farming for Our Environment",
-        metaDescription: "Explore the critical role organic farming plays in protecting our environment, supporting biodiversity, and building sustainable food systems.",
-        featured: true,
-        status: "published"
-      }
-    ];
-    
-    blogPostsData.forEach(post => {
-      const id = this.blogPostId++;
-      // Create a properly typed blog post with explicit fields
-      const newBlogPost: BlogPost = {
-        id,
-        title: post.title,
-        slug: post.slug,
-        content: post.content,
-        excerpt: post.excerpt,
-        image: post.image,
-        category: post.category,
-        date: post.date,
-        tags: post.tags || null,
-        author: post.author || null,
-        metaTitle: post.metaTitle || null,
-        metaDescription: post.metaDescription || null,
-        featured: post.featured !== undefined ? post.featured : false,
-        status: post.status || "published"
-      };
-      this.blogPosts.set(id, newBlogPost);
-    });
-    
-    // Add testimonials
-    const testimonialsData: InsertTestimonial[] = [
-      {
-        name: "Sarah Johnson",
-        avatar: "https://randomuser.me/api/portraits/women/44.jpg",
-        rating: 5,
-        comment: "I've been ordering from NatureNutri for over a year now. Their mixed nuts selection is amazing, and I love that everything is organic. The delivery is always fast, and the products are always fresh!"
-      },
-      {
-        name: "Michael Thompson",
-        avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-        rating: 4.5,
-        comment: "As someone who follows a strict diet for health reasons, finding NatureNutri has been a game-changer. Their gluten-free granola is the best I've ever tasted, and I appreciate the transparency about ingredients."
-      },
-      {
-        name: "Emily Rodriguez",
-        avatar: "https://randomuser.me/api/portraits/women/68.jpg",
-        rating: 5,
-        comment: "The protein granola bars are my go-to snack for hiking and busy days at work. They taste great and keep me energized. Plus, I love supporting a company that cares about sustainability."
-      }
-    ];
-    
-    testimonialsData.forEach(testimonial => {
-      const id = this.testimonialId++;
-      this.testimonials.set(id, { ...testimonial, id });
-    });
-  }
-  
-  // Category methods
+export const storage = {
   async getCategories(): Promise<Category[]> {
-    return Array.from(this.categories.values());
-  }
-  
-  async getCategoryBySlug(slug: string): Promise<Category | undefined> {
-    return Array.from(this.categories.values()).find(category => category.slug === slug);
-  }
-  
-  // Product methods
-  async getProducts(): Promise<Product[]> {
-    return Array.from(this.products.values());
-  }
-  
-  async getProductsByCategory(categoryId: number): Promise<Product[]> {
-    return Array.from(this.products.values())
-      .filter(product => product.categoryId === categoryId);
-  }
-  
-  async getProductBySlug(slug: string): Promise<Product | undefined> {
-    return Array.from(this.products.values()).find(product => product.slug === slug);
-  }
-  
-  async getFeaturedProducts(limit = 8): Promise<Product[]> {
-    const allProducts = Array.from(this.products.values());
-    
-    // Ensure all products have properly typed fields
-    const typedProducts: Product[] = allProducts.map(product => ({
-      id: product.id,
-      name: product.name,
-      slug: product.slug,
-      description: product.description,
-      price: product.price,
-      oldPrice: product.oldPrice ?? null,
-      image: product.image,
-      categoryId: product.categoryId,
-      rating: product.rating ?? 5,
-      isNew: product.isNew ?? false,
-      isOrganic: product.isOrganic ?? true,
-      isBestseller: product.isBestseller ?? false
-    }));
-    
-    return typedProducts
-      .sort(() => Math.random() - 0.5)
-      .slice(0, limit);
-  }
-  
-  async createProduct(product: InsertProduct): Promise<Product> {
-    const id = this.productId++;
-    
-    // Create a properly typed product with explicit fields
-    const newProduct: Product = {
-      id,
-      name: product.name,
-      slug: product.slug,
-      description: product.description,
-      price: product.price,
-      oldPrice: product.oldPrice ?? null,
-      image: product.image,
-      categoryId: product.categoryId,
-      rating: product.rating ?? 5,
-      isNew: product.isNew ?? false,
-      isOrganic: product.isOrganic ?? true,
-      isBestseller: product.isBestseller ?? false
-    };
-    
-    this.products.set(id, newProduct);
-    return newProduct;
-  }
-  
-  async updateProduct(id: number, product: Partial<InsertProduct>): Promise<Product | undefined> {
-    const existingProduct = this.products.get(id);
-    
-    if (!existingProduct) {
-      return undefined;
-    }
-    
-    // Create a properly typed product with all fields explicitly set
-    const updatedProduct: Product = {
-      id,
-      name: product.name !== undefined ? product.name : existingProduct.name,
-      slug: product.slug !== undefined ? product.slug : existingProduct.slug,
-      description: product.description !== undefined ? product.description : existingProduct.description,
-      price: product.price !== undefined ? product.price : existingProduct.price,
-      oldPrice: product.oldPrice !== undefined ? product.oldPrice : existingProduct.oldPrice,
-      image: product.image !== undefined ? product.image : existingProduct.image,
-      categoryId: product.categoryId !== undefined ? product.categoryId : existingProduct.categoryId,
-      rating: product.rating !== undefined ? product.rating : existingProduct.rating,
-      isNew: product.isNew !== undefined ? product.isNew : existingProduct.isNew,
-      isOrganic: product.isOrganic !== undefined ? product.isOrganic : existingProduct.isOrganic,
-      isBestseller: product.isBestseller !== undefined ? product.isBestseller : existingProduct.isBestseller
-    };
-    
-    this.products.set(id, updatedProduct);
-    return updatedProduct;
-  }
-  
-  async deleteProduct(id: number): Promise<boolean> {
-    return this.products.delete(id);
-  }
-  
-  // Blog methods
-  async getBlogPosts(): Promise<BlogPost[]> {
-    return Array.from(this.blogPosts.values())
-      .sort((a, b) => b.date.getTime() - a.date.getTime());
-  }
-  
-  async getBlogPostBySlug(slug: string): Promise<BlogPost | undefined> {
-    return Array.from(this.blogPosts.values()).find(post => post.slug === slug);
-  }
-  
-  async getRecentBlogPosts(limit = 3): Promise<BlogPost[]> {
-    return Array.from(this.blogPosts.values())
-      .sort((a, b) => b.date.getTime() - a.date.getTime())
-      .slice(0, limit);
-  }
-  
-  async createBlogPost(blogPost: InsertBlogPost): Promise<BlogPost> {
-    const id = this.blogPostId++;
-    
-    // Create a properly typed blog post with explicit fields
-    const newBlogPost: BlogPost = {
-      id,
-      title: blogPost.title,
-      slug: blogPost.slug,
-      content: blogPost.content,
-      excerpt: blogPost.excerpt,
-      image: blogPost.image,
-      category: blogPost.category,
-      date: blogPost.date,
-      tags: blogPost.tags || null,
-      author: blogPost.author || null,
-      metaTitle: blogPost.metaTitle || null,
-      metaDescription: blogPost.metaDescription || null,
-      featured: blogPost.featured !== undefined ? blogPost.featured : false,
-      status: blogPost.status || "published"
-    };
-    
-    this.blogPosts.set(id, newBlogPost);
-    return newBlogPost;
-  }
-  
-  async updateBlogPost(id: number, blogPost: Partial<InsertBlogPost>): Promise<BlogPost | undefined> {
-    const existingBlogPost = this.blogPosts.get(id);
-    
-    if (!existingBlogPost) {
-      return undefined;
-    }
-    
-    // Create a properly typed blog post with all fields explicitly set
-    const updatedBlogPost: BlogPost = {
-      id,
-      title: blogPost.title !== undefined ? blogPost.title : existingBlogPost.title,
-      slug: blogPost.slug !== undefined ? blogPost.slug : existingBlogPost.slug,
-      content: blogPost.content !== undefined ? blogPost.content : existingBlogPost.content,
-      excerpt: blogPost.excerpt !== undefined ? blogPost.excerpt : existingBlogPost.excerpt,
-      image: blogPost.image !== undefined ? blogPost.image : existingBlogPost.image,
-      category: blogPost.category !== undefined ? blogPost.category : existingBlogPost.category,
-      date: blogPost.date !== undefined ? blogPost.date : existingBlogPost.date,
-      tags: blogPost.tags !== undefined ? blogPost.tags : existingBlogPost.tags,
-      author: blogPost.author !== undefined ? blogPost.author : existingBlogPost.author,
-      metaTitle: blogPost.metaTitle !== undefined ? blogPost.metaTitle : existingBlogPost.metaTitle,
-      metaDescription: blogPost.metaDescription !== undefined ? blogPost.metaDescription : existingBlogPost.metaDescription,
-      featured: blogPost.featured !== undefined ? blogPost.featured : existingBlogPost.featured,
-      status: blogPost.status !== undefined ? blogPost.status : existingBlogPost.status
-    };
-    
-    this.blogPosts.set(id, updatedBlogPost);
-    return updatedBlogPost;
-  }
-  
-  async deleteBlogPost(id: number): Promise<boolean> {
-    return this.blogPosts.delete(id);
-  }
-  
-  // Testimonial methods
-  async getTestimonials(): Promise<Testimonial[]> {
-    return Array.from(this.testimonials.values());
-  }
-  
-  // Order methods
-  async createOrder(order: InsertOrder): Promise<Order> {
-    const id = this.orderId++;
-    const newOrder: Order = {
-      ...order,
-      id,
-      status: "pending",
-      createdAt: new Date()
-    };
-    this.orders.set(id, newOrder);
-    return newOrder;
-  }
-  
-  // Contact methods
-  async submitContactForm(contact: InsertContact): Promise<ContactSubmission> {
-    const id = this.contactId++;
-    const submission: ContactSubmission = {
-      ...contact,
-      id,
-      createdAt: new Date()
-    };
-    this.contactSubmissions.set(id, submission);
-    return submission;
-  }
-}
+    const [rows] = await pool.query('SELECT * FROM categories');
+    return rows as Category[];
+  },
 
-export const storage = new MemStorage();
+  async getCategoryBySlug(slug: string): Promise<Category | undefined> {
+    const [rows] = await pool.query('SELECT * FROM categories WHERE slug = ?', [slug]);
+    return (rows as Category[])[0];
+  },
+
+  async getProducts(): Promise<Product[]> {
+    const [rows] = await pool.query('SELECT * FROM products');
+    return rows as Product[];
+  },
+
+  async getProductsByCategory(categoryId: number): Promise<Product[]> {
+    const [rows] = await pool.query('SELECT * FROM products WHERE category_id = ?', [categoryId]);
+    return rows as Product[];
+  },
+
+  async getProductBySlug(slug: string): Promise<Product | undefined> {
+    const [rows] = await pool.query('SELECT * FROM products WHERE slug = ?', [slug]);
+    return (rows as Product[])[0];
+  },
+
+  async getFeaturedProducts(limit = 8): Promise<Product[]> {
+    const [rows] = await pool.query('SELECT * FROM products ORDER BY RAND() LIMIT ?', [limit]);
+    return rows as Product[];
+  },
+
+  async createProduct(product: InsertProduct): Promise<Product> {
+    const [result] = await pool.query(
+      'INSERT INTO products SET ?',
+      product
+    );
+    const [newProduct] = await pool.query('SELECT * FROM products WHERE id = ?', [(result as any).insertId]);
+    return (newProduct as Product[])[0];
+  },
+
+  async updateProduct(id: number, product: Partial<InsertProduct>): Promise<Product | undefined> {
+    await pool.query('UPDATE products SET ? WHERE id = ?', [product, id]);
+    const [updated] = await pool.query('SELECT * FROM products WHERE id = ?', [id]);
+    return (updated as Product[])[0];
+  },
+
+  async deleteProduct(id: number): Promise<boolean> {
+    const [result] = await pool.query('DELETE FROM products WHERE id = ?', [id]);
+    return (result as any).affectedRows > 0;
+  },
+
+  async getBlogPosts(): Promise<BlogPost[]> {
+    const [rows] = await pool.query('SELECT * FROM blog_posts ORDER BY date DESC');
+    return rows as BlogPost[];
+  },
+
+  async getBlogPostBySlug(slug: string): Promise<BlogPost | undefined> {
+    const [rows] = await pool.query('SELECT * FROM blog_posts WHERE slug = ?', [slug]);
+    return (rows as BlogPost[])[0];
+  },
+
+  async getRecentBlogPosts(limit = 3): Promise<BlogPost[]> {
+    const [rows] = await pool.query('SELECT * FROM blog_posts ORDER BY date DESC LIMIT ?', [limit]);
+    return rows as BlogPost[];
+  },
+
+  async createBlogPost(blogPost: InsertBlogPost): Promise<BlogPost> {
+    const [result] = await pool.query('INSERT INTO blog_posts SET ?', blogPost);
+    const [newPost] = await pool.query('SELECT * FROM blog_posts WHERE id = ?', [(result as any).insertId]);
+    return (newPost as BlogPost[])[0];
+  },
+
+  async updateBlogPost(id: number, blogPost: Partial<InsertBlogPost>): Promise<BlogPost | undefined> {
+    await pool.query('UPDATE blog_posts SET ? WHERE id = ?', [blogPost, id]);
+    const [updated] = await pool.query('SELECT * FROM blog_posts WHERE id = ?', [id]);
+    return (updated as BlogPost[])[0];
+  },
+
+  async deleteBlogPost(id: number): Promise<boolean> {
+    const [result] = await pool.query('DELETE FROM blog_posts WHERE id = ?', [id]);
+    return (result as any).affectedRows > 0;
+  },
+
+  async getTestimonials(): Promise<Testimonial[]> {
+    const [rows] = await pool.query('SELECT * FROM testimonials');
+    return rows as Testimonial[];
+  },
+
+  async createOrder(order: InsertOrder): Promise<Order> {
+    const [result] = await pool.query('INSERT INTO orders SET ?', order);
+    const [newOrder] = await pool.query('SELECT * FROM orders WHERE id = ?', [(result as any).insertId]);
+    return (newOrder as Order[])[0];
+  },
+
+  async submitContactForm(contact: InsertContact): Promise<ContactSubmission> {
+    const [result] = await pool.query('INSERT INTO contact_submissions SET ?', contact);
+    const [submission] = await pool.query('SELECT * FROM contact_submissions WHERE id = ?', [(result as any).insertId]);
+    return (submission as ContactSubmission[])[0];
+  }
+};
