@@ -258,10 +258,14 @@ export default function Admin() {
   //Handle change key mutation
   const changeKeyMutation = useMutation({
     mutationFn: async (data: ChangeKeyFormValues) => {
+      if (!data?.newKey) {
+        throw new Error('New key is required');
+      }
       const response = await fetch('/api/admin/key', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Admin-Key': adminKey || '',
           'Admin-Key': adminKey
         },
         body: JSON.stringify(data)
