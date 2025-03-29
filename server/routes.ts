@@ -1,7 +1,7 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertOrderSchema, insertContactSchema, CartItem, insertProductSchema, baseBlogPostSchema } from "@shared/schema";
+import { insertOrderSchema, insertContactSchema, CartItem, insertProductSchema, insertBlogPostSchema } from "@shared/schema";
 import { ZodError } from "zod";
 import fetch from "node-fetch";
 import { sendOrderNotification } from "./telegram";
@@ -269,7 +269,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         blogPostData.date = new Date(blogPostData.date);
       }
       
-      const validatedData = baseBlogPostSchema.parse(blogPostData);
+      const validatedData = insertBlogPostSchema.parse(blogPostData);
       const blogPost = await storage.createBlogPost(validatedData);
       res.status(201).json(blogPost);
     } catch (error) {
@@ -298,7 +298,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
         
         // Create a partial schema based on which fields are provided
-        const partialSchema = baseBlogPostSchema.partial();
+        const partialSchema = insertBlogPostSchema.partial();
         const validatedData = partialSchema.parse(blogPostData);
         
         const updatedBlogPost = await storage.updateBlogPost(id, validatedData);
