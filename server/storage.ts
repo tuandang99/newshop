@@ -85,8 +85,8 @@ async function initDb() {
         category VARCHAR(255) NOT NULL,
         tags TEXT NULL,
         author VARCHAR(255) NULL,
-        meta_title VARCHAR(255) NULL,
-        meta_description TEXT NULL,
+        metaTitle VARCHAR(255) NULL,
+        metaDescription TEXT NULL,
         featured BOOLEAN DEFAULT FALSE,
         status VARCHAR(50) DEFAULT 'published',
         date DATETIME NOT NULL
