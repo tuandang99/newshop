@@ -14,7 +14,7 @@ import BlogPost from "@/pages/BlogPost";
 import Contact from "@/pages/Contact";
 import Admin from "@/pages/Admin";
 import { Footer } from "@/components/Footer";
-import { ZaloButton } from "@/components/ZaloButton";
+import { ZaloButton } from "@/components/ui/zalo-button";
 
 function Router() {
   return (
