@@ -233,15 +233,5 @@ export const storage = {
     const [result] = await pool.query('INSERT INTO contact_submissions SET ?', contact);
     const [submission] = await pool.query('SELECT * FROM contact_submissions WHERE id = ?', [(result as any).insertId]);
     return (submission as ContactSubmission[])[0];
-  },
-
-  async verifyAdminKey(key: string): Promise<boolean> {
-    const [rows] = await pool.query('SELECT COUNT(*) as count FROM admin_keys WHERE `key` = ? AND active = TRUE', [key]);
-    return (rows as any[])[0].count > 0;
-  },
-
-  async updateAdminKey(oldKey: string, newKey: string): Promise<boolean> {
-    const [result] = await pool.query('UPDATE admin_keys SET `key` = ? WHERE `key` = ?', [newKey, oldKey]);
-    return (result as any).affectedRows > 0;
   }
 };
