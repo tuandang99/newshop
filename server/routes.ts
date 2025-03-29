@@ -359,14 +359,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(testimonials);
   });
   
-  // Admin Key Verification
+  // Admin Key Management
   app.post("/api/admin/verify", async (req: Request, res: Response) => {
     const adminKey = req.headers['admin-key'];
     
-    if (adminKey === ADMIN_KEY) {
+    if (!adminKey) {
+      return res.status(401).json({ message: "Admin key required" });
+    }
+
+    const isValid = await storage.verifyAdminKey(adminKey as string);
+    if (isValid) {
       return res.status(200).json({ message: "Admin key is valid" });
     } else {
       return res.status(401).json({ message: "Invalid admin key" });
+    }
+  });
+
+  app.post("/api/admin/key", adminAuth, async (req: Request, res: Response) => {
+    const { newKey } = req.body;
+    const currentKey = req.headers['admin-key'] as string;
+
+    if (!newKey || typeof newKey !== 'string') {
+      return res.status(400).json({ message: "New key is required" });
+    }
+
+    try {
+      const success = await storage.updateAdminKey(currentKey, newKey);
+      if (success) {
+        res.json({ message: "Admin key updated successfully" });
+      } else {
+        res.status(404).json({ message: "Failed to update admin key" });
+      }
+    } catch (error) {
+      console.error("Error updating admin key:", error);
+      res.status(500).json({ message: "Internal server error" });
     }
   });
   
