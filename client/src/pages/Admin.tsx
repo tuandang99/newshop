@@ -1,3 +1,8 @@
+
+const changeKeySchema = z.object({
+  newKey: z.string().min(6, "Key must be at least 6 characters"),
+});
+
 import { useState, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
@@ -220,7 +225,8 @@ export default function Admin() {
   });
 
   // Verify admin key against the backend
-  const validateAdminKey = async (key: string) => {
+  const validateAdminKey = async (key: string | undefined) => {
+    if (!key) return false;
     try {
       const response = await fetch('/api/admin/verify', {
         method: 'POST',
