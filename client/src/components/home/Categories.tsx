@@ -46,8 +46,8 @@ export default function Categories() {
     <section className="py-12 bg-neutral-100">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold font-poppins mb-2">Shop by Category</h2>
-          <p className="text-neutral-700">Explore our wide range of healthy food products</p>
+          <h2 className="text-3xl font-bold font-poppins mb-2">Danh Mục Sản Phẩm</h2>
+          <p className="text-neutral-700">Khám phá các sản phẩm thực phẩm sạch của chúng tôi</p>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {categories.map((category) => (
