@@ -46,7 +46,7 @@ async function initDb() {
         slug VARCHAR(255) NOT NULL UNIQUE,
         description TEXT NOT NULL,
         price DECIMAL(10,2) NOT NULL,
-        old_price DECIMAL(10,2),
+        oldPrice DECIMAL(10,2),
         image TEXT NOT NULL,
         categoryId INT NOT NULL,
         rating DECIMAL(3,2) DEFAULT 5,
@@ -153,10 +153,7 @@ export const storage = {
   async createProduct(product: InsertProduct): Promise<Product> {
     const [result] = await pool.query(
       'INSERT INTO products SET ?',
-      {
-        ...product,
-        old_price: product.oldPrice
-      }
+      product
     );
     const [newProduct] = await pool.query('SELECT * FROM products WHERE id = ?', [(result as any).insertId]);
     return (newProduct as Product[])[0];
