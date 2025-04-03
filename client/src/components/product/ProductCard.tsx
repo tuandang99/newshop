@@ -21,12 +21,12 @@ export default function ProductCard({ product }: ProductCardProps) {
       name: product.name,
       price: product.price,
       image: product.image,
-      quantity: 1
+      quantity: 1,
     });
 
     toast({
-      title: "Added to cart",
-      description: `${product.name} has been added to your cart`,
+      title: "Đã thêm vào giỏ hàng",
+      description: `${product.name} đã được thêm vào giỏ hàng`,
     });
   };
 
@@ -61,17 +61,21 @@ export default function ProductCard({ product }: ProductCardProps) {
         <div className="flex justify-between items-start mb-1">
           <h3 className="font-semibold text-lg font-poppins">{product.name}</h3>
           <div className="flex items-center">
-            <span className="text-amber-500 text-sm">{product.rating.toFixed(1)}</span>
+            <span className="text-amber-500 text-sm">
+              {product.rating.toFixed(1)}
+            </span>
             <StarFilledIcon className="text-amber-500 ml-1 h-4 w-4" />
           </div>
         </div>
         <p className="text-neutral-600 text-sm mb-3">{product.description}</p>
         <div className="flex justify-between items-center">
           <div>
-            <span className="text-lg font-semibold">{product.price.toLocaleString('vi-VN')}₫</span>
+            <span className="text-lg font-semibold">
+              {product.price.toLocaleString("vi-VN")}₫
+            </span>
             {product.oldPrice && (
               <span className="text-sm line-through text-neutral-500 ml-2">
-                {product.oldPrice.toLocaleString('vi-VN')}₫
+                {product.oldPrice.toLocaleString("vi-VN")}₫
               </span>
             )}
           </div>

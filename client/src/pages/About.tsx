@@ -5,7 +5,7 @@ export default function About() {
   return (
     <>
       <Helmet>
-        <title>About Us - NatureNutri</title>
+        <title>Về chúng tôi - TUHO</title>
         <meta name="description" content="Learn about NatureNutri's mission to provide high-quality organic foods and our commitment to sustainability." />
       </Helmet>
       
