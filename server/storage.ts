@@ -1,3 +1,4 @@
+
 import mysql from 'mysql2/promise';
 import {
   type Category,
@@ -118,8 +119,6 @@ async function initDb() {
 // Initialize the database when the server starts
 initDb().catch(console.error);
 
-export { pool, storage };
-
 export const storage = {
   async getCategories(): Promise<Category[]> {
     const [rows] = await pool.query('SELECT * FROM categories');
@@ -215,18 +214,20 @@ export const storage = {
   },
 
   async submitContactForm(contact: InsertContact): Promise<ContactSubmission> {
-    const [result] = await pool.query('INSERT INTO contacts SET ?', contact); //Table name changed to contacts
-    const [submission] = await pool.query('SELECT * FROM contacts WHERE id = ?', [(result as any).insertId]); //Table name changed to contacts
+    const [result] = await pool.query('INSERT INTO contacts SET ?', contact);
+    const [submission] = await pool.query('SELECT * FROM contacts WHERE id = ?', [(result as any).insertId]);
     return (submission as ContactSubmission[])[0];
   },
 
   async verifyAdminKey(key: string): Promise<boolean> {
-    //Removed as admin key verification is not included in edited code
-    return false;
+    return key === process.env.ADMIN_KEY;
   },
 
   async updateAdminKey(oldKey: string, newKey: string): Promise<boolean> {
-    //Removed as admin key update is not included in edited code
+    if (oldKey === process.env.ADMIN_KEY) {
+      process.env.ADMIN_KEY = newKey;
+      return true;
+    }
     return false;
   }
 };
