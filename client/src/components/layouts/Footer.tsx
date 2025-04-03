@@ -133,7 +133,7 @@ export default function Footer() {
         <div className="border-t border-neutral-800 mt-8 pt-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-neutral-400 mb-4 md:mb-0">
-              © {new Date().getFullYear()} NatureNutri. All rights reserved.
+              © {new Date().getFullYear()} NatureNutri. Đã đăng ký bản quyền.
             </p>
             <div className="flex items-center space-x-4">
               <img src="https://cdn.cdnlogo.com/logos/v/69/visa.svg" alt="Visa" className="h-8 w-auto" />

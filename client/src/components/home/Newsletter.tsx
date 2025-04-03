@@ -10,7 +10,7 @@ export default function Newsletter() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email) {
       toast({
         title: "Email bắt buộc",
@@ -19,7 +19,7 @@ export default function Newsletter() {
       });
       return;
     }
-    
+
     if (!/^\S+@\S+\.\S+$/.test(email)) {
       toast({
         title: "Email không hợp lệ",
@@ -28,9 +28,9 @@ export default function Newsletter() {
       });
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     // Send to server
     try {
       await fetch('/api/newsletter', {
@@ -40,7 +40,7 @@ export default function Newsletter() {
         },
         body: JSON.stringify({ email }),
       });
-      
+
       toast({
         title: "Đăng ký thành công!",
         description: "Cảm ơn bạn đã đăng ký nhận tin.",
