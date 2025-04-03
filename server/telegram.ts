@@ -106,7 +106,7 @@ function formatOrderMessage(order: Order, items: CartItem[]): string {
     `<b>Chi tiết đơn hàng:</b>\n${itemsList}\n\n` +
     `<b>Tổng tiền:</b> ${total.toFixed(2)} VND\n` +
     `<b>Trạng thái:</b> ${order.status}\n` +
-    `<b>Ngày đặt:</b> ${new Date(order.createdAt).toLocaleString()}\n`;
+    `<b>Ngày đặt:</b> ${new Date().toLocaleString('vi-VN')}\n`;
 }
 
 /**
