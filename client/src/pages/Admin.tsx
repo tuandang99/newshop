@@ -517,7 +517,7 @@ export default function Admin() {
                         name="price"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Price ($)</FormLabel>
+                            <FormLabel>Price (₫)</FormLabel>
                             <FormControl>
                               <Input 
                                 type="number" 
@@ -537,7 +537,7 @@ export default function Admin() {
                         name="oldPrice"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Old Price ($) (Optional)</FormLabel>
+                            <FormLabel>Old Price (₫) (Optional)</FormLabel>
                             <FormControl>
                               <Input 
                                 type="number" 

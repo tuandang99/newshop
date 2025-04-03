@@ -65,10 +65,10 @@ export default function ProductCard({ product }: ProductCardProps) {
         <p className="text-neutral-600 text-sm mb-3">{product.description}</p>
         <div className="flex justify-between items-center">
           <div>
-            <span className="text-lg font-semibold">${product.price.toFixed(2)}</span>
+            <span className="text-lg font-semibold">{product.price.toLocaleString('vi-VN')}₫</span>
             {product.oldPrice && (
               <span className="text-sm line-through text-neutral-500 ml-2">
-                ${product.oldPrice.toFixed(2)}
+                {product.oldPrice.toLocaleString('vi-VN')}₫
               </span>
             )}
           </div>
