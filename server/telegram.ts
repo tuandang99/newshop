@@ -68,6 +68,8 @@ export function sendAdminMessage(message: string): Promise<boolean> {
 /**
  * Generate and send an order notification
  */
+export { sendNewsletterNotification, sendContactNotification };
+
 export async function sendOrderNotification(order: Order, items: CartItem[]): Promise<boolean> {
   try {
     if (!bot || !chatId) {

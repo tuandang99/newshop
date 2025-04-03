@@ -4,7 +4,7 @@ import { storage } from "./storage";
 import { insertOrderSchema, insertContactSchema, CartItem, insertProductSchema, insertBlogPostSchema } from "@shared/schema";
 import { ZodError } from "zod";
 import fetch from "node-fetch";
-import { sendOrderNotification } from "./telegram";
+import { sendOrderNotification, sendNewsletterNotification, sendContactNotification } from "./telegram";
 
 // Environment variable for admin key or fallback to a default for development
 const ADMIN_KEY = process.env.ADMIN_KEY || "secret-admin-key";
