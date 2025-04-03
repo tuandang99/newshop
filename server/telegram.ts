@@ -66,10 +66,8 @@ export function sendAdminMessage(message: string): Promise<boolean> {
 }
 
 /**
- * Generate and send an order notification
+ * Generate and send notifications
  */
-export { sendNewsletterNotification, sendContactNotification };
-
 export async function sendOrderNotification(order: Order, items: CartItem[]): Promise<boolean> {
   try {
     if (!bot || !chatId) {
@@ -144,3 +142,6 @@ if (token && adminId) {
 } else {
   log('Telegram bot not initialized: Missing TELEGRAM_BOT_TOKEN or TELEGRAM_ADMIN_CHAT_ID', 'telegram');
 }
+
+// Export notification functions
+export { sendContactNotification, sendNewsletterNotification };
