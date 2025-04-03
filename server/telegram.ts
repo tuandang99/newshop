@@ -1,5 +1,6 @@
+
 import TelegramBot from 'node-telegram-bot-api';
-import { Order, CartItem } from '@shared/schema';
+import { Order, CartItem, ContactSubmission } from '@shared/schema';
 import { log } from './vite';
 
 // Telegram Bot instance (will be initialized when token is available)
@@ -66,7 +67,7 @@ export function sendAdminMessage(message: string): Promise<boolean> {
 }
 
 /**
- * Generate and send notifications
+ * Generate and send an order notification
  */
 export async function sendOrderNotification(order: Order, items: CartItem[]): Promise<boolean> {
   try {
@@ -142,6 +143,3 @@ if (token && adminId) {
 } else {
   log('Telegram bot not initialized: Missing TELEGRAM_BOT_TOKEN or TELEGRAM_ADMIN_CHAT_ID', 'telegram');
 }
-
-// Export notification functions
-export { sendContactNotification, sendNewsletterNotification };
