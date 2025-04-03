@@ -30,7 +30,7 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   const { items, calculateTotal, clearCart } = useCart();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -40,7 +40,7 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
       address: "",
     },
   });
-  
+
   const onSubmit = async (data: FormValues) => {
     if (items.length === 0) {
       toast({
@@ -50,23 +50,23 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
       });
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     try {
       const orderData = {
         ...data,
         items: JSON.stringify(items),
         total: calculateTotal(),
       };
-      
+
       await apiRequest("POST", "/api/orders", orderData);
-      
+
       toast({
         title: "Order placed successfully!",
         description: "We'll send you a confirmation email shortly.",
       });
-      
+
       clearCart();
       form.reset();
       onClose();
@@ -81,12 +81,12 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
       setIsSubmitting(false);
     }
   };
-  
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold font-poppins">Complete Your Order</DialogTitle>
+          <DialogTitle className="text-xl font-semibold font-poppins">Hoàn tất đơn hàng</DialogTitle>
           <Button
             variant="ghost"
             size="icon"
@@ -96,72 +96,72 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
             <X className="h-4 w-4" />
           </Button>
         </DialogHeader>
-        
+
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-4">
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-medium">Full Name</FormLabel>
+                  <FormLabel>Họ và tên</FormLabel>
                   <FormControl>
-                    <Input {...field} required />
+                    <Input placeholder="Nhập họ và tên của bạn" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            
+
             <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-medium">Email</FormLabel>
+                  <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input {...field} type="email" required />
+                    <Input placeholder="Nhập địa chỉ email của bạn" {...field} type="email" required />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            
+
             <FormField
               control={form.control}
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-medium">Phone</FormLabel>
+                  <FormLabel>Số điện thoại</FormLabel>
                   <FormControl>
-                    <Input {...field} type="tel" required />
+                    <Input placeholder="Nhập số điện thoại của bạn" {...field} type="tel" required />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            
+
             <FormField
               control={form.control}
               name="address"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-medium">Address</FormLabel>
+                  <FormLabel>Địa chỉ giao hàng</FormLabel>
                   <FormControl>
-                    <Textarea {...field} rows={3} required />
+                    <Textarea placeholder="Nhập địa chỉ giao hàng của bạn" {...field} rows={3} required />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            
+
             <div className="pt-2">
               <Button 
                 type="submit" 
                 className="w-full bg-primary text-white hover:bg-primary/90"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "Processing..." : "Place Order"}
+                {isSubmitting ? "Đang xử lý..." : "Đặt hàng"}
               </Button>
             </div>
           </form>
