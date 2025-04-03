@@ -30,24 +30,6 @@ async function initDb() {
   const conn = await pool.getConnection();
   try {
     await conn.query(`
-      CREATE TABLE IF NOT EXISTS admin_keys (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        \`key\` VARCHAR(255) NOT NULL UNIQUE,
-        label VARCHAR(255) NOT NULL,
-        active BOOLEAN DEFAULT TRUE
-      )
-    `);
-
-    // Insert default admin key if none exists
-    const [keys] = await conn.query('SELECT COUNT(*) as count FROM admin_keys');
-    if ((keys as any[])[0].count === 0) {
-      await conn.query(
-        'INSERT INTO admin_keys (`key`, label) VALUES (?, ?)',
-        [process.env.ADMIN_KEY || 'secret-admin-key', 'Default Admin Key']
-      );
-    }
-
-    await conn.query(`
       CREATE TABLE IF NOT EXISTS categories (
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
@@ -62,15 +44,15 @@ async function initDb() {
         name VARCHAR(255) NOT NULL,
         slug VARCHAR(255) NOT NULL UNIQUE,
         description TEXT NOT NULL,
-        price DOUBLE NOT NULL,
-        old_price DOUBLE NULL,
+        price DECIMAL(10,2) NOT NULL,
+        oldPrice DECIMAL(10,2),
         image TEXT NOT NULL,
-        category_id INT NOT NULL,
-        rating DOUBLE DEFAULT 5,
-        is_new BOOLEAN DEFAULT FALSE,
-        is_organic BOOLEAN DEFAULT TRUE,
-        is_bestseller BOOLEAN DEFAULT FALSE,
-        FOREIGN KEY (category_id) REFERENCES categories(id)
+        categoryId INT NOT NULL,
+        rating DECIMAL(3,2) DEFAULT 5,
+        isNew BOOLEAN DEFAULT FALSE,
+        isOrganic BOOLEAN DEFAULT TRUE,
+        isBestseller BOOLEAN DEFAULT FALSE,
+        FOREIGN KEY (categoryId) REFERENCES categories(id)
       )
     `);
 
@@ -83,13 +65,13 @@ async function initDb() {
         excerpt TEXT NOT NULL,
         image TEXT NOT NULL,
         category VARCHAR(255) NOT NULL,
-        tags TEXT NULL,
-        author VARCHAR(255) NULL,
-        metaTitle VARCHAR(255) NULL,
-        metaDescription TEXT NULL,
+        tags TEXT,
+        author VARCHAR(255),
+        metaTitle VARCHAR(255),
+        metaDescription TEXT,
         featured BOOLEAN DEFAULT FALSE,
-        status VARCHAR(50) DEFAULT 'published',
-        date DATETIME NOT NULL
+        status ENUM('published', 'draft', 'archived') DEFAULT 'published',
+        date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
 
@@ -98,7 +80,7 @@ async function initDb() {
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         avatar TEXT NOT NULL,
-        rating DOUBLE NOT NULL,
+        rating INT NOT NULL,
         comment TEXT NOT NULL
       )
     `);
@@ -111,29 +93,32 @@ async function initDb() {
         phone VARCHAR(50) NOT NULL,
         address TEXT NOT NULL,
         items TEXT NOT NULL,
-        total DOUBLE NOT NULL,
-        status VARCHAR(50) NOT NULL DEFAULT 'pending',
-        created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        total DECIMAL(10,2) NOT NULL,
+        status VARCHAR(50) DEFAULT 'pending',
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
 
     await conn.query(`
-      CREATE TABLE IF NOT EXISTS contact_submissions (
+      CREATE TABLE IF NOT EXISTS contacts (
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         email VARCHAR(255) NOT NULL,
         subject VARCHAR(255) NOT NULL,
         message TEXT NOT NULL,
-        created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+
   } finally {
     conn.release();
   }
 }
 
-// Initialize the database
+// Initialize the database when the server starts
 initDb().catch(console.error);
+
+export { pool, storage };
 
 export const storage = {
   async getCategories(): Promise<Category[]> {
@@ -230,18 +215,18 @@ export const storage = {
   },
 
   async submitContactForm(contact: InsertContact): Promise<ContactSubmission> {
-    const [result] = await pool.query('INSERT INTO contact_submissions SET ?', contact);
-    const [submission] = await pool.query('SELECT * FROM contact_submissions WHERE id = ?', [(result as any).insertId]);
+    const [result] = await pool.query('INSERT INTO contacts SET ?', contact); //Table name changed to contacts
+    const [submission] = await pool.query('SELECT * FROM contacts WHERE id = ?', [(result as any).insertId]); //Table name changed to contacts
     return (submission as ContactSubmission[])[0];
   },
 
   async verifyAdminKey(key: string): Promise<boolean> {
-    const [rows] = await pool.query('SELECT COUNT(*) as count FROM admin_keys WHERE `key` = ? AND active = TRUE', [key]);
-    return (rows as any[])[0].count > 0;
+    //Removed as admin key verification is not included in edited code
+    return false;
   },
 
   async updateAdminKey(oldKey: string, newKey: string): Promise<boolean> {
-    const [result] = await pool.query('UPDATE admin_keys SET `key` = ? WHERE `key` = ? AND active = TRUE', [newKey, oldKey]);
-    return (result as any).affectedRows > 0;
+    //Removed as admin key update is not included in edited code
+    return false;
   }
 };
