@@ -15,7 +15,7 @@ export default function CartDrawer() {
     } else {
       document.body.classList.remove('overflow-hidden');
     }
-    
+
     return () => {
       document.body.classList.remove('overflow-hidden');
     };
@@ -30,7 +30,7 @@ export default function CartDrawer() {
   const closeCheckoutModal = () => {
     setIsCheckoutModalOpen(false);
   };
-  
+
   const subtotal = calculateTotal();
 
   return (
@@ -47,7 +47,7 @@ export default function CartDrawer() {
               <CloseIcon className="h-6 w-6" />
             </Button>
           </div>
-          
+
           <div className="space-y-4 mb-6">
             {items.length === 0 ? (
               <div className="py-8 text-center">
@@ -89,7 +89,7 @@ export default function CartDrawer() {
                       >
                         <PlusIcon className="h-3 w-3" />
                       </Button>
-                      <span className="ml-auto">${(item.price * item.quantity).toFixed(2)}</span>
+                      <span className="ml-auto">{ (item.price * item.quantity).toLocaleString('vi-VN')}₫</span>
                     </div>
                   </div>
                   <Button 
@@ -104,11 +104,11 @@ export default function CartDrawer() {
               ))
             )}
           </div>
-          
+
           <div className="border-t border-neutral-200 pt-4 pb-6">
             <div className="flex justify-between mb-2">
               <span>Subtotal</span>
-              <span>${subtotal.toFixed(2)}</span>
+              <span>{subtotal.toLocaleString('vi-VN')}₫</span>
             </div>
             <div className="flex justify-between mb-4">
               <span>Shipping</span>
@@ -116,7 +116,7 @@ export default function CartDrawer() {
             </div>
             <div className="flex justify-between font-semibold text-lg mb-6">
               <span>Total</span>
-              <span>${subtotal.toFixed(2)}</span>
+              <span>{subtotal.toLocaleString('vi-VN')}₫</span>
             </div>
             <Button 
               className="w-full bg-primary text-white hover:bg-primary/90"
@@ -128,7 +128,7 @@ export default function CartDrawer() {
           </div>
         </div>
       </div>
-      
+
       {/* Backdrop overlay */}
       {isOpen && (
         <div 
@@ -136,7 +136,7 @@ export default function CartDrawer() {
           onClick={toggleCart}
         />
       )}
-      
+
       <CheckoutModal isOpen={isCheckoutModalOpen} onClose={closeCheckoutModal} />
     </>
   );
