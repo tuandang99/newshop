@@ -15,7 +15,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault(); // Prevent navigation to product detail
-    
+
     addItem({
       id: product.id,
       name: product.name,
@@ -23,7 +23,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       image: product.image,
       quantity: 1
     });
-    
+
     toast({
       title: "Added to cart",
       description: `${product.name} has been added to your cart`,
@@ -48,9 +48,12 @@ export default function ProductCard({ product }: ProductCardProps) {
         </span>
       )}
       <Link href={`/products/${product.slug}`}>
-        <img 
-          src={product.image} 
-          alt={product.name} 
+        <img
+          src={product.image}
+          alt={product.name}
+          loading="lazy"
+          width={400}
+          height={224}
           className="w-full h-56 object-cover"
         />
       </Link>
@@ -73,7 +76,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             )}
           </div>
           <div className="product-cta opacity-0 transform translate-y-2 transition-all">
-            <Button 
+            <Button
               size="icon"
               className="bg-primary text-white p-2 rounded-full hover:bg-primary/90"
               onClick={handleAddToCart}
