@@ -8,13 +8,13 @@ export default function Newsletter() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!email) {
       toast({
-        title: "Email required",
-        description: "Please enter your email address",
+        title: "Email bắt buộc",
+        description: "Vui lòng nhập địa chỉ email",
         variant: "destructive",
       });
       return;
@@ -22,8 +22,8 @@ export default function Newsletter() {
     
     if (!/^\S+@\S+\.\S+$/.test(email)) {
       toast({
-        title: "Invalid email",
-        description: "Please enter a valid email address",
+        title: "Email không hợp lệ",
+        description: "Vui lòng nhập một địa chỉ email hợp lệ",
         variant: "destructive",
       });
       return;
@@ -61,9 +61,9 @@ export default function Newsletter() {
     <section className="py-12 bg-primary/10">
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl font-bold font-poppins mb-4">Join Our Newsletter</h2>
+          <h2 className="text-3xl font-bold font-poppins mb-4">Đăng Ký Nhận Tin</h2>
           <p className="text-neutral-700 mb-6">
-            Subscribe to receive updates, access to exclusive deals, and more.
+            Đăng ký để nhận thông tin cập nhật, ưu đãi độc quyền và nhiều hơn nữa.
           </p>
           <form 
             onSubmit={handleSubmit}
@@ -71,7 +71,7 @@ export default function Newsletter() {
           >
             <Input
               type="email"
-              placeholder="Enter your email"
+              placeholder="Nhập email của bạn"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="px-4 py-3 rounded-md border border-neutral-300 focus:ring-2 focus:ring-primary flex-grow"
@@ -81,11 +81,11 @@ export default function Newsletter() {
               className="bg-primary text-white hover:bg-primary/90"
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Subscribing..." : "Subscribe"}
+              {isSubmitting ? "Đang đăng ký..." : "Đăng Ký"}
             </Button>
           </form>
           <p className="text-sm text-neutral-500 mt-4">
-            By subscribing, you agree to our Privacy Policy and consent to receive updates from our company.
+            Khi đăng ký, bạn đồng ý với Chính sách Bảo mật và đồng ý nhận thông tin cập nhật từ công ty chúng tôi.
           </p>
         </div>
       </div>
