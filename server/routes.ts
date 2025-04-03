@@ -429,6 +429,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const contactData = insertContactSchema.parse(req.body);
       const submission = await storage.submitContactForm(contactData);
+      await sendContactNotification(submission);
       res.status(201).json(submission);
     } catch (error) {
       if (error instanceof ZodError) {
@@ -436,6 +437,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       console.error("Error submitting contact form:", error);
       res.status(500).json({ message: "Failed to submit contact form" });
+    }
+  });
+
+  // Newsletter subscription endpoint
+  app.post("/api/newsletter", async (req: Request, res: Response) => {
+    try {
+      const { email } = req.body;
+      if (!email || typeof email !== 'string') {
+        return res.status(400).json({ message: "Invalid email address" });
+      }
+      await sendNewsletterNotification(email);
+      res.status(200).json({ message: "Newsletter subscription successful" });
+    } catch (error) {
+      console.error("Error processing newsletter subscription:", error);
+      res.status(500).json({ message: "Failed to process subscription" });
     }
   });
   

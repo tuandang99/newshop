@@ -31,15 +31,30 @@ export default function Newsletter() {
     
     setIsSubmitting(true);
     
-    // Simulate API call
-    setTimeout(() => {
+    // Send to server
+    try {
+      await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+      
       toast({
-        title: "Successfully subscribed!",
-        description: "Thank you for subscribing to our newsletter",
+        title: "Đăng ký thành công!",
+        description: "Cảm ơn bạn đã đăng ký nhận tin.",
       });
       setEmail("");
+    } catch (error) {
+      toast({
+        title: "Đăng ký thất bại",
+        description: "Vui lòng thử lại sau.",
+        variant: "destructive",
+      });
+    } finally {
       setIsSubmitting(false);
-    }, 1000);
+    }
   };
 
   return (
