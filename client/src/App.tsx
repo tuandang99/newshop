@@ -7,6 +7,7 @@ import { CartProvider } from "@/context/CartContext";
 import MainLayout from "@/components/layouts/MainLayout";
 import { lazy, Suspense } from 'react';
 import { Skeleton } from './components/ui/skeleton';
+import { ZaloButton } from '@/components/ui/zalo-button';
 
 const About = lazy(() => import('./pages/About'));
 const Admin = lazy(() => import('./pages/Admin')); 
