@@ -84,32 +84,32 @@ export default function Navbar() {
             </Link>
             <div className="hidden md:flex ml-10 space-x-6">
               <Link href="/" className={`${isActive("/")} font-medium transition`}>
-                Home
+                Trang Chủ
               </Link>
               <div className="relative group">
                 <Link href="/products" className={`${isActive("/products")} font-medium transition flex items-center`}>
-                  Products
+                  Sản Phẩm
                   <ChevronDownIcon className="ml-1 h-4 w-4" />
                 </Link>
                 {/* Added margin-top gap to make hovering easier and improved hover transition */}
                 <div className="absolute left-0 mt-0 pt-5 w-48 z-10 hidden group-hover:block">
                   <div className="bg-white shadow-lg rounded-md py-2 border border-gray-100">
-                    <Link href="/products?category=nuts-seeds" className="block px-4 py-2 text-sm hover:bg-neutral-100">Nuts & Seeds</Link>
-                    <Link href="/products?category=granola-bars" className="block px-4 py-2 text-sm hover:bg-neutral-100">Granola Bars</Link>
-                    <Link href="/products?category=cereals" className="block px-4 py-2 text-sm hover:bg-neutral-100">Cereals</Link>
-                    <Link href="/products?category=dried-fruits" className="block px-4 py-2 text-sm hover:bg-neutral-100">Dried Fruits</Link>
-                    <Link href="/products?category=superfoods" className="block px-4 py-2 text-sm hover:bg-neutral-100">Superfoods</Link>
+                    <Link href="/products?category=nuts-seeds" className="block px-4 py-2 text-sm hover:bg-neutral-100">Các Loại Hạt</Link>
+                    <Link href="/products?category=granola-bars" className="block px-4 py-2 text-sm hover:bg-neutral-100">Thanh Ngũ Cốc</Link>
+                    <Link href="/products?category=cereals" className="block px-4 py-2 text-sm hover:bg-neutral-100">Ngũ Cốc</Link>
+                    <Link href="/products?category=dried-fruits" className="block px-4 py-2 text-sm hover:bg-neutral-100">Trái Cây Sấy</Link>
+                    <Link href="/products?category=superfoods" className="block px-4 py-2 text-sm hover:bg-neutral-100">Thực Phẩm Chức Năng</Link>
                   </div>
                 </div>
               </div>
               <Link href="/about" className={`${isActive("/about")} font-medium transition`}>
-                About Us
+                Về Chúng Tôi
               </Link>
               <Link href="/blog" className={`${isActive("/blog")} font-medium transition`}>
-                Blog
+                Tin Tức
               </Link>
               <Link href="/contact" className={`${isActive("/contact")} font-medium transition`}>
-                Contact
+                Liên Hệ
               </Link>
             </div>
           </div>

@@ -8,17 +8,17 @@ export default function Hero() {
         <div className="flex flex-col md:flex-row items-center justify-between">
           <div className="md:w-1/2 mb-10 md:mb-0">
             <h1 className="text-3xl md:text-5xl font-bold font-poppins mb-4 leading-tight text-neutral-900">
-              Natural Foods for <span className="text-primary">Healthier Living</span>
+              Thực phẩm tự nhiên cho <span className="text-primary">Cuộc sống khỏe mạnh</span>
             </h1>
             <p className="text-lg mb-8 text-neutral-700">
-              Discover our premium selection of nutritious foods that fuel your body and mind with essential goodness.
+              Khám phá bộ sưu tập thực phẩm dinh dưỡng cao cấp của chúng tôi, nuôi dưỡng cơ thể và tinh thần của bạn.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button asChild className="bg-primary text-white hover:bg-primary/90">
-                <Link href="/products">Shop Now</Link>
+                <Link href="/products">Mua Ngay</Link>
               </Button>
               <Button asChild variant="outline" className="border-primary text-primary hover:bg-primary/10">
-                <Link href="/about">Learn More</Link>
+                <Link href="/about">Tìm Hiểu Thêm</Link>
               </Button>
             </div>
           </div>

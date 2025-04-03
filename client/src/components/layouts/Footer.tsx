@@ -37,31 +37,31 @@ export default function Footer() {
           </div>
           
           <div>
-            <h4 className="text-lg font-semibold mb-4 font-poppins">Quick Links</h4>
+            <h4 className="text-lg font-semibold mb-4 font-poppins">Liên Kết Nhanh</h4>
             <ul className="space-y-2">
               <li>
                 <Link href="/" className="text-neutral-400 hover:text-white transition">
-                  Home
+                  Trang Chủ
                 </Link>
               </li>
               <li>
                 <Link href="/products" className="text-neutral-400 hover:text-white transition">
-                  Shop
+                  Cửa Hàng
                 </Link>
               </li>
               <li>
                 <Link href="/about" className="text-neutral-400 hover:text-white transition">
-                  About Us
+                  Về Chúng Tôi
                 </Link>
               </li>
               <li>
                 <Link href="/blog" className="text-neutral-400 hover:text-white transition">
-                  Blog
+                  Tin Tức
                 </Link>
               </li>
               <li>
                 <Link href="/contact" className="text-neutral-400 hover:text-white transition">
-                  Contact
+                  Liên Hệ
                 </Link>
               </li>
             </ul>
