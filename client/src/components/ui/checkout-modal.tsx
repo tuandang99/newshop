@@ -87,7 +87,7 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   // Chỉ cho phép đóng thông qua nút X
   if (!open) return;
 }}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px]" closeButton={false}>
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold font-poppins">Hoàn tất đơn hàng</DialogTitle>
           <Button
