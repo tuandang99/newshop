@@ -46,14 +46,14 @@ async function initDb() {
         slug VARCHAR(255) NOT NULL UNIQUE,
         description TEXT NOT NULL,
         price DECIMAL(10,2) NOT NULL,
-        oldPrice DECIMAL(10,2),
+        old_price DECIMAL(10,2) NULL,
         image TEXT NOT NULL,
-        categoryId INT NOT NULL,
+        category_id INT NOT NULL,
         rating DECIMAL(3,2) DEFAULT 5,
-        isNew BOOLEAN DEFAULT FALSE,
-        isOrganic BOOLEAN DEFAULT TRUE,
-        isBestseller BOOLEAN DEFAULT FALSE,
-        FOREIGN KEY (categoryId) REFERENCES categories(id)
+        is_new TINYINT DEFAULT 0,
+        is_organic TINYINT DEFAULT 1,
+        is_bestseller TINYINT DEFAULT 0,
+        FOREIGN KEY (category_id) REFERENCES categories(id)
       )
     `);
 
@@ -153,7 +153,19 @@ export const storage = {
   async createProduct(product: InsertProduct): Promise<Product> {
     const [result] = await pool.query(
       'INSERT INTO products SET ?',
-      product
+      {
+        name: product.name,
+        slug: product.slug,
+        description: product.description,
+        price: product.price,
+        old_price: product.oldPrice,
+        image: product.image,
+        category_id: product.categoryId,
+        rating: product.rating,
+        is_new: product.isNew ? 1 : 0,
+        is_organic: product.isOrganic ? 1 : 0,
+        is_bestseller: product.isBestseller ? 1 : 0
+      }
     );
     const [newProduct] = await pool.query('SELECT * FROM products WHERE id = ?', [(result as any).insertId]);
     return (newProduct as Product[])[0];
