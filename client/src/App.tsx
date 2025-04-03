@@ -9,14 +9,14 @@ import { lazy, Suspense } from 'react';
 import { Skeleton } from './components/ui/skeleton';
 import { ZaloButton } from '@/components/ui/zalo-button';
 
-const About = lazy(() => import('./pages/About'));
-const Admin = lazy(() => import('./pages/Admin')); 
-const Blog = lazy(() => import('./pages/Blog'));
-const BlogPost = lazy(() => import('./pages/BlogPost'));
-const Contact = lazy(() => import('./pages/Contact'));
-const Home = lazy(() => import('./pages/Home'));
-const ProductDetail = lazy(() => import('./pages/ProductDetail'));
-const Products = lazy(() => import('./pages/Products'));
+const About = lazy(() => import(/* webpackPrefetch: true */ './pages/About'));
+const Admin = lazy(() => import(/* webpackPrefetch: true */ './pages/Admin')); 
+const Blog = lazy(() => import(/* webpackPrefetch: true */ './pages/Blog'));
+const BlogPost = lazy(() => import(/* webpackPrefetch: true */ './pages/BlogPost'));
+const Contact = lazy(() => import(/* webpackPrefetch: true */ './pages/Contact'));
+const Home = lazy(() => import(/* webpackPrefetch: true */ './pages/Home'));
+const ProductDetail = lazy(() => import(/* webpackPrefetch: true */ './pages/ProductDetail'));
+const Products = lazy(() => import(/* webpackPrefetch: true */ './pages/Products'));
 
 function Router() {
   return (

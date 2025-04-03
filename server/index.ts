@@ -58,6 +58,11 @@ app.use((req, res, next) => {
     await setupVite(app, server);
   } else {
     serveStatic(app);
+    app.use(express.static('dist', {
+      maxAge: '1d',
+      etag: true,
+      lastModified: true
+    }));
   }
 
   // ALWAYS serve the app on port 5000
