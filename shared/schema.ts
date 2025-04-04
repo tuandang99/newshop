@@ -23,6 +23,7 @@ export const insertProductSchema = z.object({
   isNew: z.boolean().default(false),
   isOrganic: z.boolean().default(true),
   isBestseller: z.boolean().default(false),
+  details: z.array(z.string()).default([]),
   discount: z.number().optional().transform(val => {
     if (!val) return null;
     return Math.min(Math.max(val, 0), 100); // Ensure discount is between 0-100%

@@ -184,10 +184,13 @@ export default function ProductDetail() {
               <div className="border-t border-neutral-200 pt-6">
                 <h3 className="font-semibold mb-2">Chi tiết sản phẩm</h3>
                 <ul className="list-disc list-inside text-neutral-700 space-y-1">
-                  <li>100% Organic certified</li>
-                  <li>High in essential nutrients</li>
-                  <li>No artificial additives or preservatives</li>
-                  <li>Sustainably sourced</li>
+                  {product.details && product.details.length > 0 ? (
+                    product.details.map((detail, index) => (
+                      <li key={index}>{detail}</li>
+                    ))
+                  ) : (
+                    <li>Chưa có thông tin chi tiết</li>
+                  )}
                 </ul>
               </div>
             </div>
