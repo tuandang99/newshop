@@ -5,16 +5,29 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Helmet } from "react-helmet";
 import { useLocation } from "wouter";
-import MDEditor from '@uiw/react-md-editor';
-import '@/components/ui/markdown-styles.css';
+import MDEditor from "@uiw/react-md-editor";
+import "@/components/ui/markdown-styles.css";
 
 // Product form schema
 const productFormSchema = z.object({
@@ -29,7 +42,17 @@ const productFormSchema = z.object({
   isNew: z.boolean().optional(),
   isOrganic: z.boolean().optional(),
   isBestseller: z.boolean().optional(),
-  details: z.array(z.string()).default([]).or(z.string().transform(str => str.split('\n').map(s => s.trim()).filter(s => s && s !== '-'))),
+  details: z
+    .array(z.string())
+    .default([])
+    .or(
+      z.string().transform((str) =>
+        str
+          .split("\n")
+          .map((s) => s.trim())
+          .filter((s) => s && s !== "-"),
+      ),
+    ),
 });
 
 type ProductFormValues = z.infer<typeof productFormSchema>;
@@ -42,7 +65,7 @@ const blogFormSchema = z.object({
   excerpt: z.string().min(1, "Excerpt is required"),
   image: z.string().url("Must be a valid URL"),
   category: z.string().min(1, "Category is required"),
-  date: z.string().transform(val => new Date(val).toISOString()),
+  date: z.string().transform((val) => new Date(val).toISOString()),
   tags: z.string().optional(),
   author: z.string().optional(),
   metaTitle: z.string().optional(),
@@ -67,7 +90,6 @@ const changeKeySchema = z.object({
 
 type ChangeKeyFormValues = z.infer<typeof changeKeySchema>;
 
-
 export default function Admin() {
   const [adminKey, setAdminKey] = useState<string>("");
   const [authenticated, setAuthenticated] = useState<boolean>(false);
@@ -89,7 +111,7 @@ export default function Admin() {
     resolver: zodResolver(authSchema),
     defaultValues: {
       adminKey: "",
-    }
+    },
   });
 
   //Change Key Form
@@ -97,7 +119,7 @@ export default function Admin() {
     resolver: zodResolver(changeKeySchema),
     defaultValues: {
       newKey: "",
-    }
+    },
   });
 
   // Product form
@@ -116,7 +138,7 @@ export default function Admin() {
       isOrganic: true,
       isBestseller: false,
       details: [],
-    }
+    },
   });
 
   // Blog form
@@ -129,32 +151,32 @@ export default function Admin() {
       excerpt: "",
       image: "",
       category: "",
-      date: new Date().toISOString().split('T')[0],
+      date: new Date().toISOString().split("T")[0],
       tags: "",
       author: "",
       metaTitle: "",
       metaDescription: "",
       featured: false,
       status: "published",
-    }
+    },
   });
 
   // Categories query
-  const { data: categories = [] } = useQuery<any[]>({ 
-    queryKey: ['/api/categories'],
-    enabled: authenticated
+  const { data: categories = [] } = useQuery<any[]>({
+    queryKey: ["/api/categories"],
+    enabled: authenticated,
   });
 
   const { data: productsResponse } = useQuery<ProductsResponse>({
-    queryKey: ['/api/products'],
-    enabled: authenticated
+    queryKey: ["/api/products"],
+    enabled: authenticated,
   });
 
   const products = productsResponse?.products || [];
 
   const { data: blogPostsResponse } = useQuery<BlogPostsResponse>({
-    queryKey: ['/api/blog-posts'],
-    enabled: authenticated
+    queryKey: ["/api/blog-posts"],
+    enabled: authenticated,
   });
 
   const blogPosts = blogPostsResponse?.posts || [];
@@ -166,17 +188,17 @@ export default function Admin() {
   const updateProductMutation = useMutation({
     mutationFn: async (data: Product) => {
       const response = await fetch(`/api/admin/products/${data.id}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
-          'Admin-Key': adminKey
+          "Content-Type": "application/json",
+          "Admin-Key": adminKey,
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to update product');
+        throw new Error(errorData.message || "Failed to update product");
       }
 
       return response.json();
@@ -188,32 +210,32 @@ export default function Admin() {
       });
       setEditingProduct(null);
       productForm.reset();
-      queryClient.invalidateQueries({ queryKey: ['/api/products'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
     },
     onError: (error) => {
       toast({
         title: "Error",
         description: error.message || "Failed to update product",
-        variant: "destructive"
+        variant: "destructive",
       });
-    }
+    },
   });
 
   // Update blog post mutation
   const updateBlogMutation = useMutation({
     mutationFn: async (data: BlogPost) => {
       const response = await fetch(`/api/admin/blog-posts/${data.id}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
-          'Admin-Key': adminKey
+          "Content-Type": "application/json",
+          "Admin-Key": adminKey,
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to update blog post');
+        throw new Error(errorData.message || "Failed to update blog post");
       }
 
       return response.json();
@@ -225,33 +247,33 @@ export default function Admin() {
       });
       setEditingBlogPost(null);
       blogForm.reset();
-      queryClient.invalidateQueries({ queryKey: ['/api/blog-posts'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/blog-posts"] });
     },
     onError: (error) => {
       toast({
         title: "Error",
         description: error.message || "Failed to update blog post",
-        variant: "destructive"
+        variant: "destructive",
       });
-    }
+    },
   });
 
   // Add product mutation
   const addProductMutation = useMutation({
     mutationFn: async (data: ProductFormValues) => {
       // Use fetch directly to include the admin-key header
-      const response = await fetch('/api/admin/products', {
-        method: 'POST',
+      const response = await fetch("/api/admin/products", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Admin-Key': adminKey
+          "Content-Type": "application/json",
+          "Admin-Key": adminKey,
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to add product');
+        throw new Error(errorData.message || "Failed to add product");
       }
 
       return response.json();
@@ -262,34 +284,34 @@ export default function Admin() {
         description: "Product has been added successfully",
       });
       productForm.reset();
-      queryClient.invalidateQueries({ queryKey: ['/api/products'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/featured-products'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/featured-products"] });
     },
     onError: (error) => {
       toast({
         title: "Error",
         description: error.message || "Failed to add product",
-        variant: "destructive"
+        variant: "destructive",
       });
-    }
+    },
   });
 
   // Add blog post mutation
   const addBlogMutation = useMutation({
     mutationFn: async (data: BlogFormValues) => {
       // Use fetch directly to include the admin-key header
-      const response = await fetch('/api/admin/blog-posts', {
-        method: 'POST',
+      const response = await fetch("/api/admin/blog-posts", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Admin-Key': adminKey
+          "Content-Type": "application/json",
+          "Admin-Key": adminKey,
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to add blog post');
+        throw new Error(errorData.message || "Failed to add blog post");
       }
 
       return response.json();
@@ -300,28 +322,28 @@ export default function Admin() {
         description: "Blog post has been added successfully",
       });
       blogForm.reset();
-      queryClient.invalidateQueries({ queryKey: ['/api/blog-posts'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/recent-blog-posts'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/blog-posts"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/recent-blog-posts"] });
     },
     onError: (error) => {
       toast({
         title: "Error",
         description: error.message || "Failed to add blog post",
-        variant: "destructive"
+        variant: "destructive",
       });
-    }
+    },
   });
 
   // Verify admin key against the backend
   const validateAdminKey = async (key: string | undefined) => {
     if (!key) return false;
     try {
-      const response = await fetch('/api/admin/verify', {
-        method: 'POST',
+      const response = await fetch("/api/admin/verify", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Admin-Key': key
-        }
+          "Content-Type": "application/json",
+          "Admin-Key": key,
+        },
       });
 
       if (response.ok) {
@@ -335,7 +357,7 @@ export default function Admin() {
         toast({
           title: "Authentication Failed",
           description: "Invalid admin key",
-          variant: "destructive"
+          variant: "destructive",
         });
         return false;
       }
@@ -343,7 +365,7 @@ export default function Admin() {
       toast({
         title: "Error",
         description: "Failed to verify admin key",
-        variant: "destructive"
+        variant: "destructive",
       });
       return false;
     }
@@ -353,39 +375,38 @@ export default function Admin() {
   const changeKeyMutation = useMutation({
     mutationFn: async (data: ChangeKeyFormValues) => {
       if (!data?.newKey) {
-        throw new Error('New key is required');
+        throw new Error("New key is required");
       }
-      const response = await fetch('/api/admin/key', {
-        method: 'POST',
+      const response = await fetch("/api/admin/key", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Admin-Key': adminKey || ''
+          "Content-Type": "application/json",
+          "Admin-Key": adminKey || "",
         },
-        body: JSON.stringify({ newKey: data.newKey })
+        body: JSON.stringify({ newKey: data.newKey }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to change admin key');
+        throw new Error(errorData.message || "Failed to change admin key");
       }
       return response.json();
     },
     onSuccess: () => {
       toast({
-        title: 'Admin Key Changed',
-        description: 'Your admin key has been successfully updated.',
+        title: "Admin Key Changed",
+        description: "Your admin key has been successfully updated.",
       });
       changeKeyForm.reset();
     },
     onError: (error) => {
       toast({
-        title: 'Error',
-        description: error.message || 'Failed to change admin key',
-        variant: 'destructive',
+        title: "Error",
+        description: error.message || "Failed to change admin key",
+        variant: "destructive",
       });
     },
   });
-
 
   // Handle admin login
   const handleLogin = async (values: AuthFormValues) => {
@@ -393,7 +414,7 @@ export default function Admin() {
     if (success) {
       toast({
         title: "Authenticated",
-        description: "You are now logged in as admin"
+        description: "You are now logged in as admin",
       });
     }
   };
@@ -410,7 +431,7 @@ export default function Admin() {
     setAdminKey("");
     toast({
       title: "Logged Out",
-      description: "You have been logged out"
+      description: "You have been logged out",
     });
     setLocation("/");
   };
@@ -418,7 +439,10 @@ export default function Admin() {
   // Handle product form submission
   const onSubmitProduct = (data: ProductFormValues) => {
     if (editingProduct) {
-      updateProductMutation.mutate({ ...data, id: editingProduct.id } as Product);
+      updateProductMutation.mutate({
+        ...data,
+        id: editingProduct.id,
+      } as Product);
     } else {
       addProductMutation.mutate(data);
     }
@@ -431,14 +455,14 @@ export default function Admin() {
       slug: product.slug,
       description: product.description,
       price: product.price,
-      oldPrice: product.oldPrice || null,
+      oldPrice: product.old_price || null,
       image: product.image,
-      categoryId: product.categoryId || 0,
+      categoryId: product.category_id || 0,
       rating: product.rating,
       isNew: product.isNew,
       isOrganic: product.isOrganic,
       isBestseller: product.isBestseller,
-      details: Array.isArray(product.details) ? product.details : []
+      details: Array.isArray(product.details) ? product.details : [],
     });
   };
 
@@ -451,13 +475,13 @@ export default function Admin() {
       excerpt: post.excerpt,
       image: post.image,
       category: post.category,
-      date: new Date(post.date).toISOString().split('T')[0],
-      tags: post.tags || '',
-      author: post.author || '',
-      metaTitle: post.metaTitle || '',
-      metaDescription: post.metaDescription || '',
+      date: new Date(post.date).toISOString().split("T")[0],
+      tags: post.tags || "",
+      author: post.author || "",
+      metaTitle: post.metaTitle || "",
+      metaDescription: post.metaDescription || "",
       featured: post.featured || false,
-      status: post.status || 'published'
+      status: post.status || "published",
     });
   };
 
@@ -470,8 +494,8 @@ export default function Admin() {
   const generateSlug = (text: string): string => {
     return text
       .toLowerCase()
-      .replace(/[^\w ]+/g, '')
-      .replace(/ +/g, '-');
+      .replace(/[^\w ]+/g, "")
+      .replace(/ +/g, "-");
   };
 
   if (!authenticated) {
@@ -484,11 +508,16 @@ export default function Admin() {
           <Card>
             <CardHeader>
               <CardTitle>Admin Login</CardTitle>
-              <CardDescription>Enter your admin key to access the admin panel</CardDescription>
+              <CardDescription>
+                Enter your admin key to access the admin panel
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <Form {...authForm}>
-                <form onSubmit={authForm.handleSubmit(handleLogin)} className="space-y-4">
+                <form
+                  onSubmit={authForm.handleSubmit(handleLogin)}
+                  className="space-y-4"
+                >
                   <FormField
                     control={authForm.control}
                     name="adminKey"
@@ -496,22 +525,24 @@ export default function Admin() {
                       <FormItem>
                         <FormLabel>Admin Key</FormLabel>
                         <FormControl>
-                          <Input 
-                            placeholder="Enter your admin key" 
-                            type="password" 
-                            {...field} 
+                          <Input
+                            placeholder="Enter your admin key"
+                            type="password"
+                            {...field}
                           />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                  <Button 
-                    type="submit" 
+                  <Button
+                    type="submit"
                     className="w-full"
                     disabled={authForm.formState.isSubmitting}
                   >
-                    {authForm.formState.isSubmitting ? "Logging in..." : "Login"}
+                    {authForm.formState.isSubmitting
+                      ? "Logging in..."
+                      : "Login"}
                   </Button>
                 </form>
               </Form>
@@ -530,7 +561,9 @@ export default function Admin() {
       <div className="container py-10">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-          <Button variant="outline" onClick={handleLogout}>Logout</Button>
+          <Button variant="outline" onClick={handleLogout}>
+            Logout
+          </Button>
         </div>
 
         <Card className="mb-8">
@@ -540,7 +573,10 @@ export default function Admin() {
           </CardHeader>
           <CardContent>
             <Form {...changeKeyForm}>
-              <form onSubmit={changeKeyForm.handleSubmit(handleChangeKey)} className="space-y-4">
+              <form
+                onSubmit={changeKeyForm.handleSubmit(handleChangeKey)}
+                className="space-y-4"
+              >
                 <FormField
                   control={changeKeyForm.control}
                   name="newKey"
@@ -560,9 +596,15 @@ export default function Admin() {
                 />
                 <Button
                   type="submit"
-                  disabled={changeKeyForm.formState.isSubmitting || changeKeyMutation.isPending}
+                  disabled={
+                    changeKeyForm.formState.isSubmitting ||
+                    changeKeyMutation.isPending
+                  }
                 >
-                  {changeKeyForm.formState.isSubmitting || changeKeyMutation.isPending ? "Updating..." : "Update Key"}
+                  {changeKeyForm.formState.isSubmitting ||
+                  changeKeyMutation.isPending
+                    ? "Updating..."
+                    : "Update Key"}
                 </Button>
               </form>
             </Form>
@@ -586,7 +628,10 @@ export default function Admin() {
               </CardHeader>
               <CardContent>
                 <Form {...productForm}>
-                  <form onSubmit={productForm.handleSubmit(onSubmitProduct)} className="space-y-4">
+                  <form
+                    onSubmit={productForm.handleSubmit(onSubmitProduct)}
+                    className="space-y-4"
+                  >
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField
                         control={productForm.control}
@@ -595,13 +640,16 @@ export default function Admin() {
                           <FormItem>
                             <FormLabel>Name</FormLabel>
                             <FormControl>
-                              <Input 
-                                placeholder="Product name" 
-                                {...field} 
+                              <Input
+                                placeholder="Product name"
+                                {...field}
                                 onChange={(e) => {
                                   field.onChange(e);
                                   if (!productForm.getValues("slug")) {
-                                    productForm.setValue("slug", generateSlug(e.target.value));
+                                    productForm.setValue(
+                                      "slug",
+                                      generateSlug(e.target.value),
+                                    );
                                   }
                                 }}
                               />
@@ -633,10 +681,10 @@ export default function Admin() {
                         <FormItem>
                           <FormLabel>Description</FormLabel>
                           <FormControl>
-                            <Textarea 
-                              placeholder="Product description" 
-                              className="min-h-[100px]" 
-                              {...field} 
+                            <Textarea
+                              placeholder="Product description"
+                              className="min-h-[100px]"
+                              {...field}
                             />
                           </FormControl>
                           <FormMessage />
@@ -652,12 +700,12 @@ export default function Admin() {
                           <FormItem>
                             <FormLabel>Price (₫)</FormLabel>
                             <FormControl>
-                              <Input 
-                                type="number" 
-                                step="0.01" 
-                                min="0" 
-                                placeholder="9.99" 
-                                {...field} 
+                              <Input
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                placeholder="9.99"
+                                {...field}
                               />
                             </FormControl>
                             <FormMessage />
@@ -672,15 +720,18 @@ export default function Admin() {
                           <FormItem>
                             <FormLabel>Old Price (₫) (Optional)</FormLabel>
                             <FormControl>
-                              <Input 
-                                type="number" 
-                                step="0.01" 
-                                min="0" 
-                                placeholder="12.99" 
-                                {...field} 
-                                value={field.value === null ? '' : field.value}
+                              <Input
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                placeholder="12.99"
+                                {...field}
+                                value={field.value === null ? "" : field.value}
                                 onChange={(e) => {
-                                  const value = e.target.value === '' ? null : parseFloat(e.target.value);
+                                  const value =
+                                    e.target.value === ""
+                                      ? null
+                                      : parseFloat(e.target.value);
                                   field.onChange(value);
                                 }}
                               />
@@ -697,11 +748,13 @@ export default function Admin() {
                           <FormItem>
                             <FormLabel>Category</FormLabel>
                             <FormControl>
-                              <select 
+                              <select
                                 className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                 {...field}
                                 value={field.value}
-                                onChange={(e) => field.onChange(parseInt(e.target.value))}
+                                onChange={(e) =>
+                                  field.onChange(parseInt(e.target.value))
+                                }
                               >
                                 <option value="">Select Category</option>
                                 {categories?.map((category: any) => (
@@ -724,7 +777,10 @@ export default function Admin() {
                         <FormItem>
                           <FormLabel>Image URL</FormLabel>
                           <FormControl>
-                            <Input placeholder="https://example.com/image.jpg" {...field} />
+                            <Input
+                              placeholder="https://example.com/image.jpg"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -738,13 +794,13 @@ export default function Admin() {
                         <FormItem>
                           <FormLabel>Rating (0-5)</FormLabel>
                           <FormControl>
-                            <Input 
-                              type="number" 
-                              step="0.1" 
-                              min="0" 
-                              max="5" 
-                              placeholder="4.5" 
-                              {...field} 
+                            <Input
+                              type="number"
+                              step="0.1"
+                              min="0"
+                              max="5"
+                              placeholder="4.5"
+                              {...field}
                             />
                           </FormControl>
                           <FormMessage />
@@ -757,20 +813,26 @@ export default function Admin() {
                       name="details"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Chi tiết sản phẩm (mỗi dòng là một điểm)</FormLabel>
+                          <FormLabel>
+                            Chi tiết sản phẩm (mỗi dòng là một điểm)
+                          </FormLabel>
                           <FormControl>
-                            <Textarea 
+                            <Textarea
                               placeholder="- 100% hữu cơ&#13;&#10;- Giàu dinh dưỡng&#13;&#10;- Không chất bảo quản"
-                              className="min-h-[100px]" 
+                              className="min-h-[100px]"
                               onChange={(e) => {
                                 // Split text by new lines, trim and filter empty lines
                                 const details = e.target.value
-                                  .split('\n')
-                                  .map(line => line.trim())
-                                  .filter(line => line && line !== '-');
+                                  .split("\n")
+                                  .map((line) => line.trim())
+                                  .filter((line) => line && line !== "-");
                                 field.onChange(details);
                               }}
-                              value={Array.isArray(field.value) ? field.value.join('\n') : (field.value || '')}
+                              value={
+                                Array.isArray(field.value)
+                                  ? field.value.join("\n")
+                                  : field.value || ""
+                              }
                             />
                           </FormControl>
                           <FormMessage />
@@ -834,15 +896,21 @@ export default function Admin() {
                       />
                     </div>
 
-                    <Button 
-                      type="submit" 
-                      className="w-full" 
-                      disabled={addProductMutation.isPending || updateProductMutation.isPending}
-                    >
-                      {editingProduct 
-                        ? (updateProductMutation.isPending ? "Updating..." : "Update Product")
-                        : (addProductMutation.isPending ? "Adding..." : "Add Product")
+                    <Button
+                      type="submit"
+                      className="w-full"
+                      disabled={
+                        addProductMutation.isPending ||
+                        updateProductMutation.isPending
                       }
+                    >
+                      {editingProduct
+                        ? updateProductMutation.isPending
+                          ? "Updating..."
+                          : "Update Product"
+                        : addProductMutation.isPending
+                          ? "Adding..."
+                          : "Add Product"}
                     </Button>
                   </form>
                 </Form>
@@ -854,15 +922,27 @@ export default function Admin() {
               <h3 className="text-lg font-semibold mb-4">Existing Products</h3>
               <div className="grid gap-4">
                 {products?.map((product) => (
-                  <div key={product.id} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div
+                    key={product.id}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
                     <div className="flex items-center space-x-4">
-                      <img src={product.image} alt={product.name} className="w-16 h-16 object-cover rounded" />
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="w-16 h-16 object-cover rounded"
+                      />
                       <div>
                         <h4 className="font-medium">{product.name}</h4>
-                        <p className="text-sm text-gray-500">{product.price.toLocaleString('vi-VN')}₫</p>
+                        <p className="text-sm text-gray-500">
+                          {product.price.toLocaleString("vi-VN")}₫
+                        </p>
                       </div>
                     </div>
-                    <Button onClick={() => handleEditProduct(product)} variant="outline">
+                    <Button
+                      onClick={() => handleEditProduct(product)}
+                      variant="outline"
+                    >
                       Chỉnh sửa
                     </Button>
                   </div>
@@ -882,7 +962,10 @@ export default function Admin() {
               </CardHeader>
               <CardContent>
                 <Form {...blogForm}>
-                  <form onSubmit={blogForm.handleSubmit(onSubmitBlog)} className="space-y-4">
+                  <form
+                    onSubmit={blogForm.handleSubmit(onSubmitBlog)}
+                    className="space-y-4"
+                  >
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField
                         control={blogForm.control}
@@ -891,13 +974,16 @@ export default function Admin() {
                           <FormItem>
                             <FormLabel>Title</FormLabel>
                             <FormControl>
-                              <Input 
-                                placeholder="Blog post title" 
-                                {...field} 
+                              <Input
+                                placeholder="Blog post title"
+                                {...field}
                                 onChange={(e) => {
                                   field.onChange(e);
                                   if (!blogForm.getValues("slug")) {
-                                    blogForm.setValue("slug", generateSlug(e.target.value));
+                                    blogForm.setValue(
+                                      "slug",
+                                      generateSlug(e.target.value),
+                                    );
                                   }
                                 }}
                               />
@@ -929,7 +1015,10 @@ export default function Admin() {
                         <FormItem>
                           <FormLabel>Excerpt</FormLabel>
                           <FormControl>
-                            <Input placeholder="Brief summary of the blog post" {...field} />
+                            <Input
+                              placeholder="Brief summary of the blog post"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -946,7 +1035,9 @@ export default function Admin() {
                             <div data-color-mode="light" className="w-full">
                               <MDEditor
                                 value={field.value}
-                                onChange={(value) => field.onChange(value || '')}
+                                onChange={(value) =>
+                                  field.onChange(value || "")
+                                }
                                 height={400}
                                 preview="edit"
                               />
@@ -965,7 +1056,10 @@ export default function Admin() {
                           <FormItem>
                             <FormLabel>Category</FormLabel>
                             <FormControl>
-                              <Input placeholder="e.g. Nutrition, Recipes" {...field} />
+                              <Input
+                                placeholder="e.g. Nutrition, Recipes"
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -994,7 +1088,10 @@ export default function Admin() {
                         <FormItem>
                           <FormLabel>Image URL</FormLabel>
                           <FormControl>
-                            <Input placeholder="https://example.com/image.jpg" {...field} />
+                            <Input
+                              placeholder="https://example.com/image.jpg"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -1023,7 +1120,10 @@ export default function Admin() {
                           <FormItem>
                             <FormLabel>Tags (comma separated)</FormLabel>
                             <FormControl>
-                              <Input placeholder="organic,nutrition,tips" {...field} />
+                              <Input
+                                placeholder="organic,nutrition,tips"
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -1039,7 +1139,10 @@ export default function Admin() {
                           <FormItem>
                             <FormLabel>Meta Title (SEO)</FormLabel>
                             <FormControl>
-                              <Input placeholder="Meta title for SEO" {...field} />
+                              <Input
+                                placeholder="Meta title for SEO"
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -1053,7 +1156,10 @@ export default function Admin() {
                           <FormItem>
                             <FormLabel>Meta Description (SEO)</FormLabel>
                             <FormControl>
-                              <Input placeholder="Meta description for SEO" {...field} />
+                              <Input
+                                placeholder="Meta description for SEO"
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -1075,7 +1181,9 @@ export default function Admin() {
                             </FormControl>
                             <div className="space-y-1 leading-none">
                               <FormLabel>Featured Post</FormLabel>
-                              <p className="text-sm text-muted-foreground">Feature this post on the homepage</p>
+                              <p className="text-sm text-muted-foreground">
+                                Feature this post on the homepage
+                              </p>
                             </div>
                           </FormItem>
                         )}
@@ -1088,7 +1196,7 @@ export default function Admin() {
                           <FormItem>
                             <FormLabel>Status</FormLabel>
                             <FormControl>
-                              <select 
+                              <select
                                 className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                 {...field}
                                 value={field.value}
@@ -1105,15 +1213,21 @@ export default function Admin() {
                       />
                     </div>
 
-                    <Button 
-                      type="submit" 
-                      className="w-full" 
-                      disabled={addBlogMutation.isPending || updateBlogMutation.isPending}
-                    >
-                      {editingBlogPost 
-                        ? (updateBlogMutation.isPending ? "Updating..." : "Update Blog Post")
-                        : (addBlogMutation.isPending ? "Adding..." : "Add Blog Post")
+                    <Button
+                      type="submit"
+                      className="w-full"
+                      disabled={
+                        addBlogMutation.isPending ||
+                        updateBlogMutation.isPending
                       }
+                    >
+                      {editingBlogPost
+                        ? updateBlogMutation.isPending
+                          ? "Updating..."
+                          : "Update Blog Post"
+                        : addBlogMutation.isPending
+                          ? "Adding..."
+                          : "Add Blog Post"}
                     </Button>
                   </form>
                 </Form>
@@ -1122,20 +1236,32 @@ export default function Admin() {
 
             {/* Blog Post List */}
             <div className="mt-8">
-              <h3 className="text-lg font-semibold mb-4">Existing Blog Posts</h3>
+              <h3 className="text-lg font-semibold mb-4">
+                Existing Blog Posts
+              </h3>
               <div className="grid gap-4">
                 {blogPosts.map((post) => (
-                  <div key={post.id} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div
+                    key={post.id}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
                     <div className="flex items-center space-x-4">
-                      <img src={post.image} alt={post.title} className="w-16 h-16 object-cover rounded" />
+                      <img
+                        src={post.image}
+                        alt={post.title}
+                        className="w-16 h-16 object-cover rounded"
+                      />
                       <div>
                         <h4 className="font-medium">{post.title}</h4>
                         <p className="text-sm text-gray-500">
-                          {new Date(post.date).toLocaleDateString('vi-VN')}
+                          {new Date(post.date).toLocaleDateString("vi-VN")}
                         </p>
                       </div>
                     </div>
-                    <Button onClick={() => handleEditBlogPost(post)} variant="outline">
+                    <Button
+                      onClick={() => handleEditBlogPost(post)}
+                      variant="outline"
+                    >
                       Chỉnh sửa
                     </Button>
                   </div>
