@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
@@ -30,6 +29,7 @@ const productFormSchema = z.object({
   isNew: z.boolean().optional(),
   isOrganic: z.boolean().optional(),
   isBestseller: z.boolean().optional(),
+  details: z.array(z.string()).default([]).or(z.string().transform(str => str.split('\n').map(s => s.trim()).filter(s => s && s !== '-'))),
 });
 
 type ProductFormValues = z.infer<typeof productFormSchema>;
@@ -115,6 +115,7 @@ export default function Admin() {
       isNew: false,
       isOrganic: true,
       isBestseller: false,
+      details: [],
     }
   });
 
@@ -1036,7 +1037,7 @@ export default function Admin() {
                         name="metaTitle"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Meta Title (SEO)</FormLabel>
+                            <FormLabel>Meta Title (SEOFormLabel>
                             <FormControl>
                               <Input placeholder="Meta title for SEO" {...field} />
                             </FormControl>

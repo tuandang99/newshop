@@ -182,11 +182,20 @@ export const storage = {
         is_new: product.isNew ? 1 : 0,
         is_organic: product.isOrganic ? 1 : 0,
         is_bestseller: product.isBestseller ? 1 : 0,
-        details: JSON.stringify(product.details)
+        details: Array.isArray(product.details) ? JSON.stringify(product.details) : '[]'
       }
     );
-    const [newProduct] = await pool.query('SELECT * FROM products WHERE id = ?', [(result as any).insertId]);
-    return (newProduct as Product[])[0];
+    const [rows] = await pool.query('SELECT * FROM products WHERE id = ?', [(result as any).insertId]);
+    const newProduct = (rows as Product[])[0];
+    if (newProduct.details) {
+      try {
+        newProduct.details = JSON.parse(newProduct.details as unknown as string);
+      } catch (error) {
+        console.error('Error parsing product details:', error);
+        newProduct.details = [];
+      }
+    }
+    return newProduct;
   },
 
   async updateProduct(id: number, product: Partial<InsertProduct>): Promise<Product | undefined> {
