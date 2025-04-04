@@ -144,10 +144,12 @@ export default function Admin() {
     enabled: authenticated
   });
 
-  const { data: products = [] } = useQuery<Product[]>({
+  const { data: productsResponse } = useQuery<ProductsResponse>({
     queryKey: ['/api/products'],
     enabled: authenticated
   });
+
+  const products = productsResponse?.products || [];
 
   const { data: blogPosts = [] } = useQuery<BlogPost[]>({
     queryKey: ['/api/blog-posts'],
