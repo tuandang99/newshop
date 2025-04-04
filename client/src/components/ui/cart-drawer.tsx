@@ -49,7 +49,7 @@ export default function CartDrawer() {
       >
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold font-poppins">Your Cart</h2>
+            <h2 className="text-xl font-semibold font-poppins">Giỏ Hàng</h2>
             <Button variant="ghost" size="icon" onClick={toggleCart}>
               <CloseIcon className="h-6 w-6" />
             </Button>
@@ -59,13 +59,13 @@ export default function CartDrawer() {
             {items.length === 0 ? (
               <div className="py-8 text-center">
                 <ShoppingCartIcon className="h-12 w-12 text-neutral-300 mx-auto mb-3" />
-                <p className="text-neutral-500">Your cart is empty</p>
+                <p className="text-neutral-500">Giỏ hàng trống</p>
                 <Button
                   variant="link"
                   onClick={toggleCart}
                   className="mt-4 text-sm text-primary hover:underline"
                 >
-                  Browse products
+                  Xem sản phẩm
                 </Button>
               </div>
             ) : (
@@ -123,15 +123,15 @@ export default function CartDrawer() {
 
           <div className="border-t border-neutral-200 pt-4 pb-6">
             <div className="flex justify-between mb-2">
-              <span>Subtotal</span>
+              <span>Tạm tính</span>
               <span>{subtotal.toLocaleString("vi-VN")}₫</span>
             </div>
             <div className="flex justify-between mb-4">
-              <span>Shipping</span>
-              <span>Calculated at checkout</span>
+              <span>Phí vận chuyển</span>
+              <span>Tính khi thanh toán</span>
             </div>
             <div className="flex justify-between font-semibold text-lg mb-6">
-              <span>Total</span>
+              <span>Tổng cộng</span>
               <span>{subtotal.toLocaleString("vi-VN")}₫</span>
             </div>
             <Button
@@ -139,7 +139,7 @@ export default function CartDrawer() {
               onClick={openCheckoutModal}
               disabled={items.length === 0}
             >
-              Proceed to Checkout
+              Tiến hành thanh toán
             </Button>
           </div>
         </div>
