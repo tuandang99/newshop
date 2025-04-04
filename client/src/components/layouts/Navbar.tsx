@@ -79,7 +79,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <Link href="/" className="flex items-center">
-              <img src="/logo.png" alt="TUHO Logo" className="h-8 w-auto mr-2" />
+              <img src="/logo.png" alt="TUHO Logo" className="h-8 sm:h-10 md:h-12 w-auto mr-2" />
               <span className="text-xl font-bold font-poppins text-primary truncate max-w-[120px] sm:max-w-none">Tuho Foods</span>
             </Link>
             <div className="hidden md:flex ml-10 space-x-6">

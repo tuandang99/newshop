@@ -3,10 +3,10 @@ import { Button } from "@/components/ui/button";
 
 export default function About() {
   return (
-    <section id="about" className="py-12 bg-primary/5">
+    <section id="about" className="py-8 sm:py-12 bg-primary/5">
       <div className="container mx-auto px-4">
-        <div className="flex flex-col-reverse md:flex-row items-center">
-          <div className="md:w-1/2 mt-8 md:mt-0 md:pr-8">
+        <div className="flex flex-col-reverse md:flex-row items-center gap-6 md:gap-8">
+          <div className="w-full md:w-1/2 mt-6 sm:mt-8 md:mt-0 md:pr-8">
             <h2 className="text-3xl font-bold font-poppins mb-4">Lời ngỏ</h2>
             <p className="mb-4 text-neutral-700">
               Tại Tuho Healthy Food, chúng tôi tin rằng sức khỏe bắt đầu từ thực
