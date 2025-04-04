@@ -4,8 +4,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { X } from "@/lib/icons";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useCart } from "@/context/CartContext";
@@ -83,22 +95,35 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
+    >
+      <DialogContent
+        className="sm:max-w-[425px]"
+        onPointerDown={(e) => e.stopPropagation()}
+      >
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold font-poppins">Hoàn tất đơn hàng</DialogTitle>
-          <Button
+          <DialogTitle className="text-xl font-semibold font-poppins">
+            Hoàn tất đơn hàng
+          </DialogTitle>
+          {/* <Button
             variant="ghost"
             size="icon"
             onClick={onClose}
             className="absolute right-4 top-4"
           >
             <X className="h-4 w-4" />
-          </Button>
+          </Button> */}
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-4">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-4 mt-4"
+          >
             <FormField
               control={form.control}
               name="name"
@@ -120,7 +145,12 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="Nhập địa chỉ email của bạn" {...field} type="email" required />
+                    <Input
+                      placeholder="Nhập địa chỉ email của bạn"
+                      {...field}
+                      type="email"
+                      required
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -134,7 +164,12 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                 <FormItem>
                   <FormLabel>Số điện thoại</FormLabel>
                   <FormControl>
-                    <Input placeholder="Nhập số điện thoại của bạn" {...field} type="tel" required />
+                    <Input
+                      placeholder="Nhập số điện thoại của bạn"
+                      {...field}
+                      type="tel"
+                      required
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -148,7 +183,12 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                 <FormItem>
                   <FormLabel>Địa chỉ giao hàng</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Nhập địa chỉ giao hàng của bạn" {...field} rows={3} required />
+                    <Textarea
+                      placeholder="Nhập địa chỉ giao hàng của bạn"
+                      {...field}
+                      rows={3}
+                      required
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -156,8 +196,8 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
             />
 
             <div className="pt-2">
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="w-full bg-primary text-white hover:bg-primary/90"
                 disabled={isSubmitting}
               >
