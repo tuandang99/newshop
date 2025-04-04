@@ -13,7 +13,7 @@ export type Category = InsertCategory & { id: number };
 // Product
 export const insertProductSchema = z.object({
   name: z.string(),
-  slug: z.string(),
+  slug: z.string(), 
   description: z.string(),
   price: z.number(),
   oldPrice: z.number().nullable(),
@@ -23,6 +23,10 @@ export const insertProductSchema = z.object({
   isNew: z.boolean().default(false),
   isOrganic: z.boolean().default(true),
   isBestseller: z.boolean().default(false),
+  discount: z.number().optional().transform(val => {
+    if (!val) return null;
+    return Math.min(Math.max(val, 0), 100); // Ensure discount is between 0-100%
+  }),
 });
 
 export type InsertProduct = z.infer<typeof insertProductSchema>;

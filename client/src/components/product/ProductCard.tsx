@@ -37,6 +37,11 @@ export default function ProductCard({ product }: ProductCardProps) {
           New
         </span>
       )}
+      {product.oldPrice && (
+        <span className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full z-10">
+          -{Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)}%
+        </span>
+      )}
       {product.isOrganic && (
         <span className="absolute top-2 left-2 bg-primary text-white text-xs px-2 py-1 rounded-full z-10">
           Organic
