@@ -144,6 +144,93 @@ export default function Admin() {
     enabled: authenticated
   });
 
+  const { data: products = [] } = useQuery<Product[]>({
+    queryKey: ['/api/products'],
+    enabled: authenticated
+  });
+
+  const { data: blogPosts = [] } = useQuery<BlogPost[]>({
+    queryKey: ['/api/blog-posts'],
+    enabled: authenticated
+  });
+
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [editingBlogPost, setEditingBlogPost] = useState<BlogPost | null>(null);
+
+  // Update product mutation
+  const updateProductMutation = useMutation({
+    mutationFn: async (data: Product) => {
+      const response = await fetch(`/api/admin/products/${data.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Admin-Key': adminKey
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update product');
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Product Updated",
+        description: "Product has been updated successfully",
+      });
+      setEditingProduct(null);
+      productForm.reset();
+      queryClient.invalidateQueries({ queryKey: ['/api/products'] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update product",
+        variant: "destructive"
+      });
+    }
+  });
+
+  // Update blog post mutation
+  const updateBlogMutation = useMutation({
+    mutationFn: async (data: BlogPost) => {
+      const response = await fetch(`/api/admin/blog-posts/${data.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Admin-Key': adminKey
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update blog post');
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Blog Post Updated",
+        description: "Blog post has been updated successfully",
+      });
+      setEditingBlogPost(null);
+      blogForm.reset();
+      queryClient.invalidateQueries({ queryKey: ['/api/blog-posts'] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update blog post",
+        variant: "destructive"
+      });
+    }
+  });
+
   // Add product mutation
   const addProductMutation = useMutation({
     mutationFn: async (data: ProductFormValues) => {
@@ -325,7 +412,48 @@ export default function Admin() {
 
   // Handle product form submission
   const onSubmitProduct = (data: ProductFormValues) => {
-    addProductMutation.mutate(data);
+    if (editingProduct) {
+      updateProductMutation.mutate({ ...data, id: editingProduct.id } as Product);
+    } else {
+      addProductMutation.mutate(data);
+    }
+  };
+
+  const handleEditProduct = (product: Product) => {
+    setEditingProduct(product);
+    productForm.reset({
+      name: product.name,
+      slug: product.slug,
+      description: product.description,
+      price: product.price,
+      oldPrice: product.oldPrice,
+      image: product.image,
+      categoryId: product.categoryId,
+      rating: product.rating,
+      isNew: product.isNew,
+      isOrganic: product.isOrganic,
+      isBestseller: product.isBestseller,
+      details: product.details || []
+    });
+  };
+
+  const handleEditBlogPost = (post: BlogPost) => {
+    setEditingBlogPost(post);
+    blogForm.reset({
+      title: post.title,
+      slug: post.slug,
+      content: post.content,
+      excerpt: post.excerpt,
+      image: post.image,
+      category: post.category,
+      date: new Date(post.date).toISOString().split('T')[0],
+      tags: post.tags || '',
+      author: post.author || '',
+      metaTitle: post.metaTitle || '',
+      metaDescription: post.metaDescription || '',
+      featured: post.featured || false,
+      status: post.status || 'published'
+    });
   };
 
   // Handle blog form submission
@@ -701,14 +829,38 @@ export default function Admin() {
                     <Button 
                       type="submit" 
                       className="w-full" 
-                      disabled={addProductMutation.isPending}
+                      disabled={addProductMutation.isPending || updateProductMutation.isPending}
                     >
-                      {addProductMutation.isPending ? "Adding..." : "Add Product"}
+                      {editingProduct 
+                        ? (updateProductMutation.isPending ? "Updating..." : "Update Product")
+                        : (addProductMutation.isPending ? "Adding..." : "Add Product")
+                      }
                     </Button>
                   </form>
                 </Form>
               </CardContent>
             </Card>
+
+            {/* Product List */}
+            <div className="mt-8">
+              <h3 className="text-lg font-semibold mb-4">Existing Products</h3>
+              <div className="grid gap-4">
+                {products.map((product) => (
+                  <div key={product.id} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div className="flex items-center space-x-4">
+                      <img src={product.image} alt={product.name} className="w-16 h-16 object-cover rounded" />
+                      <div>
+                        <h4 className="font-medium">{product.name}</h4>
+                        <p className="text-sm text-gray-500">{product.price.toLocaleString('vi-VN')}₫</p>
+                      </div>
+                    </div>
+                    <Button onClick={() => handleEditProduct(product)} variant="outline">
+                      Chỉnh sửa
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
           </TabsContent>
 
           {/* Blog Posts Tab */}
@@ -948,14 +1100,40 @@ export default function Admin() {
                     <Button 
                       type="submit" 
                       className="w-full" 
-                      disabled={addBlogMutation.isPending}
+                      disabled={addBlogMutation.isPending || updateBlogMutation.isPending}
                     >
-                      {addBlogMutation.isPending ? "Adding..." : "Add Blog Post"}
+                      {editingBlogPost 
+                        ? (updateBlogMutation.isPending ? "Updating..." : "Update Blog Post")
+                        : (addBlogMutation.isPending ? "Adding..." : "Add Blog Post")
+                      }
                     </Button>
                   </form>
                 </Form>
               </CardContent>
             </Card>
+
+            {/* Blog Post List */}
+            <div className="mt-8">
+              <h3 className="text-lg font-semibold mb-4">Existing Blog Posts</h3>
+              <div className="grid gap-4">
+                {blogPosts.map((post) => (
+                  <div key={post.id} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div className="flex items-center space-x-4">
+                      <img src={post.image} alt={post.title} className="w-16 h-16 object-cover rounded" />
+                      <div>
+                        <h4 className="font-medium">{post.title}</h4>
+                        <p className="text-sm text-gray-500">
+                          {new Date(post.date).toLocaleDateString('vi-VN')}
+                        </p>
+                      </div>
+                    </div>
+                    <Button onClick={() => handleEditBlogPost(post)} variant="outline">
+                      Chỉnh sửa
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
