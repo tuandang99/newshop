@@ -30,10 +30,10 @@ interface CheckoutModalProps {
 }
 
 const formSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-  phone: z.string().min(5, "Phone number is required"),
-  address: z.string().min(5, "Address is required"),
+  name: z.string().min(2, "Tên phải có ít nhất 2 ký tự"),
+  email: z.string().email("Địa chỉ email không hợp lệ"),
+  phone: z.string().min(5, "Số điện thoại là bắt buộc"),
+  address: z.string().min(5, "Địa chỉ là bắt buộc"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -56,8 +56,8 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   const onSubmit = async (data: FormValues) => {
     if (items.length === 0) {
       toast({
-        title: "Your cart is empty",
-        description: "Please add some items to your cart before checking out.",
+        title: "Giỏ hàng trống",
+        description: "Vui lòng thêm sản phẩm vào giỏ hàng trước khi thanh toán.",
         variant: "destructive",
       });
       return;
@@ -75,8 +75,8 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
       await apiRequest("POST", "/api/orders", orderData);
 
       toast({
-        title: "Order placed successfully!",
-        description: "We'll send you a confirmation email shortly.",
+        title: "Đặt hàng thành công!",
+        description: "Chúng tôi sẽ gửi email xác nhận cho bạn trong thời gian sớm nhất.",
       });
 
       clearCart();
@@ -85,8 +85,8 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     } catch (error) {
       console.error("Error placing order:", error);
       toast({
-        title: "Failed to place order",
-        description: "Please try again later or contact support.",
+        title: "Đặt hàng thất bại",
+        description: "Vui lòng thử lại sau hoặc liên hệ hỗ trợ.",
         variant: "destructive",
       });
     } finally {
