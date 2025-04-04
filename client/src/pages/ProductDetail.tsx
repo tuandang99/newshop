@@ -78,12 +78,12 @@ export default function ProductDetail() {
     return (
       <section className="py-10 bg-white">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-2xl font-bold font-poppins mb-4">Product Not Found</h2>
+          <h2 className="text-2xl font-bold font-poppins mb-4">Không tìm thấy sản phẩm</h2>
           <p className="text-neutral-700 mb-6">
-            The product you're looking for doesn't exist or has been removed.
+            Sản phẩm bạn đang tìm không tồn tại hoặc đã bị xóa.
           </p>
           <Button asChild>
-            <Link href="/products">Back to Products</Link>
+            <Link href="/products">Quay lại mục sản phẩm</Link>
           </Button>
         </div>
       </section>
@@ -93,7 +93,7 @@ export default function ProductDetail() {
   return (
     <>
       <Helmet>
-        <title>{product.name} - NatureNutri</title>
+        <title>{product.name} - TUHO Healthy FoodFood</title>
         <meta name="description" content={product.description} />
       </Helmet>
       
@@ -182,7 +182,7 @@ export default function ProductDetail() {
               </div>
               
               <div className="border-t border-neutral-200 pt-6">
-                <h3 className="font-semibold mb-2">Product Details</h3>
+                <h3 className="font-semibold mb-2">Chi tiết sản phẩm</h3>
                 <ul className="list-disc list-inside text-neutral-700 space-y-1">
                   <li>100% Organic certified</li>
                   <li>High in essential nutrients</li>
