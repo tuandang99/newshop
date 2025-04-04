@@ -53,6 +53,7 @@ async function initDb() {
         is_new TINYINT DEFAULT 0,
         is_organic TINYINT DEFAULT 1,
         is_bestseller TINYINT DEFAULT 0,
+        details JSON NULL,
         FOREIGN KEY (category_id) REFERENCES categories(id)
       )
     `);
@@ -164,7 +165,8 @@ export const storage = {
         rating: product.rating,
         is_new: product.isNew ? 1 : 0,
         is_organic: product.isOrganic ? 1 : 0,
-        is_bestseller: product.isBestseller ? 1 : 0
+        is_bestseller: product.isBestseller ? 1 : 0,
+        details: JSON.stringify(product.details)
       }
     );
     const [newProduct] = await pool.query('SELECT * FROM products WHERE id = ?', [(result as any).insertId]);
