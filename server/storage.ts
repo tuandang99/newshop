@@ -134,8 +134,15 @@ export const storage = {
   async getProducts(): Promise<Product[]> {
     const [rows] = await pool.query('SELECT * FROM products');
     return (rows as Product[]).map(product => {
-      if (product.details) {
-        product.details = JSON.parse(product.details as unknown as string);
+      try {
+        if (product.details) {
+          product.details = JSON.parse(product.details as unknown as string);
+        } else {
+          product.details = [];
+        }
+      } catch (error) {
+        console.error('Error parsing product details:', error);
+        product.details = [];
       }
       return product;
     });
