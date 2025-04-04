@@ -133,7 +133,12 @@ export const storage = {
 
   async getProducts(): Promise<Product[]> {
     const [rows] = await pool.query('SELECT * FROM products');
-    return rows as Product[];
+    return (rows as Product[]).map(product => {
+      if (product.details) {
+        product.details = JSON.parse(product.details as unknown as string);
+      }
+      return product;
+    });
   },
 
   async getProductsByCategory(categoryId: number): Promise<Product[]> {
@@ -143,7 +148,11 @@ export const storage = {
 
   async getProductBySlug(slug: string): Promise<Product | undefined> {
     const [rows] = await pool.query('SELECT * FROM products WHERE slug = ?', [slug]);
-    return (rows as Product[])[0];
+    const product = (rows as Product[])[0];
+    if (product && product.details) {
+      product.details = JSON.parse(product.details as unknown as string);
+    }
+    return product;
   },
 
   async getFeaturedProducts(limit = 8): Promise<Product[]> {
@@ -185,11 +194,16 @@ export const storage = {
       rating: product.rating,
       is_new: product.isNew ? 1 : 0,
       is_organic: product.isOrganic ? 1 : 0,
-      is_bestseller: product.isBestseller ? 1 : 0
+      is_bestseller: product.isBestseller ? 1 : 0,
+      details: product.details ? JSON.stringify(product.details) : null
     };
     await pool.query('UPDATE products SET ? WHERE id = ?', [dbProduct, id]);
     const [updated] = await pool.query('SELECT * FROM products WHERE id = ?', [id]);
-    return (updated as Product[])[0];
+    const result = (updated as Product[])[0];
+    if (result && result.details) {
+      result.details = JSON.parse(result.details as unknown as string);
+    }
+    return result;
   },
 
   async deleteProduct(id: number): Promise<boolean> {
