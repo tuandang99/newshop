@@ -151,10 +151,12 @@ export default function Admin() {
 
   const products = productsResponse?.products || [];
 
-  const { data: blogPosts = [] } = useQuery<BlogPost[]>({
+  const { data: blogPostsResponse } = useQuery<BlogPostsResponse>({
     queryKey: ['/api/blog-posts'],
     enabled: authenticated
   });
+
+  const blogPosts = blogPostsResponse?.posts || [];
 
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [editingBlogPost, setEditingBlogPost] = useState<BlogPost | null>(null);
