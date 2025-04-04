@@ -478,8 +478,8 @@ export default function Admin() {
       date: new Date(post.date).toISOString().split("T")[0],
       tags: post.tags || "",
       author: post.author || "",
-      metaTitle: post.metaTitle || "",
-      metaDescription: post.metaDescription || "",
+      metaTitle: post.meta_title || "",
+      metaDescription: post.meta_description || "",
       featured: post.featured || false,
       status: post.status || "published",
     });
