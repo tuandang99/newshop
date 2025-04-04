@@ -172,7 +172,20 @@ export const storage = {
   },
 
   async updateProduct(id: number, product: Partial<InsertProduct>): Promise<Product | undefined> {
-    await pool.query('UPDATE products SET ? WHERE id = ?', [product, id]);
+    const dbProduct = {
+      name: product.name,
+      slug: product.slug,
+      description: product.description,
+      price: product.price,
+      old_price: product.oldPrice,
+      image: product.image,
+      category_id: product.categoryId,
+      rating: product.rating,
+      is_new: product.isNew ? 1 : 0,
+      is_organic: product.isOrganic ? 1 : 0,
+      is_bestseller: product.isBestseller ? 1 : 0
+    };
+    await pool.query('UPDATE products SET ? WHERE id = ?', [dbProduct, id]);
     const [updated] = await pool.query('SELECT * FROM products WHERE id = ?', [id]);
     return (updated as Product[])[0];
   },
