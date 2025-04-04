@@ -34,7 +34,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     <div className="product-card bg-white rounded-lg shadow-sm overflow-hidden relative">
       {product.isNew && (
         <span className="absolute top-2 left-2 bg-amber-500 text-white text-xs px-2 py-1 rounded-full z-10">
-          New
+          Mới
         </span>
       )}
       {product.oldPrice && (
@@ -44,12 +44,12 @@ export default function ProductCard({ product }: ProductCardProps) {
       )}
       {product.isOrganic && (
         <span className="absolute top-2 left-2 bg-primary text-white text-xs px-2 py-1 rounded-full z-10">
-          Organic
+          Hữu cơ
         </span>
       )}
       {product.isBestseller && (
         <span className="absolute top-2 left-2 bg-amber-500 text-white text-xs px-2 py-1 rounded-full z-10">
-          Bestseller
+          Bán chạy
         </span>
       )}
       <Link href={`/products/${product.slug}`}>
