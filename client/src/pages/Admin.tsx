@@ -297,6 +297,84 @@ export default function Admin() {
   });
 
   // Add blog post mutation
+  // Delete product mutation
+  const deleteProductMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const response = await fetch(`/api/admin/products/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Admin-Key": adminKey,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to delete product");
+      }
+
+      return true;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Product Deleted",
+        description: "Product has been deleted successfully",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete product",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Delete blog post mutation
+  const deleteBlogMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const response = await fetch(`/api/admin/blog-posts/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Admin-Key": adminKey,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to delete blog post");
+      }
+
+      return true;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Blog Post Deleted",
+        description: "Blog post has been deleted successfully",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/blog-posts"] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete blog post",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleDeleteProduct = (id: number) => {
+    if (window.confirm("Are you sure you want to delete this product?")) {
+      deleteProductMutation.mutate(id);
+    }
+  };
+
+  const handleDeleteBlogPost = (id: number) => {
+    if (window.confirm("Are you sure you want to delete this blog post?")) {
+      deleteBlogMutation.mutate(id);
+    }
+  };
+
   const addBlogMutation = useMutation({
     mutationFn: async (data: BlogFormValues) => {
       // Use fetch directly to include the admin-key header
@@ -938,12 +1016,20 @@ export default function Admin() {
                         </p>
                       </div>
                     </div>
-                    <Button
-                      onClick={() => handleEditProduct(product)}
-                      variant="outline"
-                    >
-                      Chỉnh sửa
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => handleEditProduct(product)}
+                        variant="outline"
+                      >
+                        Chỉnh sửa
+                      </Button>
+                      <Button
+                        onClick={() => handleDeleteProduct(product.id)}
+                        variant="destructive"
+                      >
+                        Xóa
+                      </Button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -1257,12 +1343,20 @@ export default function Admin() {
                         </p>
                       </div>
                     </div>
-                    <Button
-                      onClick={() => handleEditBlogPost(post)}
-                      variant="outline"
-                    >
-                      Chỉnh sửa
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => handleEditBlogPost(post)}
+                        variant="outline"
+                      >
+                        Chỉnh sửa
+                      </Button>
+                      <Button
+                        onClick={() => handleDeleteBlogPost(post.id)}
+                        variant="destructive"
+                      >
+                        Xóa
+                      </Button>
+                    </div>
                   </div>
                 ))}
               </div>
