@@ -80,7 +80,7 @@ export default function Navbar() {
           <div className="flex items-center">
             <Link href="/" className="flex items-center">
               <LeafIcon className="text-primary text-3xl mr-1" />
-              <span className="text-xl font-bold font-poppins text-primary truncate max-w-[120px] sm:max-w-none">NatureNutri</span>
+              <span className="text-xl font-bold font-poppins text-primary truncate max-w-[120px] sm:max-w-none">TUHO Healthy Food</span>
             </Link>
             <div className="hidden md:flex ml-10 space-x-6">
               <Link href="/" className={`${isActive("/")} font-medium transition`}>
