@@ -4,18 +4,18 @@ export default function Features() {
   const features = [
     {
       icon: <LeafIcon className="text-3xl text-primary" />,
-      title: "100% Organic",
-      description: "Our products are certified organic, sourced from trusted farmers who practice sustainable agriculture."
+      title: "100% Tự Nhiên",
+      description: "Sản phẩm từ nguyên liệu tự nhiên, không chất bảo quản, đảm bảo dinh dưỡng tốt nhất cho sức khỏe."
     },
     {
       icon: <TruckIcon className="text-3xl text-primary" />,
-      title: "Free Shipping",
-      description: "Enjoy free shipping on all orders over $50. We deliver fresh products right to your doorstep."
+      title: "Đa Dạng Sản Phẩm",
+      description: "Granola, thanh gạo lứt, bánh kẹp rong biển, ngũ cốc và các loại hạt dinh dưỡng tự nhiên."
     },
     {
       icon: <RecycleIcon className="text-3xl text-primary" />,
-      title: "Eco-Friendly",
-      description: "We use sustainable packaging and practices to minimize our environmental footprint."
+      title: "Chất Lượng Cao",
+      description: "Cam kết cung cấp thực phẩm healthy chất lượng cao, đảm bảo an toàn vệ sinh thực phẩm."
     }
   ];
 

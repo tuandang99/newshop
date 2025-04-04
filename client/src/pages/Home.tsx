@@ -12,11 +12,15 @@ export default function Home() {
   return (
     <>
       <Helmet>
-        <title>TUHO - Healthy Food</title>
+        <title>TUHO - Thực Phẩm Dinh Dưỡng | Granola, Gạo Lứt, Ngũ Cốc & Hạt Dinh Dưỡng</title>
         <meta
           name="description"
-          content="Premium organic foods for a healthier lifestyle. Discover our selection of nuts, granola bars, cereals, and superfoods."
+          content="TUHO cung cấp các loại thực phẩm dinh dưỡng tự nhiên như granola, thanh gạo lứt, bánh kẹp rong biển, ngũ cốc và hạt dinh dưỡng. ✓ 100% Tự Nhiên ✓ Giàu Dinh Dưỡng"
         />
+        <meta name="keywords" content="granola, thanh gạo lứt, bánh kẹp rong biển, ngũ cốc, hạt dinh dưỡng, thực phẩm healthy, đồ ăn healthy" />
+        <meta property="og:title" content="TUHO - Thực Phẩm Dinh Dưỡng Tự Nhiên" />
+        <meta property="og:description" content="Cung cấp thực phẩm dinh dưỡng tự nhiên: granola, thanh gạo lứt, bánh kẹp rong biển, ngũ cốc và hạt dinh dưỡng." />
+        <meta name="robots" content="index, follow" />
       </Helmet>
 
       <Hero />
