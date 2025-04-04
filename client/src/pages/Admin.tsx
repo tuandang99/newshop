@@ -619,6 +619,29 @@ export default function Admin() {
                       )}
                     />
 
+                    <FormField
+                      control={productForm.control}
+                      name="details"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Chi tiết sản phẩm (mỗi dòng là một điểm)</FormLabel>
+                          <FormControl>
+                            <Textarea 
+                              placeholder="- 100% hữu cơ&#13;&#10;- Giàu dinh dưỡng&#13;&#10;- Không chất bảo quản"
+                              className="min-h-[100px]" 
+                              onChange={(e) => {
+                                // Split text by new lines and filter empty lines
+                                const details = e.target.value.split('\n').map(line => line.trim()).filter(line => line);
+                                field.onChange(details);
+                              }}
+                              value={Array.isArray(field.value) ? field.value.join('\n') : ''}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <FormField
                         control={productForm.control}
