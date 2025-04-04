@@ -431,14 +431,14 @@ export default function Admin() {
       slug: product.slug,
       description: product.description,
       price: product.price,
-      oldPrice: product.oldPrice,
+      oldPrice: product.oldPrice || null,
       image: product.image,
-      categoryId: product.categoryId,
+      categoryId: product.categoryId || 0,
       rating: product.rating,
       isNew: product.isNew,
       isOrganic: product.isOrganic,
       isBestseller: product.isBestseller,
-      details: product.details || []
+      details: Array.isArray(product.details) ? product.details : []
     });
   };
 
