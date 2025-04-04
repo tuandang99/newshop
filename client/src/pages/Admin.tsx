@@ -821,11 +821,10 @@ export default function Admin() {
                               placeholder="- 100% hữu cơ&#13;&#10;- Giàu dinh dưỡng&#13;&#10;- Không chất bảo quản"
                               className="min-h-[100px]"
                               onChange={(e) => {
-                                // Split text by new lines, trim and filter empty lines
                                 const details = e.target.value
                                   .split("\n")
-                                  .map((line) => line.trim())
-                                  .filter((line) => line && line !== "-");
+                                  .map(line => line.startsWith("-") ? line : `- ${line}`)
+                                  .filter(line => line.length > 1);
                                 field.onChange(details);
                               }}
                               value={
