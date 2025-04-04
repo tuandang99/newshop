@@ -1037,7 +1037,7 @@ export default function Admin() {
                         name="metaTitle"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Meta Title (SEOFormLabel>
+                            <FormLabel>Meta Title (SEO)</FormLabel>
                             <FormControl>
                               <Input placeholder="Meta title for SEO" {...field} />
                             </FormControl>
