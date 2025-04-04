@@ -80,7 +80,10 @@ export default function BlogPreview() {
               <Link href={`/blog/${post.slug}`}>
                 <img 
                   src={post.image} 
-                  alt={post.title} 
+                  alt={post.title}
+                  loading="lazy"
+                  width={400}
+                  height={192}
                   className="w-full h-48 object-cover"
                 />
               </Link>

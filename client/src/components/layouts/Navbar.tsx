@@ -32,7 +32,7 @@ export default function Navbar() {
   const { data: productsResponse } = useQuery<ProductsResponse>({
     queryKey: ['/api/products'],
   });
-  
+
   // Extract products from the response
   const products = productsResponse?.products;
 
@@ -49,23 +49,23 @@ export default function Navbar() {
   const isActive = (path: string) => {
     return location === path ? "text-primary" : "text-neutral-900 hover:text-primary";
   };
-  
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim() === "") {
       toast({
-        title: "Search query is empty",
-        description: "Please enter a product name to search",
+        title: "Truy vấn tìm kiếm trống",
+        description: "Vui lòng nhập tên sản phẩm để tìm kiếm",
         variant: "destructive"
       });
       return;
     }
-    
+
     setShowSearchResults(false);
     setLocation(`/products?search=${encodeURIComponent(searchQuery)}`);
     setSearchQuery("");
   };
-  
+
   const filteredProducts = products 
     ? products.filter(product => 
         product.name.toLowerCase().includes(searchQuery.toLowerCase()) && 
@@ -84,32 +84,32 @@ export default function Navbar() {
             </Link>
             <div className="hidden md:flex ml-10 space-x-6">
               <Link href="/" className={`${isActive("/")} font-medium transition`}>
-                Home
+                Trang Chủ
               </Link>
               <div className="relative group">
                 <Link href="/products" className={`${isActive("/products")} font-medium transition flex items-center`}>
-                  Products
+                  Sản Phẩm
                   <ChevronDownIcon className="ml-1 h-4 w-4" />
                 </Link>
                 {/* Added margin-top gap to make hovering easier and improved hover transition */}
                 <div className="absolute left-0 mt-0 pt-5 w-48 z-10 hidden group-hover:block">
                   <div className="bg-white shadow-lg rounded-md py-2 border border-gray-100">
-                    <Link href="/products?category=nuts-seeds" className="block px-4 py-2 text-sm hover:bg-neutral-100">Nuts & Seeds</Link>
-                    <Link href="/products?category=granola-bars" className="block px-4 py-2 text-sm hover:bg-neutral-100">Granola Bars</Link>
-                    <Link href="/products?category=cereals" className="block px-4 py-2 text-sm hover:bg-neutral-100">Cereals</Link>
-                    <Link href="/products?category=dried-fruits" className="block px-4 py-2 text-sm hover:bg-neutral-100">Dried Fruits</Link>
-                    <Link href="/products?category=superfoods" className="block px-4 py-2 text-sm hover:bg-neutral-100">Superfoods</Link>
+                    <Link href="/products?category=nuts-seeds" className="block px-4 py-2 text-sm hover:bg-neutral-100">Các Loại Hạt</Link>
+                    <Link href="/products?category=granola-bars" className="block px-4 py-2 text-sm hover:bg-neutral-100">Thanh Ngũ Cốc</Link>
+                    <Link href="/products?category=cereals" className="block px-4 py-2 text-sm hover:bg-neutral-100">Ngũ Cốc</Link>
+                    <Link href="/products?category=dried-fruits" className="block px-4 py-2 text-sm hover:bg-neutral-100">Trái Cây Sấy</Link>
+                    <Link href="/products?category=superfoods" className="block px-4 py-2 text-sm hover:bg-neutral-100">Thực Phẩm Chức Năng</Link>
                   </div>
                 </div>
               </div>
               <Link href="/about" className={`${isActive("/about")} font-medium transition`}>
-                About Us
+                Về Chúng Tôi
               </Link>
               <Link href="/blog" className={`${isActive("/blog")} font-medium transition`}>
-                Blog
+                Tin Tức
               </Link>
               <Link href="/contact" className={`${isActive("/contact")} font-medium transition`}>
-                Contact
+                Liên Hệ
               </Link>
             </div>
           </div>
@@ -118,7 +118,7 @@ export default function Navbar() {
               <form onSubmit={handleSearch} className="relative">
                 <Input 
                   type="text" 
-                  placeholder="Search products..." 
+                  placeholder="Tìm kiếm sản phẩm..." 
                   className="pl-10 pr-4 py-2 rounded-full bg-neutral-100 focus:ring-2 focus:ring-primary w-64" 
                   value={searchQuery}
                   onChange={(e) => {
@@ -132,7 +132,7 @@ export default function Navbar() {
                 <button type="submit" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                   <SearchIcon className="h-4 w-4" />
                 </button>
-                
+
                 {/* Search results dropdown */}
                 {showSearchResults && filteredProducts.length > 0 && (
                   <div className="absolute top-full mt-1 w-full bg-white shadow-lg rounded-md py-2 z-50">
@@ -155,7 +155,7 @@ export default function Navbar() {
               size="icon" 
               onClick={toggleCart}
               className="relative p-1 sm:p-2 hover:bg-neutral-100 rounded-full transition"
-              aria-label="Shopping cart"
+              aria-label="Giỏ hàng"
             >
               <ShoppingCartIcon className="h-5 w-5 sm:h-6 sm:w-6" />
               {cartItemsCount > 0 && (
@@ -175,7 +175,7 @@ export default function Navbar() {
             </Button>
           </div>
         </div>
-        
+
         {/* Mobile menu */}
         {mobileMenuOpen && (
           <div className="md:hidden py-4">
@@ -184,7 +184,7 @@ export default function Navbar() {
                 <form onSubmit={handleSearch} className="relative">
                   <Input 
                     type="text" 
-                    placeholder="Search products..." 
+                    placeholder="Tìm kiếm sản phẩm..." 
                     className="pl-10 pr-4 py-2 rounded-full bg-neutral-100 focus:ring-2 focus:ring-primary w-full" 
                     value={searchQuery}
                     onChange={(e) => {
@@ -198,7 +198,7 @@ export default function Navbar() {
                   <button type="submit" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                     <SearchIcon className="h-4 w-4" />
                   </button>
-                  
+
                   {/* Search results dropdown */}
                   {showSearchResults && filteredProducts.length > 0 && (
                     <div className="absolute top-full mt-1 w-full bg-white shadow-lg rounded-md py-2 z-50">
@@ -220,44 +220,44 @@ export default function Navbar() {
                 </form>
               </div>
               <Link href="/" className="text-neutral-900 hover:text-primary font-medium py-2 transition">
-                Home
+                Trang Chủ
               </Link>
               <div>
                 <button 
                   onClick={toggleMobileProducts}
                   className="text-neutral-900 hover:text-primary font-medium py-2 transition w-full text-left flex justify-between items-center"
                 >
-                  Products
+                  Sản Phẩm
                   <ChevronDownIcon className="h-4 w-4" />
                 </button>
                 {mobileProductsOpen && (
                   <div className="pl-4 py-2 space-y-2">
                     <Link href="/products?category=nuts-seeds" className="block py-1 text-neutral-900 hover:text-primary">
-                      Nuts & Seeds
+                      Các Loại Hạt
                     </Link>
                     <Link href="/products?category=granola-bars" className="block py-1 text-neutral-900 hover:text-primary">
-                      Granola Bars
+                      Thanh Ngũ Cốc
                     </Link>
                     <Link href="/products?category=cereals" className="block py-1 text-neutral-900 hover:text-primary">
-                      Cereals
+                      Ngũ Cốc
                     </Link>
                     <Link href="/products?category=dried-fruits" className="block py-1 text-neutral-900 hover:text-primary">
-                      Dried Fruits
+                      Trái Cây Sấy
                     </Link>
                     <Link href="/products?category=superfoods" className="block py-1 text-neutral-900 hover:text-primary">
-                      Superfoods
+                      Thực Phẩm Chức Năng
                     </Link>
                   </div>
                 )}
               </div>
               <Link href="/about" className="text-neutral-900 hover:text-primary font-medium py-2 transition">
-                About Us
+                Về Chúng Tôi
               </Link>
               <Link href="/blog" className="text-neutral-900 hover:text-primary font-medium py-2 transition">
-                Blog
+                Tin Tức
               </Link>
               <Link href="/contact" className="text-neutral-900 hover:text-primary font-medium py-2 transition">
-                Contact
+                Liên Hệ
               </Link>
             </div>
           </div>

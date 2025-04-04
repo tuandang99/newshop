@@ -15,18 +15,18 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault(); // Prevent navigation to product detail
-    
+
     addItem({
       id: product.id,
       name: product.name,
       price: product.price,
       image: product.image,
-      quantity: 1
+      quantity: 1,
     });
-    
+
     toast({
-      title: "Added to cart",
-      description: `${product.name} has been added to your cart`,
+      title: "Đã thêm vào giỏ hàng",
+      description: `${product.name} đã được thêm vào giỏ hàng`,
     });
   };
 
@@ -48,9 +48,12 @@ export default function ProductCard({ product }: ProductCardProps) {
         </span>
       )}
       <Link href={`/products/${product.slug}`}>
-        <img 
-          src={product.image} 
-          alt={product.name} 
+        <img
+          src={product.image}
+          alt={product.name}
+          loading="lazy"
+          width={400}
+          height={224}
           className="w-full h-56 object-cover"
         />
       </Link>
@@ -58,22 +61,26 @@ export default function ProductCard({ product }: ProductCardProps) {
         <div className="flex justify-between items-start mb-1">
           <h3 className="font-semibold text-lg font-poppins">{product.name}</h3>
           <div className="flex items-center">
-            <span className="text-amber-500 text-sm">{product.rating.toFixed(1)}</span>
+            <span className="text-amber-500 text-sm">
+              {product.rating.toFixed(1)}
+            </span>
             <StarFilledIcon className="text-amber-500 ml-1 h-4 w-4" />
           </div>
         </div>
         <p className="text-neutral-600 text-sm mb-3">{product.description}</p>
         <div className="flex justify-between items-center">
           <div>
-            <span className="text-lg font-semibold">${product.price.toFixed(2)}</span>
+            <span className="text-lg font-semibold">
+              {product.price.toLocaleString("vi-VN")}₫
+            </span>
             {product.oldPrice && (
               <span className="text-sm line-through text-neutral-500 ml-2">
-                ${product.oldPrice.toFixed(2)}
+                {product.oldPrice.toLocaleString("vi-VN")}₫
               </span>
             )}
           </div>
           <div className="product-cta opacity-0 transform translate-y-2 transition-all">
-            <Button 
+            <Button
               size="icon"
               className="bg-primary text-white p-2 rounded-full hover:bg-primary/90"
               onClick={handleAddToCart}

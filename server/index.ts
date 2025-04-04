@@ -3,8 +3,10 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 // Import Telegram module to ensure it's initialized
 import "./telegram";
+import compression from 'compression';
 
 const app = express();
+app.use(compression()); // Add compression middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -56,6 +58,11 @@ app.use((req, res, next) => {
     await setupVite(app, server);
   } else {
     serveStatic(app);
+    app.use(express.static('dist', {
+      maxAge: '1d',
+      etag: true,
+      lastModified: true
+    }));
   }
 
   // ALWAYS serve the app on port 5000

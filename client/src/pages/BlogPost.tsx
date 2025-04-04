@@ -122,7 +122,7 @@ export default function BlogPost() {
                             href={`/blog/${relatedPost.slug}`} 
                             className="text-primary font-medium hover:underline flex items-center text-sm"
                           >
-                            Read Article
+                            Read Articlele
                             <ArrowRightIcon className="ml-1 h-3 w-3" />
                           </Link>
                         </div>

@@ -145,9 +145,9 @@ export default function ProductDetail() {
               </div>
               
               <div className="flex items-center mb-6">
-                <span className="text-2xl font-bold mr-2">${product.price.toFixed(2)}</span>
+                <span className="text-2xl font-bold mr-2">{product.price.toLocaleString('vi-VN')}₫</span>
                 {product.oldPrice && (
-                  <span className="text-neutral-500 line-through">${product.oldPrice.toFixed(2)}</span>
+                  <span className="text-neutral-500 line-through">{product.oldPrice.toLocaleString('vi-VN')}₫</span>
                 )}
               </div>
               

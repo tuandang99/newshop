@@ -1,5 +1,6 @@
+
 import TelegramBot from 'node-telegram-bot-api';
-import { Order, CartItem } from '@shared/schema';
+import { Order, CartItem, ContactSubmission } from '@shared/schema';
 import { log } from './vite';
 
 // Telegram Bot instance (will be initialized when token is available)
@@ -94,18 +95,43 @@ function formatOrderMessage(order: Order, items: CartItem[]): string {
   
   // Format items list
   const itemsList = items
-    .map(item => `• ${item.quantity}x ${item.name} - $${item.price.toFixed(2)}`)
+    .map(item => `• ${item.quantity}x ${item.name} - ${item.price.toFixed(2)} VND`)
     .join('\n');
   
-  return `🛒 <b>New Order #${order.id}</b>\n\n` +
-    `<b>Customer:</b> ${order.name}\n` +
+  return `🛒 <b>Đơn Hàng Mới #${order.id}</b>\n\n` +
+    `<b>Khách hàng:</b> ${order.name}\n` +
     `<b>Email:</b> ${order.email}\n` +
-    `<b>Phone:</b> ${order.phone}\n` +
-    `<b>Address:</b> ${order.address}\n\n` +
-    `<b>Order Items:</b>\n${itemsList}\n\n` +
-    `<b>Total Amount:</b> $${total.toFixed(2)}\n` +
-    `<b>Status:</b> ${order.status}\n` +
-    `<b>Order Date:</b> ${new Date(order.createdAt).toLocaleString()}\n`;
+    `<b>SĐT:</b> ${order.phone}\n` +
+    `<b>Địa chỉ:</b> ${order.address}\n\n` +
+    `<b>Chi tiết đơn hàng:</b>\n${itemsList}\n\n` +
+    `<b>Tổng tiền:</b> ${total.toFixed(2)} VND\n` +
+    `<b>Trạng thái:</b> ${order.status}\n` +
+    `<b>Ngày đặt:</b> ${new Date().toLocaleString('vi-VN')}\n`;
+}
+
+/**
+ * Send a contact form notification
+ */
+export async function sendContactNotification(contact: ContactSubmission): Promise<boolean> {
+  const message = `📧 <b>Liên Hệ Mới</b>\n\n` +
+    `<b>Họ tên:</b> ${contact.name}\n` +
+    `<b>Email:</b> ${contact.email}\n` +
+    `<b>Chủ đề:</b> ${contact.subject}\n` +
+    `<b>Nội dung:</b>\n${contact.message}\n` +
+    `<b>Thời gian:</b> ${new Date(contact.createdAt).toLocaleString()}\n`;
+
+  return await sendAdminMessage(message);
+}
+
+/**
+ * Send a newsletter subscription notification
+ */
+export async function sendNewsletterNotification(email: string): Promise<boolean> {
+  const message = `📬 <b>Đăng Ký Nhận Tin Mới</b>\n\n` +
+    `<b>Email:</b> ${email}\n` +
+    `<b>Thời gian:</b> ${new Date().toLocaleString()}\n`;
+
+  return await sendAdminMessage(message);
 }
 
 // Initialize the bot when the server starts if environment variables are set
