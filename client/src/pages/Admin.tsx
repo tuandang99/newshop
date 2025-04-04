@@ -845,7 +845,7 @@ export default function Admin() {
             <div className="mt-8">
               <h3 className="text-lg font-semibold mb-4">Existing Products</h3>
               <div className="grid gap-4">
-                {products.map((product) => (
+                {productsResponse?.products?.map((product) => (
                   <div key={product.id} className="flex items-center justify-between p-4 border rounded-lg">
                     <div className="flex items-center space-x-4">
                       <img src={product.image} alt={product.name} className="w-16 h-16 object-cover rounded" />
