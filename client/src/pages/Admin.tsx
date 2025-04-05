@@ -37,7 +37,12 @@ const productFormSchema = z.object({
   description: z.string().min(1, "Description is required"),
   price: z.coerce.number().min(0.01, "Price must be greater than 0"),
   oldPrice: z.coerce.number().nullable().optional(),
-  image: z.string().min(1, "Image path is required").startsWith("/", "Path must start with /"),
+  image: z.string()
+    .min(1, "Image path is required")
+    .refine(
+      (val) => val.startsWith("/") || val.startsWith("http"),
+      "Image path must start with '/' for local files or 'http' for URLs"
+    ),
   categoryId: z.coerce.number().min(1, "Category is required"),
   rating: z.coerce.number().min(0).max(5).optional(),
   isNew: z.boolean().optional(),
@@ -64,7 +69,12 @@ const blogFormSchema = z.object({
   slug: z.string().min(1, "Slug is required"),
   content: z.string().min(1, "Content is required"),
   excerpt: z.string().min(1, "Excerpt is required"),
-  image: z.string().min(1, "Image path is required").startsWith("/", "Path must start with /"),
+  image: z.string()
+    .min(1, "Image path is required")
+    .refine(
+      (val) => val.startsWith("/") || val.startsWith("http"),
+      "Image path must start with '/' for local files or 'http' for URLs"
+    ),
   category: z.string().min(1, "Category is required"),
   date: z.string().transform((val) => new Date(val).toISOString()),
   tags: z.string().optional(),
@@ -862,7 +872,7 @@ export default function Admin() {
                             />
                           </FormControl>
                           <FormDescription>
-                            Use relative path from public folder (e.g. /images/products/product-1.jpg)
+                            Use relative path from public folder (e.g. /images/products/product-1.jpg) or a full URL.
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
@@ -1085,7 +1095,7 @@ export default function Admin() {
                       <FormField
                         control={blogForm.control}
                         name="slug"
-                        render={({ field }) => (
+                        render={({field }) => (
                           <FormItem>
                             <FormLabel>Slug</FormLabel>
                             <FormControl>
@@ -1183,7 +1193,7 @@ export default function Admin() {
                             />
                           </FormControl>
                           <FormDescription>
-                            Use relative path from public folder (e.g. /images/blog/post-1.jpg)
+                            Use relative path from public folder (e.g. /images/blog/post-1.jpg) or a full URL.
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
