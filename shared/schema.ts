@@ -4,7 +4,7 @@ import { z } from "zod";
 export const insertCategorySchema = z.object({
   name: z.string(),
   slug: z.string(),
-  image: z.string(),
+  image: z.string().min(1, "Image path is required"),
 });
 
 export type InsertCategory = z.infer<typeof insertCategorySchema>;
@@ -17,7 +17,7 @@ export const insertProductSchema = z.object({
   description: z.string(),
   price: z.number(),
   oldPrice: z.number().nullable(),
-  image: z.string(),
+  image: z.string().min(1, "Image path is required"),
   categoryId: z.number(),
   rating: z.number().default(5),
   isNew: z.boolean().default(false),
@@ -39,7 +39,7 @@ export const insertBlogPostSchema = z.object({
   slug: z.string(),
   content: z.string(),
   excerpt: z.string(),
-  image: z.string(),
+  image: z.string().min(1, "Image path is required"),
   category: z.string(),
   tags: z.string().optional(),
   author: z.string().optional(),
@@ -56,7 +56,7 @@ export type BlogPost = InsertBlogPost & { id: number };
 // Testimonials
 export const insertTestimonialSchema = z.object({
   name: z.string(),
-  avatar: z.string(),
+  avatar: z.string().min(1, "Image path is required"),
   rating: z.number(),
   comment: z.string(),
 });
@@ -110,7 +110,7 @@ export const cartItemSchema = z.object({
   id: z.number(),
   name: z.string(),
   price: z.number(),
-  image: z.string(),
+  image: z.string().min(1, "Image path is required"),
   quantity: z.number(),
 });
 
