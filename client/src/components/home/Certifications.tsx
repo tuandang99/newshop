@@ -14,13 +14,13 @@ export default function Certifications() {
       icon: <ShieldCheckIcon className="h-12 w-12 text-primary" />,
     },
     {
-      name: "VSATTP",
-      description: "Chứng nhận vệ sinh an toàn thực phẩm",
+      name: "Công bố sản phẩm",
+      description: "Công bố sản phẩm",
       icon: <ShieldCheckIcon className="h-12 w-12 text-primary" />,
     },
     {
-      name: "GMP",
-      description: "Thực hành sản xuất tốt",
+      name: "Kiểm nghiệm sản phẩm",
+      description: "Thực hiện đầy đủ nghiểm nghiệm chất lượng sản ",
       icon: <ShieldCheckIcon className="h-12 w-12 text-primary" />,
     },
   ];
