@@ -28,6 +28,8 @@ import {
   ShieldCheck,
   StarHalf,
   Image,
+  BringToFront,
+  Award,
 } from "lucide-react";
 
 // Export all icons with consistent naming convention
@@ -57,6 +59,8 @@ export const CalendarIcon = (props: LucideProps) => <Calendar {...props} />;
 export const HeartIcon = (props: LucideProps) => <Heart {...props} />;
 export const SproutIcon = (props: LucideProps) => <Sprout {...props} />;
 export const ShieldCheckIcon = (props: LucideProps) => <ShieldCheck {...props} />;
+export const BringToFrontIcon = (props: LucideProps) => <BringToFront {...props} />;
+export const AwardIcon = (props: LucideProps) => <Award {...props} />;
 
 // Re-export with additional names for backward compatibility
 export { X } from "lucide-react";
