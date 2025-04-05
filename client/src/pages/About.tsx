@@ -1,5 +1,6 @@
 import { Helmet } from "react-helmet";
 import { LeafIcon, HeartIcon, SproutIcon, ShieldCheckIcon } from "@/lib/icons";
+import Certifications from "@/components/home/Certifications";
 
 export default function About() {
   return (
@@ -175,6 +176,8 @@ export default function About() {
           </div>
         </div>
       </section>
+
+      <Certifications />
 
       <section className="py-12 bg-primary/5">
         <div className="container mx-auto px-4 text-center">
