@@ -157,14 +157,6 @@ export default function Footer() {
                   href="#"
                   className="text-neutral-400 hover:text-white transition"
                 >
-                  Tài Khoản
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-neutral-400 hover:text-white transition"
-                >
                   Chính Sách Vận Chuyển
                 </a>
               </li>
