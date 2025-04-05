@@ -1,3 +1,21 @@
+
+import { Helmet } from "react-helmet";
+
+function generateProductSchema(product: any) {
+  return {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    "name": product.name,
+    "description": product.description,
+    "image": product.image,
+    "offers": {
+      "@type": "Offer",
+      "price": product.price,
+      "priceCurrency": "VND"
+    }
+  };
+}
+
 import { Link } from "wouter";
 import { Product } from "@shared/schema";
 import { Button } from "@/components/ui/button";

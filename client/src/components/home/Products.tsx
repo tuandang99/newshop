@@ -19,11 +19,11 @@ interface ProductsResponse {
 
 export default function Products() {
   const [activeFilter, setActiveFilter] = useState('all');
-  
+
   const { data: productsResponse, isLoading, error } = useQuery<ProductsResponse>({
     queryKey: ['/api/featured-products'],
   });
-  
+
   // Extract products from the response
   const products = productsResponse?.products;
 
@@ -117,13 +117,13 @@ export default function Products() {
             </Button>
           </div>
         </div>
-        
+
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredProducts && filteredProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
-        
+
         <div className="text-center mt-10">
           <Button 
             variant="outline" 
