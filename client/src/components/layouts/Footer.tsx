@@ -189,34 +189,18 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-neutral-800 mt-8 pt-6">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-neutral-400 mb-4 md:mb-0">
-              © {new Date().getFullYear()} TUHO Healthy Food. Đã đăng ký bản quyền.
-            </p>
-            {/* <div className="flex items-center space-x-4">
-              <img
-                src="https://cdn.cdnlogo.com/logos/v/69/visa.svg"
-                alt="Visa"
-                className="h-8 w-auto"
-              />
-              <img
-                src="https://cdn.cdnlogo.com/logos/m/33/mastercard.svg"
-                alt="Mastercard"
-                className="h-8 w-auto"
-              />
-              <img
-                src="https://cdn.cdnlogo.com/logos/p/20/paypal.svg"
-                alt="PayPal"
-                className="h-8 w-auto"
-              />
-              <img
-                src="https://cdn.cdnlogo.com/logos/a/60/apple-pay.svg"
-                alt="Apple Pay"
-                className="h-8 w-auto"
-              />
-            </div> */}
+            <div className="text-neutral-400 mb-6">
+              <h4 className="font-semibold mb-2">CÔNG TY TNHH TUHO HEALTHY FOOD</h4>
+              <p className="mb-1">MST: 6001773821</p>
+              <p className="mb-1">Địa chỉ: Thôn Hải Hà, Xã Ea Tân, Huyện Krông Năng, Tỉnh Đắk Lắk, Việt Nam</p>
+              <p className="mb-1">Email: Tuhohealthyfood@gmail.com</p>
+            </div>
+            <div className="flex flex-col md:flex-row justify-between items-center">
+              <p className="text-neutral-400 mb-4 md:mb-0">
+                © {new Date().getFullYear()} TUHO Healthy Food. Đã đăng ký bản quyền.
+              </p>
+            </div>
           </div>
-        </div>
       </div>
     </footer>
   );
