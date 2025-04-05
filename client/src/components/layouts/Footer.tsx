@@ -14,7 +14,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center mb-4">
-              <LeafIcon className="text-3xl mr-2 text-primary" />
+              <img src="/logo.png" alt="TUHO Logo" className="h-8 w-auto mr-2" />
               <span className="text-xl font-bold font-poppins text-white">
                 TUHO
               </span>
