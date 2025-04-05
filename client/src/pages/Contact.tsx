@@ -71,14 +71,14 @@ export default function Contact() {
     <>
       <Helmet>
         <title>Liên Hệ - TUHO</title>
-        <meta name="description" content="Get in touch with the NatureNutri team. We'd love to hear from you!" />
+        <meta name="description" content="Liên hệ với TUHO Foods. Chúng tôi luôn sẵn sàng lắng nghe ý kiến của bạn!" />
       </Helmet>
       
       <section className="py-12 bg-primary/10">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl font-bold font-poppins mb-4">Contact Us</h1>
+          <h1 className="text-4xl font-bold font-poppins mb-4">Liên Hệ</h1>
           <p className="max-w-2xl mx-auto text-neutral-700">
-            We'd love to hear from you. Reach out with questions, feedback, or inquiries.
+            Chúng tôi rất mong nhận được phản hồi từ bạn. Hãy liên hệ với chúng tôi nếu bạn có bất kỳ câu hỏi hoặc góp ý nào.
           </p>
         </div>
       </section>
@@ -171,8 +171,8 @@ export default function Contact() {
                       <MapPinIcon className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <h4 className="font-medium">Our Location</h4>
-                      <p className="text-neutral-700">123 Nature Way, Organic Valley, CA 94123</p>
+                      <h4 className="font-medium">Địa Chỉ</h4>
+                      <p className="text-neutral-700">Thôn Hải Hà, Xã Ea Tân, Huyện Krông Năng, Tỉnh Đắk Lắk, Việt Nam</p>
                     </div>
                   </div>
                   <div className="flex items-start">
@@ -180,8 +180,8 @@ export default function Contact() {
                       <MailIcon className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <h4 className="font-medium">Email Us</h4>
-                      <p className="text-neutral-700">hello@naturenutri.com</p>
+                      <h4 className="font-medium">Email</h4>
+                      <p className="text-neutral-700">tuhohealthyfood@gmail.com</p>
                     </div>
                   </div>
                   <div className="flex items-start">
@@ -189,8 +189,8 @@ export default function Contact() {
                       <PhoneIcon className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <h4 className="font-medium">Call Us</h4>
-                      <p className="text-neutral-700">+1 (555) 123-4567</p>
+                      <h4 className="font-medium">Điện Thoại</h4>
+                      <p className="text-neutral-700">0398 377 304</p>
                     </div>
                   </div>
                   <div className="flex items-start">
@@ -198,8 +198,8 @@ export default function Contact() {
                       <ClockIcon className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <h4 className="font-medium">Working Hours</h4>
-                      <p className="text-neutral-700">Monday - Friday: 9:00 AM - 6:00 PM</p>
+                      <h4 className="font-medium">Giờ Làm Việc</h4>
+                      <p className="text-neutral-700">Thứ Hai - Thứ Sáu: 8:00 - 17:00</p>/p>
                       <p className="text-neutral-700">Saturday: 10:00 AM - 4:00 PM</p>
                     </div>
                   </div>
