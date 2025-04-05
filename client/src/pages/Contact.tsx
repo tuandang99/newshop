@@ -70,7 +70,7 @@ export default function Contact() {
   return (
     <>
       <Helmet>
-        <title>Contact Us - NatureNutri</title>
+        <title>Liên Hệ - TUHO</title>
         <meta name="description" content="Get in touch with the NatureNutri team. We'd love to hear from you!" />
       </Helmet>
       

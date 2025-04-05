@@ -59,7 +59,7 @@ export default function BlogPost() {
   return (
     <>
       <Helmet>
-        <title>{post.title} - NatureNutri Blog</title>
+        <title>{post.title} - TUHO Blog</title>
         <meta name="description" content={post.excerpt} />
       </Helmet>
       

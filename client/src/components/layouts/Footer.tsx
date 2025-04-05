@@ -16,7 +16,7 @@ export default function Footer() {
             <div className="flex items-center mb-4">
               <LeafIcon className="text-3xl mr-2 text-primary" />
               <span className="text-xl font-bold font-poppins text-white">
-                NatureNutri
+                TUHO
               </span>
             </div>
             <p className="text-neutral-400 mb-4">
