@@ -1,7 +1,7 @@
 
-# NatureNutri - Healthy Food Store
+# TUHOTUHO - Healthy Food Store
 
-NatureNutri is a modern e-commerce platform for organic and healthy food products built with React, Express, and MySQL.
+TUHO webweb is a modern e-commerce platform for organic and healthy food products built with React, Express, and MySQL.
 
 ## Features
 

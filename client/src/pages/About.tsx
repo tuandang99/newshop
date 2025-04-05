@@ -5,15 +5,15 @@ export default function About() {
   return (
     <>
       <Helmet>
-        <title>Về chúng tôi - TUHO</title>
-        <meta name="description" content="Learn about NatureNutri's mission to provide high-quality organic foods and our commitment to sustainability." />
+        <title>Về chúng tôi - TUHO Foods</title>
+        <meta name="description" content="Công ty Tuho cung cấp các thực phẩm tốt cho sức khỏe, hướng đến chất lượng cao và cam kết vì sự bền vững." />
       </Helmet>
       
       <section className="py-12 bg-primary/10">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl font-bold font-poppins mb-4">About NatureNutri</h1>
+          <h1 className="text-4xl font-bold font-poppins mb-4">Về chúng tôitôi</h1>
           <p className="max-w-2xl mx-auto text-neutral-700">
-            Our story, mission, and commitment to providing you with the highest quality organic foods.
+          Câu chuyện, sứ mệnh và cam kết của chúng tôi trong việc cung cấp cho bạn những thực phẩm tốt cho sức khỏekhỏe chất lượng cao nhất.
           </p>
         </div>
       </section>
