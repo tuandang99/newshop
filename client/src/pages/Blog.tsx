@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { BlogPost } from "@shared/schema";
@@ -6,7 +7,7 @@ import { CalendarIcon, ArrowRightIcon } from "@/lib/icons";
 import { format } from "date-fns";
 import { Helmet } from "react-helmet";
 
-// Define the API response structure
+// Định nghĩa cấu trúc phản hồi API
 interface BlogPostsResponse {
   posts: BlogPost[];
   pagination: {
@@ -26,7 +27,7 @@ export default function Blog() {
     queryKey: ["/api/blog-posts"],
   });
 
-  // Extract posts from the response
+  // Trích xuất bài viết từ phản hồi
   const posts = postsResponse?.posts;
 
   if (isLoading) {
@@ -34,9 +35,9 @@ export default function Blog() {
       <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold font-poppins mb-2">Our Blog</h1>
+            <h1 className="text-4xl font-bold font-poppins mb-2">Blog của chúng tôi</h1>
             <p className="text-neutral-700">
-              Insights, recipes, and tips for healthy living
+              Kiến thức, công thức và lời khuyên cho cuộc sống lành mạnh
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -62,16 +63,16 @@ export default function Blog() {
     return (
       <section className="py-12 bg-white">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl font-bold font-poppins mb-2">Our Blog</h1>
+          <h1 className="text-4xl font-bold font-poppins mb-2">Blog của chúng tôi</h1>
           <p className="text-red-500">
-            Failed to load blog posts. Please try again later.
+            Không thể tải bài viết. Vui lòng thử lại sau.
           </p>
         </div>
       </section>
     );
   }
 
-  // Group posts by year and month
+  // Nhóm bài viết theo năm và tháng
   const groupedPosts: Record<string, BlogPost[]> = {};
 
   posts.forEach((post) => {
@@ -91,16 +92,16 @@ export default function Blog() {
         <title>Blog - TUHO Healthy Food</title>
         <meta
           name="description"
-          content="Read our latest articles on nutrition, healthy recipes, and sustainable living."
+          content="Đọc các bài viết mới nhất về dinh dưỡng, công thức nấu ăn lành mạnh và lối sống bền vững."
         />
       </Helmet>
 
       <section className="py-12 bg-primary/10">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl font-bold font-poppins mb-4">Our Blog</h1>
+          <h1 className="text-4xl font-bold font-poppins mb-4">Blog của chúng tôi</h1>
           <p className="max-w-2xl mx-auto text-neutral-700">
-            Insights, tips, and recipes to help you live a healthier, more
-            sustainable life.
+            Kiến thức, lời khuyên và công thức giúp bạn sống một cuộc sống khỏe mạnh,
+            bền vững hơn.
           </p>
         </div>
       </section>
@@ -133,7 +134,7 @@ export default function Blog() {
                           <div className="flex items-center text-sm text-neutral-500 mb-2">
                             <CalendarIcon className="mr-2 h-4 w-4" />
                             <span>
-                              {format(new Date(post.date), "MMMM d, yyyy")}
+                              {format(new Date(post.date), "dd MMMM, yyyy")}
                             </span>
                             <span className="mx-2">•</span>
                             <span>{post.category}</span>
@@ -153,7 +154,7 @@ export default function Blog() {
                             href={`/blog/${post.slug}`}
                             className="text-primary font-medium hover:underline flex items-center"
                           >
-                            Read More
+                            Đọc thêm
                             <ArrowRightIcon className="ml-1 h-4 w-4" />
                           </Link>
                         </div>
@@ -167,7 +168,7 @@ export default function Blog() {
             <div className="md:col-span-1">
               <div className="bg-neutral-50 p-6 rounded-lg sticky top-24">
                 <h3 className="text-xl font-semibold mb-4 font-poppins">
-                  Categories
+                  Danh mục
                 </h3>
                 <ul className="space-y-2">
                   <li>
@@ -175,7 +176,7 @@ export default function Blog() {
                       variant="ghost"
                       className="w-full justify-start hover:text-primary hover:bg-primary/10"
                     >
-                      Nutrition
+                      Dinh dưỡng
                     </Button>
                   </li>
                   <li>
@@ -183,7 +184,7 @@ export default function Blog() {
                       variant="ghost"
                       className="w-full justify-start hover:text-primary hover:bg-primary/10"
                     >
-                      Recipes
+                      Công thức nấu ăn
                     </Button>
                   </li>
                   <li>
@@ -191,7 +192,7 @@ export default function Blog() {
                       variant="ghost"
                       className="w-full justify-start hover:text-primary hover:bg-primary/10"
                     >
-                      Sustainability
+                      Bền vững
                     </Button>
                   </li>
                   <li>
@@ -199,7 +200,7 @@ export default function Blog() {
                       variant="ghost"
                       className="w-full justify-start hover:text-primary hover:bg-primary/10"
                     >
-                      Wellness
+                      Sức khỏe
                     </Button>
                   </li>
                   <li>
@@ -207,29 +208,29 @@ export default function Blog() {
                       variant="ghost"
                       className="w-full justify-start hover:text-primary hover:bg-primary/10"
                     >
-                      Lifestyle
+                      Lối sống
                     </Button>
                   </li>
                 </ul>
 
                 <div className="mt-8">
                   <h3 className="text-xl font-semibold mb-4 font-poppins">
-                    Subscribe
+                    Đăng ký
                   </h3>
                   <p className="text-neutral-700 mb-4">
-                    Stay updated with our latest articles and nutritional tips.
+                    Cập nhật bài viết mới nhất và lời khuyên dinh dưỡng.
                   </p>
                   <form className="space-y-2">
                     <input
                       type="email"
-                      placeholder="Your email address"
+                      placeholder="Địa chỉ email của bạn"
                       className="w-full px-4 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                     <Button
                       type="submit"
                       className="w-full bg-primary text-white hover:bg-primary/90"
                     >
-                      Subscribe
+                      Đăng ký
                     </Button>
                   </form>
                 </div>
