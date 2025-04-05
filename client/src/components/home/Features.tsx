@@ -1,4 +1,4 @@
-import { LeafIcon, TruckIcon, RecycleIcon } from "@/lib/icons";
+import { LeafIcon, BringToFrontIcon, AwardIcon } from "@/lib/icons";
 
 export default function Features() {
   const features = [
@@ -8,12 +8,12 @@ export default function Features() {
       description: "Sản phẩm từ nguyên liệu tự nhiên, không chất bảo quản, đảm bảo dinh dưỡng tốt nhất cho sức khỏe."
     },
     {
-      icon: <TruckIcon className="text-3xl text-primary" />,
+      icon: <BringToFrontIcon className="text-3xl text-primary" />,
       title: "Đa Dạng Sản Phẩm",
       description: "Granola, thanh gạo lứt, bánh kẹp rong biển, ngũ cốc và các loại hạt dinh dưỡng tự nhiên."
     },
     {
-      icon: <RecycleIcon className="text-3xl text-primary" />,
+      icon: <AwardIcon className="text-3xl text-primary" />,
       title: "Chất Lượng Cao",
       description: "Cam kết cung cấp thực phẩm healthy chất lượng cao, đảm bảo an toàn vệ sinh thực phẩm."
     }
