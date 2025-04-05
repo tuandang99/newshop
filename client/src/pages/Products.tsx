@@ -19,14 +19,14 @@ export default function Products() {
     ? categories.find(cat => cat.slug === categorySlug) 
     : null;
 
-  let pageTitle = "All Products - NatureNutri";
+  let pageTitle = "All Products - TUHO";
   let metaDescription = "Browse our complete selection of organic, healthy food products. Find nuts, granola bars, cereals and more.";
 
   if (category) {
-    pageTitle = `${category.name} - NatureNutri`;
-    metaDescription = `Explore our selection of organic ${category.name.toLowerCase()} at NatureNutri.`;
+    pageTitle = `${category.name} - TUHO`;
+    metaDescription = `Explore our selection of organic ${category.name.toLowerCase()} at TUHO.`;
   } else if (searchQuery) {
-    pageTitle = `Search Results: "${searchQuery}" - NatureNutri`;
+    pageTitle = `Search Results: "${searchQuery}" - TUHO`;
     metaDescription = `Discover products matching "${searchQuery}" in our organic food collection.`;
   }
 

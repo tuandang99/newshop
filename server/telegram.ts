@@ -29,7 +29,7 @@ export function initTelegramBot(token: string, adminChatId: string) {
     log('Telegram bot initialized successfully', 'telegram');
     
     // Send a test message to confirm it's working
-    sendAdminMessage('🔔 NatureNutri E-commerce Bot is now online and ready to receive order notifications.');
+    sendAdminMessage('🔔 TUHOTUHO E-commerce Bot is now online and ready to receive order notifications.');
   } catch (error) {
     log(`Error initializing Telegram bot: ${error}`, 'telegram');
     bot = null;
