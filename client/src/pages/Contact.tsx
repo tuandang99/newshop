@@ -199,7 +199,7 @@ export default function Contact() {
                     </div>
                     <div>
                       <h4 className="font-medium">Giờ Làm Việc</h4>
-                      <p className="text-neutral-700">Thứ Hai - Thứ Sáu: 8:00 - 17:00</p>/p>
+                      <p className="text-neutral-700">Thứ Hai - Thứ Sáu: 8:00 - 17:00</p>
                       <p className="text-neutral-700">Saturday: 10:00 AM - 4:00 PM</p>
                     </div>
                   </div>
