@@ -1,3 +1,4 @@
+
 import { useParams, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { BlogPost as BlogPostType } from "@shared/schema";
@@ -42,24 +43,22 @@ export default function BlogPost() {
     return (
       <section className="py-10 bg-white">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-2xl font-bold font-poppins mb-4">Article Not Found</h1>
+          <h1 className="text-2xl font-bold font-poppins mb-4">Không Tìm Thấy Bài Viết</h1>
           <p className="text-neutral-700 mb-6">
-            The article you're looking for doesn't exist or has been removed.
+            Bài viết bạn đang tìm kiếm không tồn tại hoặc đã bị xóa.
           </p>
           <Button asChild>
-            <Link href="/blog">Back to Blog</Link>
+            <Link href="/blog">Quay Lại Blog</Link>
           </Button>
         </div>
       </section>
     );
   }
 
-  // No need for formatContent anymore as we'll use MDEditor
-
   return (
     <>
       <Helmet>
-        <title>{post.title} - TUHO Blog</title>
+        <title>{post.title} - Blog TUHO</title>
         <meta name="description" content={post.excerpt} />
       </Helmet>
       
@@ -69,7 +68,7 @@ export default function BlogPost() {
             <Button asChild variant="outline" className="flex items-center">
               <Link href="/blog">
                 <ArrowLeftIcon className="mr-2 h-4 w-4" />
-                Back to Blog
+                Quay Lại Blog
               </Link>
             </Button>
           </div>
@@ -79,7 +78,7 @@ export default function BlogPost() {
               <h1 className="text-3xl md:text-4xl font-bold font-poppins mb-4">{post.title}</h1>
               <div className="flex items-center text-sm text-neutral-500">
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                <span>{format(new Date(post.date), 'MMMM d, yyyy')}</span>
+                <span>{format(new Date(post.date), 'dd/MM/yyyy')}</span>
                 <span className="mx-2">•</span>
                 <span>{post.category}</span>
               </div>
@@ -96,7 +95,7 @@ export default function BlogPost() {
             </div>
             
             <div className="border-t border-neutral-200 mt-10 pt-6">
-              <h3 className="text-xl font-semibold mb-4 font-poppins">Related Articles</h3>
+              <h3 className="text-xl font-semibold mb-4 font-poppins">Bài Viết Liên Quan</h3>
               
               {recentPosts && recentPosts.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -122,7 +121,7 @@ export default function BlogPost() {
                             href={`/blog/${relatedPost.slug}`} 
                             className="text-primary font-medium hover:underline flex items-center text-sm"
                           >
-                            Read Articlele
+                            Xem Bài Viết
                             <ArrowRightIcon className="ml-1 h-3 w-3" />
                           </Link>
                         </div>
@@ -130,7 +129,7 @@ export default function BlogPost() {
                     ))}
                 </div>
               ) : (
-                <p>No related articles found</p>
+                <p>Không có bài viết liên quan</p>
               )}
             </div>
           </div>
