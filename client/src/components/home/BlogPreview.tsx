@@ -70,7 +70,7 @@ export default function BlogPreview() {
             <p className="text-neutral-700">Tips and news from our health experts</p>
           </div>
           <Link href="/blog" className="mt-4 md:mt-0 text-primary font-medium hover:underline">
-            View All Articles
+            Xem tất cả bài viết
           </Link>
         </div>
         
