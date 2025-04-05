@@ -853,13 +853,16 @@ export default function Admin() {
                       name="image"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Image URL</FormLabel>
+                          <FormLabel>Image Path</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="https://example.com/image.jpg"
+                              placeholder="/images/products/product-1.jpg"
                               {...field}
                             />
                           </FormControl>
+                          <FormDescription>
+                            Use relative path from public folder (e.g. /images/products/product-1.jpg)
+                          </FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -1168,16 +1171,19 @@ export default function Admin() {
 
                     <FormField
                       control={blogForm.control}
-                      name="image"
+                      name="image" 
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Image URL</FormLabel>
+                          <FormLabel>Image Path</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="https://example.com/image.jpg"
+                              placeholder="/images/blog/post-1.jpg"
                               {...field}
                             />
                           </FormControl>
+                          <FormDescription>
+                            Use relative path from public folder (e.g. /images/blog/post-1.jpg)
+                          </FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
