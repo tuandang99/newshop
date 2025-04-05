@@ -153,36 +153,36 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2">
               <li>
-                <a
-                  href="#"
+                <Link
+                  href="/support/shipping"
                   className="text-neutral-400 hover:text-white transition"
                 >
                   Chính Sách Vận Chuyển
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  href="/support/refund"
                   className="text-neutral-400 hover:text-white transition"
                 >
                   Đổi Trả & Hoàn Tiền
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  href="/support/faq"
                   className="text-neutral-400 hover:text-white transition"
                 >
                   Câu Hỏi Thường Gặp
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  href="/support/privacy"
                   className="text-neutral-400 hover:text-white transition"
                 >
                   Chính Sách Bảo Mật
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
