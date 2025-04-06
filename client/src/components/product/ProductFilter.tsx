@@ -28,13 +28,15 @@ export default function ProductFilter({ onFilter, selectedCategory }: ProductFil
   });
 
   const handleFilter = () => {
-    onFilter({
+    const filters = {
       search,
       category: category || null,
       minPrice: priceRange[0],
       maxPrice: priceRange[1],
       minRating: rating
-    });
+    };
+    console.log('Applying filters:', filters);
+    onFilter(filters);
   };
 
   return (

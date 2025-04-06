@@ -26,11 +26,19 @@ export default function Products() {
     : null;
 
   const filteredProducts = products?.products.filter(product => {
+    console.log('Filtering product:', product.name);
+    console.log('Current category:', category);
+    console.log('Current search query:', searchQuery);
+    
     if (category) {
-      return product.categoryId === category.id;
+      const matches = product.categoryId === category.id;
+      console.log('Category match:', matches);
+      return matches;
     }
     if (searchQuery) {
-      return product.name.toLowerCase().includes(searchQuery.toLowerCase());
+      const matches = product.name.toLowerCase().includes(searchQuery.toLowerCase());
+      console.log('Search match:', matches);
+      return matches;
     }
     return true;
   });
