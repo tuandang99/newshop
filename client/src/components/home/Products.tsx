@@ -34,7 +34,7 @@ export default function Products() {
   const filteredProducts = products && activeFilter !== 'all' && categories
     ? products.filter(product => {
         const category = categories.find(cat => cat.slug === activeFilter);
-        return category ? product.categoryId === category.id : true;
+        return category ? product.category_id === category.id : true;
       })
     : products;
 
@@ -82,7 +82,7 @@ export default function Products() {
             <h2 className="text-3xl font-bold font-poppins mb-2">Featured Products</h2>
             <p className="text-neutral-700">Handpicked selection of our best sellers</p>
           </div>
-          <div className="flex space-x-2 mt-4 md:mt-0">
+          <div className="flex space-x-2 mt-4 md:mt-0 overflow-x-auto">
             <Button 
               variant={activeFilter === 'all' ? 'default' : 'outline'} 
               onClick={() => setActiveFilter('all')}
@@ -90,27 +90,16 @@ export default function Products() {
             >
               Tất cả
             </Button>
-            <Button 
-              variant={activeFilter === 'nuts' ? 'default' : 'outline'} 
-              onClick={() => setActiveFilter('nuts')}
-              className={activeFilter === 'nuts' ? 'bg-primary text-white' : 'bg-neutral-100 hover:bg-neutral-200'}
-            >
-              Các loại hạt
-            </Button>
-            <Button 
-              variant={activeFilter === 'bars' ? 'default' : 'outline'} 
-              onClick={() => setActiveFilter('bars')}
-              className={activeFilter === 'bars' ? 'bg-primary text-white' : 'bg-neutral-100 hover:bg-neutral-200'}
-            >
-              Thanh dinh dưỡng
-            </Button>
-            <Button 
-              variant={activeFilter === 'cereals' ? 'default' : 'outline'} 
-              onClick={() => setActiveFilter('cereals')}
-              className={activeFilter === 'cereals' ? 'bg-primary text-white' : 'bg-neutral-100 hover:bg-neutral-200'}
-            >
-              Ngũ cốc
-            </Button>
+            {categories?.map((category) => (
+              <Button
+                key={category.id}
+                variant={activeFilter === category.slug ? 'default' : 'outline'}
+                onClick={() => setActiveFilter(category.slug)}
+                className={activeFilter === category.slug ? 'bg-primary text-white' : 'bg-neutral-100 hover:bg-neutral-200'}
+              >
+                {category.name}
+              </Button>
+            ))}
           </div>
         </div>
 
