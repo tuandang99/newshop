@@ -1,7 +1,6 @@
-
 import { useParams, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { BlogPost as BlogPostType } from "@shared/schema";
+import { BlogPost as BlogPostType, BlogPostsResponse } from "@shared/schema"; // Added import for BlogPostsResponse
 import { Button } from "@/components/ui/button";
 import { CalendarIcon, ArrowLeftIcon, ArrowRightIcon } from "@/lib/icons";
 import { format } from "date-fns";
@@ -11,14 +10,21 @@ import '@/components/ui/markdown-styles.css';
 
 export default function BlogPost() {
   const { slug } = useParams();
-  
+
   const { data: post, isLoading, error } = useQuery<BlogPostType>({
     queryKey: [`/api/blog-posts/${slug}`],
   });
-  
-  const { data: recentPosts } = useQuery<BlogPostType[]>({
-    queryKey: ['/api/recent-blog-posts'],
+
+  // Get related posts from the same category
+  const { data: relatedPosts } = useQuery<BlogPostsResponse>({
+    queryKey: ['/api/blog-posts'],
+    enabled: !!post // Only fetch when the main post is loaded
   });
+
+  const filteredRelatedPosts = relatedPosts?.posts?.filter(
+    p => p.id !== post?.id && p.category === post?.category
+  )?.slice(0, 3);
+
 
   if (isLoading) {
     return (
@@ -61,7 +67,7 @@ export default function BlogPost() {
         <title>{post.title} - Blog TUHO</title>
         <meta name="description" content={post.excerpt} />
       </Helmet>
-      
+
       <section className="py-10 bg-white">
         <div className="container mx-auto px-4">
           <div className="mb-6">
@@ -72,8 +78,8 @@ export default function BlogPost() {
               </Link>
             </Button>
           </div>
-          
-          <div className="max-w-3xl mx-auto">
+
+          <article className="max-w-3xl mx-auto">
             <div className="mb-6">
               <h1 className="text-3xl md:text-4xl font-bold font-poppins mb-4">{post.title}</h1>
               <div className="flex items-center text-sm text-neutral-500">
@@ -83,56 +89,58 @@ export default function BlogPost() {
                 <span>{post.category}</span>
               </div>
             </div>
-            
-            <img 
-              src={post.image} 
-              alt={post.title} 
+
+            <img
+              src={post.image}
+              alt={post.title}
               className="w-full h-auto rounded-lg mb-8"
             />
-            
+
             <div className="prose prose-lg max-w-none" data-color-mode="light">
               <MDEditor.Markdown source={post.content} />
             </div>
-            
-            <div className="border-t border-neutral-200 mt-10 pt-6">
-              <h3 className="text-xl font-semibold mb-4 font-poppins">Bài Viết Liên Quan</h3>
-              
-              {recentPosts && recentPosts.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {recentPosts
-                    .filter(relatedPost => relatedPost.id !== post.id)
-                    .slice(0, 2)
-                    .map(relatedPost => (
-                      <div key={relatedPost.id} className="bg-neutral-50 rounded-lg overflow-hidden">
-                        <Link href={`/blog/${relatedPost.slug}`}>
-                          <img 
-                            src={relatedPost.image} 
-                            alt={relatedPost.title} 
-                            className="w-full h-40 object-cover"
-                          />
-                        </Link>
-                        <div className="p-4">
-                          <h4 className="font-semibold mb-2 font-poppins line-clamp-1">
-                            <Link href={`/blog/${relatedPost.slug}`} className="hover:text-primary transition">
-                              {relatedPost.title}
-                            </Link>
-                          </h4>
-                          <Link 
-                            href={`/blog/${relatedPost.slug}`} 
-                            className="text-primary font-medium hover:underline flex items-center text-sm"
-                          >
-                            Xem Bài Viết
-                            <ArrowRightIcon className="ml-1 h-3 w-3" />
-                          </Link>
+
+
+            {/* Related Posts */}
+            {filteredRelatedPosts && filteredRelatedPosts.length > 0 && (
+              <div className="mt-12 border-t border-neutral-200 pt-8">
+                <h3 className="text-2xl font-semibold mb-6">Bài viết liên quan</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {filteredRelatedPosts.map((relatedPost) => (
+                    <div key={relatedPost.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
+                      <Link href={`/blog/${relatedPost.slug}`}>
+                        <img
+                          src={relatedPost.image}
+                          alt={relatedPost.title}
+                          className="w-full h-48 object-cover"
+                        />
+                      </Link>
+                      <div className="p-4">
+                        <div className="flex items-center text-sm text-neutral-500 mb-2">
+                          <span>{format(new Date(relatedPost.date), 'dd/MM/yyyy')}</span>
                         </div>
+                        <h4 className="font-semibold line-clamp-2 mb-2">
+                          <Link href={`/blog/${relatedPost.slug}`} className="hover:text-primary">
+                            {relatedPost.title}
+                          </Link>
+                        </h4>
+                        <p className="text-neutral-600 text-sm line-clamp-2 mb-3">
+                          {relatedPost.excerpt}
+                        </p>
+                        <Link
+                          href={`/blog/${relatedPost.slug}`}
+                          className="text-primary text-sm font-medium hover:underline inline-flex items-center"
+                        >
+                          Đọc thêm
+                          <ArrowRightIcon className="ml-1 h-4 w-4" />
+                        </Link>
                       </div>
-                    ))}
+                    </div>
+                  ))}
                 </div>
-              ) : (
-                <p>Không có bài viết liên quan</p>
-              )}
-            </div>
-          </div>
+              </div>
+            )}
+          </article>
         </div>
       </section>
     </>
