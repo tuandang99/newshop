@@ -47,6 +47,7 @@ export default function Products() {
   const filteredProducts = products?.products.filter(product => {
     console.log("Filtering product:", product.name);
     console.log("Current category:", filters.category);
+    console.log("Product categoryId:", product.categoryId);
 
     // Search filter
     if (filters.search) {
@@ -61,6 +62,7 @@ export default function Products() {
     if (filters.category) {
       const category = categories?.find(cat => cat.slug === filters.category);
       console.log("Found category:", category);
+      console.log("Category ID comparison:", category?.id, product.categoryId);
       if (category && product.categoryId !== category.id) {
         return false;
       }
