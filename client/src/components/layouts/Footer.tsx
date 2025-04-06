@@ -6,7 +6,7 @@ import {
   FacebookIcon,
   TwitterIcon,
   InstagramIcon,
-  PinterestIcon,
+  YoutubeIcon,
 } from "@/lib/icons";
 
 export default function Footer() {
