@@ -78,12 +78,12 @@ export default function ProductCard({ product, variant = 'default' }: ProductCar
           loading="lazy"
           width={400}
           height={224}
-          className={`w-full object-cover ${variant === 'compact' ? 'h-40' : 'h-56 max-h-[300px]'}`}
+          className={`w-full object-cover ${variant === 'compact' ? 'h-32' : 'h-40 max-h-[200px]'}`}
         />
       </Link>
       <div className={variant === 'compact' ? 'p-3' : 'p-4'}>
         <div className="flex justify-between items-start mb-1">
-          <h3 className="font-semibold text-lg font-poppins">{product.name}</h3>
+          <h3 className="font-semibold text-base font-poppins">{product.name}</h3>
           <div className="flex items-center">
             <span className="text-amber-500 text-sm">
               {product.rating.toFixed(1)}
