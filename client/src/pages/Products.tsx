@@ -1,8 +1,10 @@
 import { useEffect } from "react";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Category } from "@shared/schema";
 import ProductCard from "@/components/product/ProductCard";
+import { Button } from "@/components/ui/button";
+import { ArrowLeftIcon } from "@/lib/icons";
 import { Helmet } from "react-helmet";
 
 export default function Products() {
@@ -57,6 +59,14 @@ export default function Products() {
 
       <section className="py-10 bg-white">
         <div className="container mx-auto px-4">
+          <div className="mb-6">
+            <Button asChild variant="outline" className="flex items-center gap-2">
+              <Link href="/">
+                <ArrowLeftIcon className="h-4 w-4" />
+                Quay lại trang chủ
+              </Link>
+            </Button>
+          </div>
           <div className="grid grid-cols-1 gap-6">
             {filteredProducts && (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
