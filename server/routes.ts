@@ -1,7 +1,7 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertOrderSchema, insertContactSchema, CartItem, insertProductSchema, insertBlogPostSchema } from "@shared/schema";
+import { insertOrderSchema, insertContactSchema, CartItem, insertProductSchema, insertBlogPostSchema, insertCategorySchema } from "@shared/schema";
 import { ZodError } from "zod";
 import fetch from "node-fetch";
 import { sendOrderNotification, sendNewsletterNotification, sendContactNotification } from "./telegram";
