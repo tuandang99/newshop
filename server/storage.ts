@@ -286,5 +286,11 @@ export const storage = {
       return true;
     }
     return false;
+  },
+
+  async createCategory(category: InsertCategory): Promise<Category> {
+    const [result] = await pool.query('INSERT INTO categories SET ?', category);
+    const [newCategory] = await pool.query('SELECT * FROM categories WHERE id = ?', [(result as any).insertId]);
+    return (newCategory as Category[])[0];
   }
 };
