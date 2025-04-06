@@ -22,6 +22,11 @@ export default function ProductDetail() {
     queryKey: [`/api/products/${slug}`],
   });
 
+  const { data: productsResponse } = useQuery({
+    queryKey: ['/api/products'],
+    enabled: !!product, // Only fetch when product data is available
+  });
+
   const { data: categories } = useQuery<Category[]>({
     queryKey: ["/api/categories"],
   });
