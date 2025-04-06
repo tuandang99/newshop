@@ -45,10 +45,6 @@ export default function Products() {
   };
 
   const filteredProducts = products?.products.filter(product => {
-    console.log("Filtering product:", product.name);
-    console.log("Current category:", filters.category);
-    console.log("Product categoryId:", product.categoryId);
-
     // Search filter
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
@@ -61,8 +57,8 @@ export default function Products() {
     // Category filter
     if (filters.category) {
       const category = categories?.find(cat => cat.slug === filters.category);
-      if (!category) return true; // If category not found, show all products
-      return product.categoryId === category.id;
+      if (!category) return true;
+      return product.category_id === category.id;
     }
 
     // Price filter
