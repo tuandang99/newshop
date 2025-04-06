@@ -215,23 +215,14 @@ export default function ProductDetail() {
               {/* Related Products */}
               <div className="border-t border-neutral-200 pt-8 mt-8">
                 <h3 className="text-xl font-bold mb-6">Sản phẩm liên quan</h3>
-                {(() => {
-                  const { data: allProducts } = useQuery<ProductsResponse>({
-                    queryKey: ['/api/products'],
-                  });
-
-                  const relatedProducts = allProducts?.products
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                  {productsResponse?.products
                     .filter(p => p.categoryId === product.categoryId && p.id !== product.id)
-                    .slice(0, 4);
-
-                  return (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                      {relatedProducts?.map(relatedProduct => (
-                        <ProductCard key={relatedProduct.id} product={relatedProduct} />
-                      ))}
-                    </div>
-                  );
-                })()}
+                    .slice(0, 4)
+                    .map(relatedProduct => (
+                      <ProductCard key={relatedProduct.id} product={relatedProduct} />
+                    ))}
+                </div>
               </div>
             </div>
           </div>
