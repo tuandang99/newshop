@@ -32,7 +32,7 @@ interface CheckoutModalProps {
 const formSchema = z.object({
   name: z.string().min(2, "Tên phải có ít nhất 2 ký tự"),
   phone: z.string().min(5, "Số điện thoại là bắt buộc"),
-  address: z.string().min(5, "Địa chỉ là bắt buộc"),n(5, "Địa chỉ là bắt buộc"),
+  address: z.string().min(5, "Địa chỉ là bắt buộc"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
