@@ -93,7 +93,6 @@ export {
   Sprout,
   ShieldCheck,
   StarHalf,
-  Image,
   BringToFront,
   Award,
   Filter,
