@@ -45,6 +45,9 @@ export default function Products() {
   };
 
   const filteredProducts = products?.products.filter(product => {
+    console.log("Filtering product:", product.name);
+    console.log("Current category:", filters.category);
+
     // Search filter
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
@@ -57,7 +60,10 @@ export default function Products() {
     // Category filter
     if (filters.category) {
       const category = categories?.find(cat => cat.slug === filters.category);
-      if (category && product.categoryId !== category.id) return false;
+      console.log("Found category:", category);
+      if (category && product.categoryId !== category.id) {
+        return false;
+      }
     }
 
     // Price filter

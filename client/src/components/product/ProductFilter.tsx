@@ -52,6 +52,14 @@ export default function ProductFilter({ onFilter, selectedCategory, initialFilte
     onFilter(filters);
   };
 
+  // Update category when selectedCategory changes
+  useEffect(() => {
+    if (selectedCategory) {
+      setCategory(selectedCategory);
+      handleFilter();
+    }
+  }, [selectedCategory]);
+
   useEffect(() => {
     handleFilter();
   }, [search, category, priceRange, rating]);
