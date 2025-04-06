@@ -126,7 +126,7 @@ export default function ProductDetail() {
               <img
                 src={product.image}
                 alt={product.name}
-                className="rounded-lg w-full h-auto object-cover"
+                className="rounded-lg w-full h-auto object-cover max-w-[600px] max-h-[600px]"
               />
             </div>
 

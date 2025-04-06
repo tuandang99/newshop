@@ -77,7 +77,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           loading="lazy"
           width={400}
           height={224}
-          className="w-full h-56 object-cover"
+          className="w-full h-56 object-cover max-h-[300px]"
         />
       </Link>
       <div className="p-4">
