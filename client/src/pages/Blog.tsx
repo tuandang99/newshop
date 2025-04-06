@@ -2,6 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { BlogPost } from "@shared/schema";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { CalendarIcon, ArrowRightIcon } from "@/lib/icons";
 import { format } from "date-fns";
@@ -72,10 +73,14 @@ export default function Blog() {
     );
   }
 
-  // Nhóm bài viết theo năm và tháng
-  const groupedPosts: Record<string, BlogPost[]> = {};
+  // State for grouped posts
+  const [groupedPosts, setGroupedPosts] = useState<Record<string, BlogPost[]>>({});
 
-  posts.forEach((post) => {
+  // Initialize grouped posts
+  useEffect(() => {
+    if (posts) {
+      const newGrouped: Record<string, BlogPost[]> = {};
+      posts.forEach((post) => {
     const date = new Date(post.date);
     const yearMonth = format(date, "MMMM yyyy");
 
@@ -172,44 +177,52 @@ export default function Blog() {
                 </h3>
                 <ul className="space-y-2">
                   <li>
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start hover:text-primary hover:bg-primary/10"
-                    >
-                      Dinh dưỡng
-                    </Button>
-                  </li>
+                    {Object.keys(groupedPosts).map(yearMonth => {
+                    const categories = [...new Set(groupedPosts[yearMonth].map(post => post.category))];
+                    return categories.map(category => (
+                      <li key={category}>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start hover:text-primary hover:bg-primary/10"
+                          onClick={() => {
+                            const filtered = posts.filter(post => post.category === category);
+                            const newGrouped: Record<string, BlogPost[]> = {};
+                            filtered.forEach((post) => {
+                              const date = new Date(post.date);
+                              const yearMonth = format(date, "MMMM yyyy");
+                              if (!newGrouped[yearMonth]) {
+                                newGrouped[yearMonth] = [];
+                              }
+                              newGrouped[yearMonth].push(post);
+                            });
+                            setGroupedPosts(newGrouped);
+                          }}
+                        >
+                          {category}
+                        </Button>
+                      </li>
+                    ));
+                  })}
                   <li>
                     <Button
                       variant="ghost"
                       className="w-full justify-start hover:text-primary hover:bg-primary/10"
+                      onClick={() => {
+                        const newGrouped: Record<string, BlogPost[]> = {};
+                        posts.forEach((post) => {
+                          const date = new Date(post.date);
+                          const yearMonth = format(date, "MMMM yyyy");
+                          if (!newGrouped[yearMonth]) {
+                            newGrouped[yearMonth] = [];
+                          }
+                          newGrouped[yearMonth].push(post);
+                        });
+                        setGroupedPosts(newGrouped);
+                      }}
                     >
-                      Công thức nấu ăn
+                      Tất cả
                     </Button>
                   </li>
-                  <li>
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start hover:text-primary hover:bg-primary/10"
-                    >
-                      Bền vững
-                    </Button>
-                  </li>
-                  <li>
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start hover:text-primary hover:bg-primary/10"
-                    >
-                      Sức khỏe
-                    </Button>
-                  </li>
-                  <li>
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start hover:text-primary hover:bg-primary/10"
-                    >
-                      Lối sống
-                    </Button>
                   </li>
                 </ul>
 
