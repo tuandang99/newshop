@@ -21,10 +21,8 @@ import {
   PhoneIcon,
   ClockIcon,
   FacebookIcon,
-  TwitterIcon,
-  InstagramIcon,
-  PinterestIcon,
   YoutubeIcon,
+  MapIcon
 } from "@/lib/icons";
 import { Helmet } from "react-helmet";
 
