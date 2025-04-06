@@ -88,28 +88,28 @@ export default function Products() {
               onClick={() => setActiveFilter('all')}
               className={activeFilter === 'all' ? 'bg-primary text-white' : 'bg-neutral-100 hover:bg-neutral-200'}
             >
-              All
+              Tất cả
             </Button>
             <Button 
               variant={activeFilter === 'nuts' ? 'default' : 'outline'} 
               onClick={() => setActiveFilter('nuts')}
               className={activeFilter === 'nuts' ? 'bg-primary text-white' : 'bg-neutral-100 hover:bg-neutral-200'}
             >
-              Nuts
+              Các loại hạt
             </Button>
             <Button 
               variant={activeFilter === 'bars' ? 'default' : 'outline'} 
               onClick={() => setActiveFilter('bars')}
               className={activeFilter === 'bars' ? 'bg-primary text-white' : 'bg-neutral-100 hover:bg-neutral-200'}
             >
-              Bars
+              Thanh dinh dưỡng
             </Button>
             <Button 
               variant={activeFilter === 'cereals' ? 'default' : 'outline'} 
               onClick={() => setActiveFilter('cereals')}
               className={activeFilter === 'cereals' ? 'bg-primary text-white' : 'bg-neutral-100 hover:bg-neutral-200'}
             >
-              Cereals
+              Ngũ cốc
             </Button>
           </div>
         </div>
