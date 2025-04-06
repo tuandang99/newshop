@@ -66,12 +66,12 @@ export type Testimonial = InsertTestimonial & { id: number };
 
 // Orders
 export const insertOrderSchema = z.object({
-  name: z.string(),
-  email: z.string(),
-  phone: z.string(),
-  address: z.string(),
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  phone: z.string().min(5, "Phone number is required"), 
+  address: z.string().min(5, "Address is required"),
   items: z.string(),
   total: z.number(),
+  status: z.string().optional(),
 });
 
 export type InsertOrder = z.infer<typeof insertOrderSchema>;

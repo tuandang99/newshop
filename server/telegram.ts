@@ -100,7 +100,6 @@ function formatOrderMessage(order: Order, items: CartItem[]): string {
   
   return `🛒 <b>Đơn Hàng Mới #${order.id}</b>\n\n` +
     `<b>Khách hàng:</b> ${order.name}\n` +
-    `<b>Email:</b> ${order.email}\n` +
     `<b>SĐT:</b> ${order.phone}\n` +
     `<b>Địa chỉ:</b> ${order.address}\n\n` +
     `<b>Chi tiết đơn hàng:</b>\n${itemsList}\n\n` +
