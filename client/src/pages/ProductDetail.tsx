@@ -219,14 +219,14 @@ export default function ProductDetail() {
               </div>
 
               {/* Related Products */}
-              <div className="border-t border-neutral-200 pt-8 mt-8">
-                <h3 className="text-xl font-bold mb-6">Sản phẩm liên quan</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              <div className="border-t border-neutral-200 pt-6 mt-6">
+                <h3 className="text-lg font-bold mb-4">Sản phẩm liên quan</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                   {productsResponse?.products
                     .filter(p => p.categoryId === product.categoryId && p.id !== product.id)
-                    .slice(0, 4)
+                    .slice(0, 3)
                     .map(relatedProduct => (
-                      <ProductCard key={relatedProduct.id} product={relatedProduct} />
+                      <ProductCard key={relatedProduct.id} product={relatedProduct} variant="compact" />
                     ))}
                 </div>
               </div>

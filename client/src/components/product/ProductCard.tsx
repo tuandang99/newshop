@@ -25,9 +25,10 @@ import { useToast } from "@/hooks/use-toast";
 
 interface ProductCardProps {
   product: Product;
+  variant?: 'default' | 'compact';
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({ product, variant = 'default' }: ProductCardProps) {
   const { addItem } = useCart();
   const { toast } = useToast();
 
@@ -77,10 +78,10 @@ export default function ProductCard({ product }: ProductCardProps) {
           loading="lazy"
           width={400}
           height={224}
-          className="w-full h-56 object-cover max-h-[300px]"
+          className={`w-full object-cover ${variant === 'compact' ? 'h-40' : 'h-56 max-h-[300px]'}`}
         />
       </Link>
-      <div className="p-4">
+      <div className={variant === 'compact' ? 'p-3' : 'p-4'}>
         <div className="flex justify-between items-start mb-1">
           <h3 className="font-semibold text-lg font-poppins">{product.name}</h3>
           <div className="flex items-center">
