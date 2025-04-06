@@ -24,14 +24,9 @@ export default function Products() {
     : null;
 
   const filteredProducts = products?.products.filter(product => {
-    // Filter by category if specified
-    if (categorySlug && categories) {
-      const selectedCategory = categories.find(cat => cat.slug === categorySlug);
-      if (selectedCategory && product.categoryId !== selectedCategory.id) {
-        return false;
-      }
+    if (category) {
+      return product.categoryId === category.id;
     }
-    // Filter by search query if specified
     if (searchQuery) {
       return product.name.toLowerCase().includes(searchQuery.toLowerCase());
     }
