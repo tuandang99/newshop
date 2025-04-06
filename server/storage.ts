@@ -87,8 +87,11 @@ async function initDb() {
       )
     `);
 
+    // Drop orders table first
+    await conn.query('DROP TABLE IF EXISTS orders');
+
+    // Then create new orders table
     await conn.query(`
-      DROP TABLE IF EXISTS orders;
       CREATE TABLE orders (
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
