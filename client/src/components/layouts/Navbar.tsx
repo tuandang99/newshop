@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/CartContext";
 import { LeafIcon, SearchIcon, ShoppingCartIcon, MenuIcon, ChevronDownIcon } from "@/lib/icons";
+import { Category } from "@shared/schema";
 import { useQuery } from "@tanstack/react-query";
 import { Product } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
@@ -20,6 +21,9 @@ interface ProductsResponse {
 }
 
 export default function Navbar() {
+  const { data: categories } = useQuery<Category[]>({
+    queryKey: ["/api/categories"],
+  });
   const [location, setLocation] = useLocation();
   const { items, toggleCart } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
