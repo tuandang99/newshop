@@ -96,6 +96,7 @@ export default function Navbar() {
                       key={category.id}
                       href={`/products?category=${category.slug}`} 
                       className="block px-4 py-2 text-sm hover:bg-neutral-100 transition-colors"
+                      onClick={closeMenu}
                     >
                       {category.name}
                     </Link>
