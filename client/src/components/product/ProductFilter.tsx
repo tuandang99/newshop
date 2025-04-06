@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Category } from "@shared/schema";
 import { useQuery } from "@tanstack/react-query";
@@ -9,25 +8,17 @@ interface ProductFilterProps {
   onFilter: (filters: {
     search: string;
     category: string | null;
-    minPrice: number;
-    maxPrice: number;
-    minRating: number;
   }) => void;
   selectedCategory?: string;
   initialFilters?: {
     search: string;
     category: string;
-    priceRange: [number, number];
-    rating: number;
   };
 }
 
 export default function ProductFilter({ onFilter, selectedCategory, initialFilters }: ProductFilterProps) {
   const [search, setSearch] = useState(initialFilters?.search || "");
   const [category, setCategory] = useState(selectedCategory || "");
-  const [minPrice, setMinPrice] = useState(initialFilters?.priceRange?.[0] || 0);
-  const [maxPrice, setMaxPrice] = useState(initialFilters?.priceRange?.[1] || 1000000);
-  const [rating, setRating] = useState(initialFilters?.rating || 0);
 
   const { data: categories } = useQuery<Category[]>({
     queryKey: ["/api/categories"],
@@ -43,11 +34,8 @@ export default function ProductFilter({ onFilter, selectedCategory, initialFilte
     onFilter({
       search: search.trim(),
       category: category || null,
-      minPrice: Number(minPrice),
-      maxPrice: Number(maxPrice),
-      minRating: rating
     });
-  }, [search, category, minPrice, maxPrice, rating, onFilter]);
+  }, [search, category, onFilter]);
 
   return (
     <div className="bg-white rounded-lg p-4 space-y-4">
@@ -75,40 +63,6 @@ export default function ProductFilter({ onFilter, selectedCategory, initialFilte
                 {cat.name}
               </option>
             ))}
-          </select>
-        </div>
-
-        <div>
-          <label className="text-sm font-medium">Giá (VNĐ)</label>
-          <div className="flex gap-2 mt-1">
-            <Input
-              type="number"
-              placeholder="Từ"
-              value={minPrice}
-              onChange={(e) => setMinPrice(Number(e.target.value))}
-              min={0}
-            />
-            <Input
-              type="number"
-              placeholder="Đến"
-              value={maxPrice}
-              onChange={(e) => setMaxPrice(Number(e.target.value))}
-              min={minPrice}
-            />
-          </div>
-        </div>
-
-        <div>
-          <label className="text-sm font-medium">Đánh giá tối thiểu</label>
-          <select
-            value={rating}
-            onChange={(e) => setRating(Number(e.target.value))}
-            className="w-full mt-1 px-3 py-2 bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-          >
-            <option value="0">Tất cả</option>
-            <option value="3">3 sao trở lên</option>
-            <option value="4">4 sao trở lên</option>
-            <option value="5">5 sao</option>
           </select>
         </div>
       </div>
