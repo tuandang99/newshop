@@ -1,27 +1,20 @@
 import { useState, useEffect } from "react";
-import { Input } from "@/components/ui/input";
-import { useQuery } from "@tanstack/react-query";
 import { Category } from "@shared/schema";
-import { SearchIcon, FilterIcon } from "@/lib/icons";
+import { useQuery } from "@tanstack/react-query";
+import { Input } from "@/components/ui/input";
+import { SearchIcon } from "@/lib/icons";
 
 interface ProductFilterProps {
   onFilter: (filters: {
     search: string;
     category: string | null;
-    minPrice: number;
-    maxPrice: number;
-    minRating: number;
   }) => void;
   selectedCategory?: string;
-  initialFilters?: {
-    search?: string;
-    category?: string;
-  };
 }
 
-export default function ProductFilter({ onFilter, selectedCategory, initialFilters }: ProductFilterProps) {
-  const [search, setSearch] = useState(initialFilters?.search || "");
-  const [category, setCategory] = useState(selectedCategory || initialFilters?.category || "");
+export default function ProductFilter({ onFilter, selectedCategory }: ProductFilterProps) {
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState(selectedCategory || "");
 
   const { data: categories } = useQuery<Category[]>({
     queryKey: ["/api/categories"],
@@ -33,35 +26,17 @@ export default function ProductFilter({ onFilter, selectedCategory, initialFilte
     }
   }, [selectedCategory]);
 
-  const handleFilter = () => {
-    const filters = {
+  useEffect(() => {
+    onFilter({
       search: search.trim(),
       category: category === "" ? null : category,
-      minPrice: 0,
-      maxPrice: 1000000,
-      minRating: 0
-    };
-    console.log('Applying filters:', {
-      ...filters,
-      categoryDetails: categories?.find(cat => cat.slug === category)
     });
-    onFilter(filters);
-  };
-
-  useEffect(() => {
-    console.log("Filtering with category:", category);
-    handleFilter();
-  }, [search, category]);
+  }, [search, category, onFilter]);
 
   return (
-    <div className="bg-white rounded-lg shadow-sm divide-y divide-gray-100">
-      <div className="p-4">
-        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-          <FilterIcon className="w-5 h-5" />
-          Bộ lọc sản phẩm
-        </h3>
-
-        <div className="relative mb-4">
+    <div className="bg-white rounded-lg p-4 space-y-4">
+      <div className="space-y-4">
+        <div className="relative">
           <Input
             placeholder="Tìm kiếm sản phẩm..."
             value={search}
@@ -70,22 +45,22 @@ export default function ProductFilter({ onFilter, selectedCategory, initialFilte
           />
           <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
         </div>
-      </div>
 
-      <div className="p-4">
-        <label className="text-sm font-medium block mb-2">Danh mục</label>
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          className="w-full px-3 py-2 bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-        >
-          <option value="">Tất cả danh mục</option>
-          {categories?.map((cat) => (
-            <option key={cat.id} value={cat.slug}>
-              {cat.name}
-            </option>
-          ))}
-        </select>
+        <div>
+          <label className="text-sm font-medium">Danh mục sản phẩm</label>
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="w-full mt-1 px-3 py-2 bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+          >
+            <option value="">Tất cả danh mục</option>
+            {categories?.map((cat) => (
+              <option key={cat.id} value={cat.slug}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
     </div>
   );
