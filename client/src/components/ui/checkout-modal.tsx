@@ -31,9 +31,8 @@ interface CheckoutModalProps {
 
 const formSchema = z.object({
   name: z.string().min(2, "Tên phải có ít nhất 2 ký tự"),
-  email: z.string().email("Địa chỉ email không hợp lệ"),
   phone: z.string().min(5, "Số điện thoại là bắt buộc"),
-  address: z.string().min(5, "Địa chỉ là bắt buộc"),
+  address: z.string().min(5, "Địa chỉ là bắt buộc"),n(5, "Địa chỉ là bắt buộc"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -47,7 +46,6 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      email: "",
       phone: "",
       address: "",
     },
@@ -132,25 +130,6 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                   <FormLabel>Họ và tên</FormLabel>
                   <FormControl>
                     <Input placeholder="Nhập họ và tên của bạn" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Nhập địa chỉ email của bạn"
-                      {...field}
-                      type="email"
-                      required
-                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
