@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
@@ -15,27 +15,33 @@ interface ProductFilterProps {
     minRating: number;
   }) => void;
   selectedCategory?: string;
+  initialFilters?: {
+    search?: string;
+    category?: string;
+    priceRange?: [number, number];
+    rating?: number;
+  };
 }
 
-export default function ProductFilter({ onFilter, selectedCategory }: ProductFilterProps) {
-  const [search, setSearch] = useState("");
-  const [category, setCategory] = useState(selectedCategory || "");
-  const [priceRange, setPriceRange] = useState([0, 1000000]);
-  const [rating, setRating] = useState(0);
+export default function ProductFilter({ onFilter, selectedCategory, initialFilters }: ProductFilterProps) {
+  const [search, setSearch] = useState(initialFilters?.search || "");
+  const [category, setCategory] = useState(selectedCategory || initialFilters?.category || "");
+  const [priceRange, setPriceRange] = useState<[number, number]>(initialFilters?.priceRange || [0, 1000000]);
+  const [rating, setRating] = useState(initialFilters?.rating || 0);
 
   const { data: categories } = useQuery<Category[]>({
     queryKey: ["/api/categories"],
   });
 
+  useEffect(() => {
+    if (selectedCategory) {
+      setCategory(selectedCategory);
+    }
+  }, [selectedCategory]);
+
   const handleFilter = () => {
-    console.log('Filter button clicked');
-    console.log('Current search:', search);
-    console.log('Current category:', category);
-    console.log('Current price range:', priceRange);
-    console.log('Current rating:', rating);
-    
     const filters = {
-      search,
+      search: search.trim(),
       category: category || null,
       minPrice: priceRange[0],
       maxPrice: priceRange[1],
@@ -44,6 +50,11 @@ export default function ProductFilter({ onFilter, selectedCategory }: ProductFil
     console.log('Applying filters:', filters);
     onFilter(filters);
   };
+
+  // Auto-apply filters when inputs change
+  useEffect(() => {
+    handleFilter();
+  }, [search, category, priceRange, rating]);
 
   return (
     <div className="space-y-4 p-4 bg-white rounded-lg shadow-sm">
@@ -76,7 +87,7 @@ export default function ProductFilter({ onFilter, selectedCategory }: ProductFil
           max={1000000}
           step={50000}
           value={priceRange}
-          onValueChange={setPriceRange}
+          onValueChange={(value) => setPriceRange(value as [number, number])}
         />
         <div className="flex justify-between text-sm mt-1">
           <span>{priceRange[0].toLocaleString()}₫</span>
@@ -84,9 +95,21 @@ export default function ProductFilter({ onFilter, selectedCategory }: ProductFil
         </div>
       </div>
 
-      <Button onClick={handleFilter} className="w-full">
-        Lọc sản phẩm
-      </Button>
+      <div>
+        <label className="text-sm font-medium">Đánh giá tối thiểu</label>
+        <div className="flex items-center gap-2">
+          <input
+            type="range"
+            min="0"
+            max="5"
+            step="0.5"
+            value={rating}
+            onChange={(e) => setRating(Number(e.target.value))}
+            className="w-full"
+          />
+          <span>{rating} ⭐</span>
+        </div>
+      </div>
     </div>
   );
 }
