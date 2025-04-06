@@ -25,7 +25,8 @@ interface ProductFilterProps {
 export default function ProductFilter({ onFilter, selectedCategory, initialFilters }: ProductFilterProps) {
   const [search, setSearch] = useState(initialFilters?.search || "");
   const [category, setCategory] = useState(selectedCategory || "");
-  const [priceRange, setPriceRange] = useState<[number, number]>(initialFilters?.priceRange || [0, 1000000]);
+  const [minPrice, setMinPrice] = useState(initialFilters?.priceRange?.[0] || 0);
+  const [maxPrice, setMaxPrice] = useState(initialFilters?.priceRange?.[1] || 1000000);
   const [rating, setRating] = useState(initialFilters?.rating || 0);
 
   const { data: categories } = useQuery<Category[]>({
@@ -42,11 +43,11 @@ export default function ProductFilter({ onFilter, selectedCategory, initialFilte
     onFilter({
       search: search.trim(),
       category: category || null,
-      minPrice: priceRange[0],
-      maxPrice: priceRange[1],
+      minPrice: Number(minPrice),
+      maxPrice: Number(maxPrice),
       minRating: rating
     });
-  }, [search, category, priceRange, rating, onFilter]);
+  }, [search, category, minPrice, maxPrice, rating, onFilter]);
 
   return (
     <div className="bg-white rounded-lg p-4 space-y-4">
@@ -83,16 +84,16 @@ export default function ProductFilter({ onFilter, selectedCategory, initialFilte
             <Input
               type="number"
               placeholder="Từ"
-              value={priceRange[0]}
-              onChange={(e) => setPriceRange([Number(e.target.value), priceRange[1]])}
+              value={minPrice}
+              onChange={(e) => setMinPrice(Number(e.target.value))}
               min={0}
             />
             <Input
               type="number"
               placeholder="Đến"
-              value={priceRange[1]}
-              onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
-              min={priceRange[0]}
+              value={maxPrice}
+              onChange={(e) => setMaxPrice(Number(e.target.value))}
+              min={minPrice}
             />
           </div>
         </div>
