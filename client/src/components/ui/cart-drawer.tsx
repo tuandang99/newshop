@@ -61,12 +61,15 @@ export default function CartDrawer() {
                 <ShoppingCartIcon className="h-12 w-12 text-neutral-300 mx-auto mb-3" />
                 <p className="text-neutral-500">Giỏ hàng trống</p>
                 <Button
-                  variant="link"
-                  onClick={toggleCart}
-                  className="mt-4 text-sm text-primary hover:underline"
-                >
-                  Xem sản phẩm
-                </Button>
+                    variant="link"
+                    onClick={() => {
+                      toggleCart();
+                      window.location.href = '/products';
+                    }}
+                    className="mt-4 text-sm text-primary hover:underline"
+                  >
+                    Xem sản phẩm
+                  </Button>
               </div>
             ) : (
               items.map((item) => (
