@@ -109,10 +109,12 @@ export default function Contact() {
                       name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="font-medium">Họ và tên</FormLabel>
+                          <FormLabel className="font-medium">
+                            Họ và tên
+                          </FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="Nhập họ và tên của bạn"
+                              placeholder=""
                               {...field}
                               className="px-4 py-2 border border-neutral-300 rounded-md focus:ring-2 focus:ring-primary"
                             />
@@ -163,9 +165,7 @@ export default function Contact() {
                     name="message"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="font-medium">
-                          Tin nhắnnhắn
-                        </FormLabel>
+                        <FormLabel className="font-medium">Tin nhắn</FormLabel>
                         <FormControl>
                           <Textarea
                             {...field}
