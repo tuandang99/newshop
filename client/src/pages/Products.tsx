@@ -15,17 +15,25 @@ export default function Products() {
     queryKey: ['/api/categories'],
   });
 
+  const { data: products } = useQuery<ProductsResponse>({
+    queryKey: ['/api/products'],
+  });
+
   const category = categorySlug && categories 
     ? categories.find(cat => cat.slug === categorySlug) 
     : null;
 
-  const { data: products } = useQuery<ProductsResponse>({
-    queryKey: ['/api/products', categorySlug],
-  });
-
   const filteredProducts = products?.products.filter(product => {
-    if (category) {
-      return product.categoryId === category.id;
+    // Filter by category if specified
+    if (categorySlug && categories) {
+      const selectedCategory = categories.find(cat => cat.slug === categorySlug);
+      if (selectedCategory && product.categoryId !== selectedCategory.id) {
+        return false;
+      }
+    }
+    // Filter by search query if specified
+    if (searchQuery) {
+      return product.name.toLowerCase().includes(searchQuery.toLowerCase());
     }
     return true;
   });
