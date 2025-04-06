@@ -27,18 +27,10 @@ export default function Products() {
   // Extract products from the response
   const products = productsResponse?.products;
 
-  const filteredProducts = products && activeFilter !== 'all'
+  const filteredProducts = products && activeFilter !== 'all' && categories
     ? products.filter(product => {
-        switch (activeFilter) {
-          case 'nuts':
-            return product.categoryId === 1; // Nuts & Seeds
-          case 'bars':
-            return product.categoryId === 2; // Granola Bars
-          case 'cereals':
-            return product.categoryId === 3; // Cereals
-          default:
-            return true;
-        }
+        const category = categories.find(cat => cat.slug === activeFilter);
+        return category ? product.categoryId === category.id : true;
       })
     : products;
 
