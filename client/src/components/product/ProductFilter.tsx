@@ -28,6 +28,12 @@ export default function ProductFilter({ onFilter, selectedCategory }: ProductFil
   });
 
   const handleFilter = () => {
+    console.log('Filter button clicked');
+    console.log('Current search:', search);
+    console.log('Current category:', category);
+    console.log('Current price range:', priceRange);
+    console.log('Current rating:', rating);
+    
     const filters = {
       search,
       category: category || null,

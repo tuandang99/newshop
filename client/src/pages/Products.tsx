@@ -3,6 +3,7 @@ import { useLocation, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Category } from "@shared/schema";
 import ProductCard from "@/components/product/ProductCard";
+import ProductFilter from "@/components/product/ProductFilter";
 import { Button } from "@/components/ui/button";
 import { ArrowLeftIcon } from "@/lib/icons";
 import { Helmet } from "react-helmet";
@@ -56,7 +57,16 @@ export default function Products() {
 
       <section className="py-10 bg-white">
         <div className="container mx-auto px-4">
-          <div className="mb-6">
+          <div className="mb-6 flex flex-col md:flex-row gap-6">
+            <div className="md:w-1/4">
+              <ProductFilter 
+                selectedCategory={categorySlug || ''} 
+                onFilter={(filters) => {
+                  console.log('Received filters in Products:', filters);
+                  // Add your filter logic here
+                }} 
+              />
+            </div>
             <Button asChild variant="outline" className="flex items-center gap-2">
               <Link href="/">
                 <ArrowLeftIcon className="h-4 w-4" />
