@@ -3,6 +3,20 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+
+// Category form schema
+const categoryFormSchema = z.object({
+  name: z.string().min(1, "Tên danh mục là bắt buộc"),
+  slug: z.string().min(1, "Slug là bắt buộc"),
+  image: z.string()
+    .min(1, "Đường dẫn ảnh là bắt buộc")
+    .refine(
+      (val) => val.startsWith("/") || val.startsWith("http"),
+      "Đường dẫn ảnh phải bắt đầu bằng '/' cho file local hoặc 'http' cho URL"
+    ),
+});
+
+type CategoryFormValues = z.infer<typeof categoryFormSchema>;
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import {
@@ -153,6 +167,16 @@ export default function Admin() {
   });
 
   // Blog form
+  // Category form
+  const categoryForm = useForm<CategoryFormValues>({
+    resolver: zodResolver(categoryFormSchema),
+    defaultValues: {
+      name: "",
+      slug: "",
+      image: "",
+    },
+  });
+
   const blogForm = useForm<BlogFormValues>({
     resolver: zodResolver(blogFormSchema),
     defaultValues: {
@@ -384,6 +408,86 @@ export default function Admin() {
     if (window.confirm("Are you sure you want to delete this blog post?")) {
       deleteBlogMutation.mutate(id);
     }
+  };
+
+  // Add category mutation
+  const addCategoryMutation = useMutation({
+    mutationFn: async (data: CategoryFormValues) => {
+      const response = await fetch("/api/admin/categories", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Admin-Key": adminKey,
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to add category");
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Thêm danh mục thành công",
+        description: "Danh mục mới đã được thêm vào hệ thống",
+      });
+      categoryForm.reset();
+      queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Lỗi",
+        description: error.message || "Không thể thêm danh mục",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Delete category mutation
+  const deleteCategoryMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const response = await fetch(`/api/admin/categories/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Admin-Key": adminKey,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to delete category");
+      }
+
+      return true;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Xóa danh mục thành công",
+        description: "Danh mục đã được xóa khỏi hệ thống",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Lỗi",
+        description: error.message || "Không thể xóa danh mục",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleDeleteCategory = (id: number) => {
+    if (window.confirm("Bạn có chắc chắn muốn xóa danh mục này?")) {
+      deleteCategoryMutation.mutate(id);
+    }
+  };
+
+  // Handle category form submission
+  const onSubmitCategory = (data: CategoryFormValues) => {
+    addCategoryMutation.mutate(data);
   };
 
   const addBlogMutation = useMutation({
@@ -702,9 +806,133 @@ export default function Admin() {
 
         <Tabs defaultValue="products">
           <TabsList className="mb-6">
+            <TabsTrigger value="categories">Categories</TabsTrigger>
             <TabsTrigger value="products">Products</TabsTrigger>
             <TabsTrigger value="blog">Blog Posts</TabsTrigger>
           </TabsList>
+
+          {/* Categories Tab */}
+          <TabsContent value="categories">
+            <Card>
+              <CardHeader>
+                <CardTitle>Thêm Danh Mục Mới</CardTitle>
+                <CardDescription>
+                  Tạo danh mục sản phẩm mới
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Form {...categoryForm}>
+                  <form
+                    onSubmit={categoryForm.handleSubmit(onSubmitCategory)}
+                    className="space-y-4"
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <FormField
+                        control={categoryForm.control}
+                        name="name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Tên danh mục</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="VD: Rau củ hữu cơ"
+                                {...field}
+                                onChange={(e) => {
+                                  field.onChange(e);
+                                  if (!categoryForm.getValues("slug")) {
+                                    categoryForm.setValue(
+                                      "slug",
+                                      generateSlug(e.target.value),
+                                    );
+                                  }
+                                }}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={categoryForm.control}
+                        name="slug"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Slug</FormLabel>
+                            <FormControl>
+                              <Input placeholder="rau-cu-huu-co" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <FormField
+                      control={categoryForm.control}
+                      name="image"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Ảnh danh mục</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="/images/categories/vegetables.jpg"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            Sử dụng đường dẫn từ thư mục public (VD: /images/categories/vegetables.jpg) hoặc URL đầy đủ
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <Button
+                      type="submit"
+                      className="w-full"
+                      disabled={addCategoryMutation.isPending}
+                    >
+                      {addCategoryMutation.isPending ? "Đang thêm..." : "Thêm danh mục"}
+                    </Button>
+                  </form>
+                </Form>
+              </CardContent>
+            </Card>
+
+            {/* Category List */}
+            <div className="mt-8">
+              <h3 className="text-lg font-semibold mb-4">Danh mục hiện có</h3>
+              <div className="grid gap-4">
+                {categories?.map((category) => (
+                  <div
+                    key={category.id}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
+                    <div className="flex items-center space-x-4">
+                      <img
+                        src={category.image}
+                        alt={category.name}
+                        className="w-16 h-16 object-cover rounded"
+                      />
+                      <div>
+                        <h4 className="font-medium">{category.name}</h4>
+                        <p className="text-sm text-gray-500">{category.slug}</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => handleDeleteCategory(category.id)}
+                        variant="destructive"
+                      >
+                        Xóa
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </TabsContent>
 
           {/* Products Tab */}
           <TabsContent value="products">
