@@ -101,7 +101,7 @@ export default function Contact() {
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-4"
+                  className="space-y-6"
                 >
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <FormField
@@ -109,9 +109,10 @@ export default function Contact() {
                       name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="font-medium"></FormLabel>
+                          <FormLabel className="font-medium">Họ và tên</FormLabel>
                           <FormControl>
                             <Input
+                              placeholder="Nhập họ và tên của bạn"
                               {...field}
                               className="px-4 py-2 border border-neutral-300 rounded-md focus:ring-2 focus:ring-primary"
                             />
@@ -179,10 +180,10 @@ export default function Contact() {
 
                   <Button
                     type="submit"
-                    className="bg-primary text-white hover:bg-primary/90 px-6 py-3"
+                    className="w-full md:w-auto bg-primary text-white hover:bg-primary/90 px-8 py-3 text-base font-medium"
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? "Sending..." : "Send Message"}
+                    {isSubmitting ? "Đang gửi..." : "Gửi tin nhắn"}
                   </Button>
                 </form>
               </Form>
