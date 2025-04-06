@@ -201,7 +201,7 @@ export default function ProductDetail() {
                   onClick={handleAddToCart}
                   className="bg-primary text-white hover:bg-primary/90 px-8"
                 >
-                  Add to Cart
+                  Thêm vào giỏ hàng
                 </Button>
               </div>
 
