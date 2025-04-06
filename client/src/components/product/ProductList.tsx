@@ -51,9 +51,9 @@ export default function ProductList({ categorySlug }: ProductListProps) {
   const products = allProducts
     ? allProducts.filter((product) => {
         // Filter by category if specified
-        if (categorySlug) {
-          const categoryId = category?.id;
-          if (categoryId && product.categoryId !== categoryId) {
+        if (categorySlug && categories) {
+          const category = categories.find(cat => cat.slug === categorySlug);
+          if (category && product.categoryId !== category.id) {
             return false;
           }
         }

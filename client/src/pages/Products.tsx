@@ -8,7 +8,7 @@ import { Helmet } from "react-helmet";
 export default function Products() {
   const [location] = useLocation();
   const searchParams = new URLSearchParams(location.split('?')[1] || '');
-  const categorySlug = searchParams.get('category') || undefined;
+  const categorySlug = searchParams.get('category');
   const searchQuery = searchParams.get('search');
 
   const { data: categories } = useQuery<Category[]>({
