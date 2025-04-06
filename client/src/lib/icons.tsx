@@ -30,6 +30,7 @@ import {
   Image,
   BringToFront,
   Award,
+  Filter,
 } from "lucide-react";
 
 // Export all icons with consistent naming convention
@@ -61,6 +62,7 @@ export const SproutIcon = (props: LucideProps) => <Sprout {...props} />;
 export const ShieldCheckIcon = (props: LucideProps) => <ShieldCheck {...props} />;
 export const BringToFrontIcon = (props: LucideProps) => <BringToFront {...props} />;
 export const AwardIcon = (props: LucideProps) => <Award {...props} />;
+export const FilterIcon = (props: LucideProps) => <Filter {...props} />;
 
 // Re-export with additional names for backward compatibility
 export { X } from "lucide-react";
