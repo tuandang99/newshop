@@ -31,6 +31,7 @@ import {
   BringToFront,
   Award,
   Filter,
+  Youtube,
 } from "lucide-react";
 
 // Export all icons with consistent naming convention
@@ -45,12 +46,20 @@ export const FacebookIcon = (props: LucideProps) => <Facebook {...props} />;
 export const TwitterIcon = (props: LucideProps) => <Twitter {...props} />;
 export const InstagramIcon = (props: LucideProps) => <Instagram {...props} />;
 export const PinterestIcon = (props: LucideProps) => <Image {...props} />;
-export const StarFilledIcon = (props: LucideProps) => <Star fill="currentColor" {...props} />;
-export const StarHalfFilledIcon = (props: LucideProps) => <StarHalf fill="currentColor" {...props} />;
-export const ShoppingCartIcon = (props: LucideProps) => <ShoppingCart {...props} />;
+export const StarFilledIcon = (props: LucideProps) => (
+  <Star fill="currentColor" {...props} />
+);
+export const StarHalfFilledIcon = (props: LucideProps) => (
+  <StarHalf fill="currentColor" {...props} />
+);
+export const ShoppingCartIcon = (props: LucideProps) => (
+  <ShoppingCart {...props} />
+);
 export const SearchIcon = (props: LucideProps) => <Search {...props} />;
 export const MenuIcon = (props: LucideProps) => <Menu {...props} />;
-export const ChevronDownIcon = (props: LucideProps) => <ChevronDown {...props} />;
+export const ChevronDownIcon = (props: LucideProps) => (
+  <ChevronDown {...props} />
+);
 export const PlusIcon = (props: LucideProps) => <Plus {...props} />;
 export const MinusIcon = (props: LucideProps) => <Minus {...props} />;
 export const CloseIcon = (props: LucideProps) => <X {...props} />;
@@ -59,10 +68,15 @@ export const ArrowLeftIcon = (props: LucideProps) => <ArrowLeft {...props} />;
 export const CalendarIcon = (props: LucideProps) => <Calendar {...props} />;
 export const HeartIcon = (props: LucideProps) => <Heart {...props} />;
 export const SproutIcon = (props: LucideProps) => <Sprout {...props} />;
-export const ShieldCheckIcon = (props: LucideProps) => <ShieldCheck {...props} />;
-export const BringToFrontIcon = (props: LucideProps) => <BringToFront {...props} />;
+export const ShieldCheckIcon = (props: LucideProps) => (
+  <ShieldCheck {...props} />
+);
+export const BringToFrontIcon = (props: LucideProps) => (
+  <BringToFront {...props} />
+);
 export const AwardIcon = (props: LucideProps) => <Award {...props} />;
 export const FilterIcon = (props: LucideProps) => <Filter {...props} />;
+export const YoutubeIcon = (props: LucideProps) => <Youtube {...props} />;
 
 // Re-export with additional names for backward compatibility
 export { X } from "lucide-react";

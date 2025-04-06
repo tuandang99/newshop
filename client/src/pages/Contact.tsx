@@ -24,6 +24,7 @@ import {
   TwitterIcon,
   InstagramIcon,
   PinterestIcon,
+  YoutubeIcon,
 } from "@/lib/icons";
 import { Helmet } from "react-helmet";
 
@@ -223,7 +224,7 @@ export default function Contact() {
                       <PhoneIcon className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <h4 className="font-medium">Điện Thoại</h4>
+                      <h4 className="font-medium">Điện Thoại - Zalo</h4>
                       <p className="text-neutral-700">0398 377 304</p>
                     </div>
                   </div>
@@ -247,28 +248,28 @@ export default function Contact() {
                   <h4 className="font-medium mb-2">Liên hệ qua</h4>
                   <div className="flex space-x-2">
                     <a
-                      href="#"
+                      href="https://www.facebook.com/tuhohealthyfood/"
                       className="bg-primary/10 p-2 rounded-full hover:bg-primary/20 transition"
                     >
                       <FacebookIcon className="h-5 w-5 text-primary" />
                     </a>
                     <a
-                      href="#"
+                      href="https://www.youtube.com/@TuhoHealthyFood"
                       className="bg-primary/10 p-2 rounded-full hover:bg-primary/20 transition"
                     >
-                      <TwitterIcon className="h-5 w-5 text-primary" />
+                      <YoutubeIcon className="h-5 w-5 text-primary" />
                     </a>
                     <a
-                      href="#"
+                      href="https://maps.app.goo.gl/Y4GSMPnHnPxWYGPm9"
                       className="bg-primary/10 p-2 rounded-full hover:bg-primary/20 transition"
                     >
-                      <InstagramIcon className="h-5 w-5 text-primary" />
+                      <MapPinIcon className="h-5 w-5 text-primary" />
                     </a>
                     <a
-                      href="#"
+                      href="https://zalo.me/0398377304"
                       className="bg-primary/10 p-2 rounded-full hover:bg-primary/20 transition"
                     >
-                      <PinterestIcon className="h-5 w-5 text-primary" />
+                      <PhoneIcon className="h-5 w-5 text-primary" />
                     </a>
                   </div>
                 </div>
