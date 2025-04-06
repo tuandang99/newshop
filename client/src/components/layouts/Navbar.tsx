@@ -227,7 +227,11 @@ export default function Navbar() {
                   )}
                 </form>
               </div>
-              <Link href="/" className="text-neutral-900 hover:text-primary font-medium py-2 transition">
+              <Link 
+                href="/" 
+                className="text-neutral-900 hover:text-primary font-medium py-2 transition"
+                onClick={() => setMobileMenuOpen(false)}
+              >
                 Trang Chủ
               </Link>
               <div>
@@ -245,6 +249,10 @@ export default function Navbar() {
                         key={category.id}
                         href={`/products?category=${category.slug}`} 
                         className="block py-1 text-neutral-900 hover:text-primary"
+                        onClick={() => {
+                          setMobileMenuOpen(false);
+                          setMobileProductsOpen(false);
+                        }}
                       >
                         {category.name}
                       </Link>
@@ -252,13 +260,25 @@ export default function Navbar() {
                   </div>
                 )}
               </div>
-              <Link href="/about" className="text-neutral-900 hover:text-primary font-medium py-2 transition">
+              <Link 
+                href="/about" 
+                className="text-neutral-900 hover:text-primary font-medium py-2 transition"
+                onClick={() => setMobileMenuOpen(false)}
+              >
                 Về Chúng Tôi
               </Link>
-              <Link href="/blog" className="text-neutral-900 hover:text-primary font-medium py-2 transition">
+              <Link 
+                href="/blog" 
+                className="text-neutral-900 hover:text-primary font-medium py-2 transition"
+                onClick={() => setMobileMenuOpen(false)}
+              >
                 Tin Tức
               </Link>
-              <Link href="/contact" className="text-neutral-900 hover:text-primary font-medium py-2 transition">
+              <Link 
+                href="/contact" 
+                className="text-neutral-900 hover:text-primary font-medium py-2 transition"
+                onClick={() => setMobileMenuOpen(false)}
+              >
                 Liên Hệ
               </Link>
             </div>
