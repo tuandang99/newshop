@@ -88,7 +88,8 @@ async function initDb() {
     `);
 
     await conn.query(`
-      CREATE TABLE IF NOT EXISTS orders (
+      DROP TABLE IF EXISTS orders;
+      CREATE TABLE orders (
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
         phone VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
