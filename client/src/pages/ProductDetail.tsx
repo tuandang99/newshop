@@ -7,6 +7,7 @@ import { StarFilledIcon, Plus, Minus, ArrowLeftIcon } from "@/lib/icons";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
 import { Helmet } from "react-helmet";
+import ProductCard from "@/components/product/ProductCard";
 
 export default function ProductDetail() {
   const { slug } = useParams();
