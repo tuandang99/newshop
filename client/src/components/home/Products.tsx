@@ -44,8 +44,8 @@ export default function Products() {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center mb-8">
             <div>
-              <h2 className="text-3xl font-bold font-poppins mb-2">Featured Products</h2>
-              <p className="text-neutral-700">Handpicked selection of our best sellers</p>
+              <h2 className="text-3xl font-bold font-poppins mb-2">Danh mục sản phẩm</h2>
+              <p className="text-neutral-700">Lựa chọn những sản phẩm tốt nhất</p>
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -67,7 +67,7 @@ export default function Products() {
     return (
       <section className="py-12 bg-white">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold font-poppins mb-2">Featured Products</h2>
+          <h2 className="text-3xl font-bold font-poppins mb-2">Danh mục sản phẩm</h2>
           <p className="text-red-500">Failed to load products. Please try again later.</p>
         </div>
       </section>
@@ -79,8 +79,8 @@ export default function Products() {
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center mb-8">
           <div>
-            <h2 className="text-3xl font-bold font-poppins mb-2">Featured Products</h2>
-            <p className="text-neutral-700">Handpicked selection of our best sellers</p>
+            <h2 className="text-3xl font-bold font-poppins mb-2">Danh mục sản phẩm</h2>
+            <p className="text-neutral-700">Lựa chọn những sản phẩm tốt </p>
           </div>
           <div className="flex space-x-2 mt-4 md:mt-0 overflow-x-auto">
             <Button 
