@@ -94,11 +94,15 @@ export default function Navbar() {
                 {/* Added margin-top gap to make hovering easier and improved hover transition */}
                 <div className="absolute left-0 mt-0 pt-5 w-48 z-10 hidden group-hover:block">
                   <div className="bg-white shadow-lg rounded-md py-2 border border-gray-100">
-                    <Link href="/products?category=nuts-seeds" className="block px-4 py-2 text-sm hover:bg-neutral-100">Các Loại Hạt</Link>
-                    <Link href="/products?category=granola-bars" className="block px-4 py-2 text-sm hover:bg-neutral-100">Thanh Ngũ Cốc</Link>
-                    <Link href="/products?category=cereals" className="block px-4 py-2 text-sm hover:bg-neutral-100">Ngũ Cốc</Link>
-                    <Link href="/products?category=dried-fruits" className="block px-4 py-2 text-sm hover:bg-neutral-100">Trái Cây Sấy</Link>
-                    <Link href="/products?category=superfoods" className="block px-4 py-2 text-sm hover:bg-neutral-100">Thực Phẩm Chức Năng</Link>
+                    {categories?.map((category) => (
+                      <Link 
+                        key={category.id}
+                        href={`/products?category=${category.slug}`} 
+                        className="block px-4 py-2 text-sm hover:bg-neutral-100"
+                      >
+                        {category.name}
+                      </Link>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -232,21 +236,15 @@ export default function Navbar() {
                 </button>
                 {mobileProductsOpen && (
                   <div className="pl-4 py-2 space-y-2">
-                    <Link href="/products?category=nuts-seeds" className="block py-1 text-neutral-900 hover:text-primary">
-                      Các Loại Hạt
-                    </Link>
-                    <Link href="/products?category=granola-bars" className="block py-1 text-neutral-900 hover:text-primary">
-                      Thanh Ngũ Cốc
-                    </Link>
-                    <Link href="/products?category=cereals" className="block py-1 text-neutral-900 hover:text-primary">
-                      Ngũ Cốc
-                    </Link>
-                    <Link href="/products?category=dried-fruits" className="block py-1 text-neutral-900 hover:text-primary">
-                      Trái Cây Sấy
-                    </Link>
-                    <Link href="/products?category=superfoods" className="block py-1 text-neutral-900 hover:text-primary">
-                      Thực Phẩm Chức Năng
-                    </Link>
+                    {categories?.map((category) => (
+                      <Link 
+                        key={category.id}
+                        href={`/products?category=${category.slug}`} 
+                        className="block py-1 text-neutral-900 hover:text-primary"
+                      >
+                        {category.name}
+                      </Link>
+                    ))}
                   </div>
                 )}
               </div>

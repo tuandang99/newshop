@@ -1,4 +1,6 @@
 import { Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
+import { Category } from "@shared/schema";
 import {
   LeafIcon,
   FacebookIcon,
@@ -8,6 +10,9 @@ import {
 } from "@/lib/icons";
 
 export default function Footer() {
+  const { data: categories } = useQuery<Category[]>({
+    queryKey: ["/api/categories"],
+  });
   return (
     <footer className="bg-neutral-900 text-white pt-12 pb-6">
       <div className="container mx-auto px-4">
@@ -104,46 +109,16 @@ export default function Footer() {
               Danh Mục Sản Phẩm
             </h4>
             <ul className="space-y-2">
-              <li>
-                <Link
-                  href="/products?category=nuts-seeds"
-                  className="text-neutral-400 hover:text-white transition"
-                >
-                  Các Loại Hạt
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/products?category=granola-bars"
-                  className="text-neutral-400 hover:text-white transition"
-                >
-                  Thanh Granola
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/products?category=cereals"
-                  className="text-neutral-400 hover:text-white transition"
-                >
-                  Ngũ Cốc
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/products?category=dried-fruits"
-                  className="text-neutral-400 hover:text-white transition"
-                >
-                  Trái Cây Sấy
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/products?category=superfoods"
-                  className="text-neutral-400 hover:text-white transition"
-                >
-                  Thực Phẩm Bổ Dưỡng
-                </Link>
-              </li>
+              {categories?.map((category) => (
+                <li key={category.id}>
+                  <Link
+                    href={`/products?category=${category.slug}`}
+                    className="text-neutral-400 hover:text-white transition"
+                  >
+                    {category.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
