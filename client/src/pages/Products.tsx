@@ -35,17 +35,6 @@ export default function Products() {
     return true;
   });
 
-  let pageTitle = "All Products - TUHO";
-  let metaDescription = "Browse our complete selection of organic, healthy food products. Find nuts, granola bars, cereals and more.";
-
-  if (category) {
-    pageTitle = `${category.name} - TUHO`;
-    metaDescription = `Explore our selection of organic ${category.name.toLowerCase()} at TUHO.`;
-  } else if (searchQuery) {
-    pageTitle = `Search Results: "${searchQuery}" - TUHO`;
-    metaDescription = `Discover products matching "${searchQuery}" in our organic food collection.`;
-  }
-
   return (
     <>
       <Helmet>
@@ -67,16 +56,14 @@ export default function Products() {
               </Link>
             </Button>
           </div>
-          <div className="grid grid-cols-1 gap-6">
-            {filteredProducts && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {filteredProducts.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
-            )}
+
+          {filteredProducts && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {filteredProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
             </div>
-          </div>
+          )}
         </div>
       </section>
     </>
