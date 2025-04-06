@@ -19,6 +19,17 @@ export default function Products() {
     ? categories.find(cat => cat.slug === categorySlug) 
     : null;
 
+  const { data: products } = useQuery<ProductsResponse>({
+    queryKey: ['/api/products', categorySlug],
+  });
+
+  const filteredProducts = products?.products.filter(product => {
+    if (category) {
+      return product.categoryId === category.id;
+    }
+    return true;
+  });
+
   let pageTitle = "All Products - TUHO";
   let metaDescription = "Browse our complete selection of organic, healthy food products. Find nuts, granola bars, cereals and more.";
 
@@ -44,7 +55,13 @@ export default function Products() {
       <section className="py-10 bg-white">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 gap-6">
-            <ProductList categorySlug={categorySlug} />
+            {filteredProducts && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {filteredProducts.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </section>
