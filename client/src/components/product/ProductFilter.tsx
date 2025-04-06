@@ -36,12 +36,15 @@ export default function ProductFilter({ onFilter, selectedCategory, initialFilte
   const handleFilter = () => {
     const filters = {
       search: search.trim(),
-      category: category || null,
+      category: category === "" ? null : category,
       minPrice: 0,
       maxPrice: 1000000,
       minRating: 0
     };
-    console.log('Applying filters:', filters);
+    console.log('Applying filters:', {
+      ...filters,
+      categoryDetails: categories?.find(cat => cat.slug === category)
+    });
     onFilter(filters);
   };
 

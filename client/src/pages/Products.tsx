@@ -61,11 +61,8 @@ export default function Products() {
     // Category filter
     if (filters.category) {
       const category = categories?.find(cat => cat.slug === filters.category);
-      console.log("Found category:", category);
-      console.log("Category ID comparison:", category?.id, product.categoryId);
-      if (category && product.categoryId !== category.id) {
-        return false;
-      }
+      if (!category) return true; // If category not found, show all products
+      return product.categoryId === category.id;
     }
 
     // Price filter
