@@ -8,7 +8,6 @@ import { CalendarIcon, ArrowRightIcon } from "@/lib/icons";
 import { format } from "date-fns";
 import { Helmet } from "react-helmet";
 
-// Định nghĩa cấu trúc phản hồi API
 interface BlogPostsResponse {
   posts: BlogPost[];
   pagination: {
@@ -28,8 +27,23 @@ export default function Blog() {
     queryKey: ["/api/blog-posts"],
   });
 
-  // Trích xuất bài viết từ phản hồi
   const posts = postsResponse?.posts;
+  const [groupedPosts, setGroupedPosts] = useState<Record<string, BlogPost[]>>({});
+
+  useEffect(() => {
+    if (posts) {
+      const newGrouped: Record<string, BlogPost[]> = {};
+      posts.forEach((post) => {
+        const date = new Date(post.date);
+        const yearMonth = format(date, "MMMM yyyy");
+        if (!newGrouped[yearMonth]) {
+          newGrouped[yearMonth] = [];
+        }
+        newGrouped[yearMonth].push(post);
+      });
+      setGroupedPosts(newGrouped);
+    }
+  }, [posts]);
 
   if (isLoading) {
     return (
@@ -72,24 +86,6 @@ export default function Blog() {
       </section>
     );
   }
-
-  // State for grouped posts
-  const [groupedPosts, setGroupedPosts] = useState<Record<string, BlogPost[]>>({});
-
-  // Initialize grouped posts
-  useEffect(() => {
-    if (posts) {
-      const newGrouped: Record<string, BlogPost[]> = {};
-      posts.forEach((post) => {
-    const date = new Date(post.date);
-    const yearMonth = format(date, "MMMM yyyy");
-
-    if (!groupedPosts[yearMonth]) {
-      groupedPosts[yearMonth] = [];
-    }
-
-    groupedPosts[yearMonth].push(post);
-  });
 
   return (
     <>
@@ -176,33 +172,29 @@ export default function Blog() {
                   Danh mục
                 </h3>
                 <ul className="space-y-2">
-                  <li>
-                    {Object.keys(groupedPosts).map(yearMonth => {
-                    const categories = [...new Set(groupedPosts[yearMonth].map(post => post.category))];
-                    return categories.map(category => (
-                      <li key={category}>
-                        <Button
-                          variant="ghost"
-                          className="w-full justify-start hover:text-primary hover:bg-primary/10"
-                          onClick={() => {
-                            const filtered = posts.filter(post => post.category === category);
-                            const newGrouped: Record<string, BlogPost[]> = {};
-                            filtered.forEach((post) => {
-                              const date = new Date(post.date);
-                              const yearMonth = format(date, "MMMM yyyy");
-                              if (!newGrouped[yearMonth]) {
-                                newGrouped[yearMonth] = [];
-                              }
-                              newGrouped[yearMonth].push(post);
-                            });
-                            setGroupedPosts(newGrouped);
-                          }}
-                        >
-                          {category}
-                        </Button>
-                      </li>
-                    ));
-                  })}
+                  {posts && Array.from(new Set(posts.map(post => post.category))).map(category => (
+                    <li key={category}>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start hover:text-primary hover:bg-primary/10"
+                        onClick={() => {
+                          const filtered = posts.filter(post => post.category === category);
+                          const newGrouped: Record<string, BlogPost[]> = {};
+                          filtered.forEach((post) => {
+                            const date = new Date(post.date);
+                            const yearMonth = format(date, "MMMM yyyy");
+                            if (!newGrouped[yearMonth]) {
+                              newGrouped[yearMonth] = [];
+                            }
+                            newGrouped[yearMonth].push(post);
+                          });
+                          setGroupedPosts(newGrouped);
+                        }}
+                      >
+                        {category}
+                      </Button>
+                    </li>
+                  ))}
                   <li>
                     <Button
                       variant="ghost"
@@ -222,7 +214,6 @@ export default function Blog() {
                     >
                       Tất cả
                     </Button>
-                  </li>
                   </li>
                 </ul>
 
