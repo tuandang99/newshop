@@ -7,12 +7,39 @@ import compression from 'compression';
 import cors from 'cors';
 const app = express();
 app.use(compression());
+import cors from 'cors';
+
+const allowedOrigins = [
+  'https://tuho.vn',
+  'https://admin.tuho.vn',
+  'https://www.tuho.vn',
+  'http://localhost:5000'
+];
+
 app.use(cors({
-  origin: ['https://tuho.vn', 'https://admin.tuho.vn', 'https://www.tuho.vn', 'http://localhost:5000'],
+  origin: (origin, callback) => {
+    // Nếu không có origin (ví dụ request từ curl hoặc Postman), cho phép
+    if (!origin) return callback(null, true);
+
+    // Nếu origin nằm trong danh sách allow sẵn
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    // Nếu là IP nội bộ dạng 192.168.x.x hoặc 10.x.x.x
+    const lanRegex = /^http:\/\/(192\.168|10\.)\.\d+\.\d+(:\d+)?$/;
+    if (lanRegex.test(origin)) {
+      return callback(null, true);
+    }
+
+    // Nếu không match, chặn
+    return callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Admin-Key']
 }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
