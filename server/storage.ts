@@ -16,14 +16,15 @@ import {
 } from "@shared/schema";
 
 const pool = mysql.createPool({
-  host: process.env.MARIADB_HOST,
+  host: process.env.MARIADB_HOST || 'localhost',
   port: parseInt(process.env.MARIADB_PORT || '3306'),
   user: process.env.MARIADB_USER || 'root',
   password: process.env.MARIADB_PASSWORD || '',
-  database: process.env.MARIADB_DATABASE,
+  database: process.env.MARIADB_DATABASE || 'tuho_db',
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
+  queueLimit: 0,
+  connectTimeout: 60000
 });
 
 // Initialize database tables
