@@ -82,12 +82,12 @@ export default function Products() {
             <h2 className="text-3xl font-bold font-poppins mb-2">Danh mục sản phẩm</h2>
             <p className="text-neutral-700">Lựa chọn những sản phẩm tốt </p>
           </div>
-          <div className="relative">
-            <div className="flex space-x-2 mt-4 md:mt-0 overflow-x-auto pb-2 scrollbar-hide mask-fade-right">
+          <div className="relative w-full md:w-auto">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:flex md:flex-row gap-2 mt-4 md:mt-0">
               <Button 
                 variant={activeFilter === 'all' ? 'default' : 'outline'} 
                 onClick={() => setActiveFilter('all')}
-                className={`shrink-0 ${activeFilter === 'all' ? 'bg-primary text-white' : 'bg-neutral-100 hover:bg-neutral-200'}`}
+                className={`w-full md:w-auto justify-center ${activeFilter === 'all' ? 'bg-primary text-white' : 'bg-neutral-100 hover:bg-neutral-200'}`}
               >
                 Tất cả
               </Button>
@@ -96,7 +96,7 @@ export default function Products() {
                   key={category.id}
                   variant={activeFilter === category.slug ? 'default' : 'outline'}
                   onClick={() => setActiveFilter(category.slug)}
-                  className={`shrink-0 ${activeFilter === category.slug ? 'bg-primary text-white' : 'bg-neutral-100 hover:bg-neutral-200'}`}
+                  className={`w-full md:w-auto justify-center text-center ${activeFilter === category.slug ? 'bg-primary text-white' : 'bg-neutral-100 hover:bg-neutral-200'}`}
                 >
                   {category.name}
                 </Button>
