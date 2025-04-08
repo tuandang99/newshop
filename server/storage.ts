@@ -22,9 +22,13 @@ const pool = mysql.createPool({
   password: process.env.MARIADB_PASSWORD || '',
   database: process.env.MARIADB_DATABASE || 'tuho_db',
   waitForConnections: true,
-  connectionLimit: 10,
+  connectionLimit: 5,
   queueLimit: 0,
-  connectTimeout: 60000
+  connectTimeout: 10000,
+  acquireTimeout: 10000,
+  timeout: 10000,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0
 });
 
 // Initialize database tables

@@ -10,9 +10,7 @@ app.use(compression());
 import cors from 'cors';
 
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? 'https://tuanpi.duckdns.org'
-    : ['http://localhost:5173', 'https://localhost:5173', 'http://0.0.0.0:5173'],
+  origin: true,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Admin-Key']
