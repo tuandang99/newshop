@@ -8,9 +8,22 @@ import cors from 'cors';
 const app = express();
 app.use(compression());
 app.use(cors({
-  origin: ['https://tuho.vn'], // hoặc '*' nếu muốn mở cho tất cả (nhưng không dùng được với credentials)
-  credentials: true,            // Bắt buộc phải có nếu frontend dùng credentials
+  origin: (origin, callback) => {
+    const allowedOrigins = [
+      'https://tuho.vn',
+      'http://localhost:5000',
+      'http://localhost:3000'
+    ];
+
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
 }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
