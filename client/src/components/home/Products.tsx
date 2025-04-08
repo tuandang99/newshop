@@ -82,24 +82,26 @@ export default function Products() {
             <h2 className="text-3xl font-bold font-poppins mb-2">Danh mục sản phẩm</h2>
             <p className="text-neutral-700">Lựa chọn những sản phẩm tốt </p>
           </div>
-          <div className="flex space-x-2 mt-4 md:mt-0 overflow-x-auto">
-            <Button 
-              variant={activeFilter === 'all' ? 'default' : 'outline'} 
-              onClick={() => setActiveFilter('all')}
-              className={activeFilter === 'all' ? 'bg-primary text-white' : 'bg-neutral-100 hover:bg-neutral-200'}
-            >
-              Tất cả
-            </Button>
-            {categories?.map((category) => (
-              <Button
-                key={category.id}
-                variant={activeFilter === category.slug ? 'default' : 'outline'}
-                onClick={() => setActiveFilter(category.slug)}
-                className={activeFilter === category.slug ? 'bg-primary text-white' : 'bg-neutral-100 hover:bg-neutral-200'}
+          <div className="relative">
+            <div className="flex space-x-2 mt-4 md:mt-0 overflow-x-auto pb-2 scrollbar-hide mask-fade-right">
+              <Button 
+                variant={activeFilter === 'all' ? 'default' : 'outline'} 
+                onClick={() => setActiveFilter('all')}
+                className={`shrink-0 ${activeFilter === 'all' ? 'bg-primary text-white' : 'bg-neutral-100 hover:bg-neutral-200'}`}
               >
-                {category.name}
+                Tất cả
               </Button>
-            ))}
+              {categories?.map((category) => (
+                <Button
+                  key={category.id}
+                  variant={activeFilter === category.slug ? 'default' : 'outline'}
+                  onClick={() => setActiveFilter(category.slug)}
+                  className={`shrink-0 ${activeFilter === category.slug ? 'bg-primary text-white' : 'bg-neutral-100 hover:bg-neutral-200'}`}
+                >
+                  {category.name}
+                </Button>
+              ))}
+            </div>
           </div>
         </div>
 
