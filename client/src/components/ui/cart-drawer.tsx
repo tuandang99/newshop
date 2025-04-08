@@ -71,7 +71,7 @@ export default function CartDrawer() {
                     Xem sản phẩm
                   </Button>
               </div>
-            ) : (
+            ) : (``
               items.map((item) => (
                 <div
                   key={item.id}
