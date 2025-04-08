@@ -8,9 +8,7 @@ import cors from 'cors';
 const app = express();
 app.use(compression());
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://tuho.vn', 'https://admin.tuho.vn', 'https://www.tuho.vn']
-    : true,
+  origin: ['https://tuho.vn', 'https://admin.tuho.vn', 'https://www.tuho.vn'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Admin-Key']
