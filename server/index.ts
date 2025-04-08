@@ -8,7 +8,7 @@ import cors from 'cors';
 const app = express();
 app.use(compression());
 app.use(cors({
-  origin: ['https://tuho.vn', 'https://admin.tuho.vn', 'https://www.tuho.vn'],
+  origin: ['https://tuho.vn', 'https://admin.tuho.vn', 'https://www.tuho.vn', 'http://localhost:5000'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Admin-Key']
