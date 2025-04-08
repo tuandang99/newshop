@@ -1,6 +1,6 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
-const API_BASE_URL = "https://tuanpi.duckdns.org:5000";
+const API_BASE_URL = "https://tuanpi.duckdns.org";
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {

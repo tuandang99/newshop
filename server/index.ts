@@ -8,7 +8,8 @@ import cors from 'cors';
 const app = express();
 app.use(compression());
 app.use(cors({
-  origin: 'https://tuho.vn'
+  origin: ['https://tuho.vn'], // hoặc '*' nếu muốn mở cho tất cả (nhưng không dùng được với credentials)
+  credentials: true,            // Bắt buộc phải có nếu frontend dùng credentials
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
