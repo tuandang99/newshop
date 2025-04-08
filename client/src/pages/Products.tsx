@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useLocation, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Category } from "@shared/schema";
@@ -39,10 +39,9 @@ export default function Products() {
     queryKey: ['/api/products'],
   });
 
-  const handleFilter = (newFilters: FilterState) => {
-    console.log('Applying new filters:', newFilters);
+  const handleFilter = useCallback((newFilters: FilterState) => {
     setFilters(newFilters);
-  };
+  }, []);
 
   const filteredProducts = products?.products.filter(product => {
     // Search filter
