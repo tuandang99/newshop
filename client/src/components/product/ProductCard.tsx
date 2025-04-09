@@ -93,13 +93,20 @@ export default function ProductCard({ product, variant = 'default' }: ProductCar
         </div>
         <p className="text-neutral-600 text-sm mb-3">{product.description}</p>
         <div className="flex justify-between items-center">
-          <div>
-            <span className="text-lg font-semibold">
-              {product.price.toLocaleString("vi-VN")}₫
-            </span>
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <span className="text-lg font-semibold text-primary">
+                {product.price.toLocaleString("vi-VN")}₫
+              </span>
+              {product.oldPrice && (
+                <span className="text-sm line-through text-neutral-500">
+                  {product.oldPrice.toLocaleString("vi-VN")}₫
+                </span>
+              )}
+            </div>
             {product.oldPrice && (
-              <span className="text-sm line-through text-neutral-500 ml-2">
-                {product.oldPrice.toLocaleString("vi-VN")}₫
+              <span className="text-xs text-red-500">
+                Giảm {Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)}%
               </span>
             )}
           </div>
