@@ -9,12 +9,7 @@ const app = express();
 app.use(compression());
 
 app.use(cors({
-  origin: [
-    'http://localhost:5000',
-    'http://127.0.0.1:5000',
-    'https://tuho-healthy-food.tuanpi.repl.co',
-    'https://tuho.vn'
-  ],
+  origin: true, // Allow all origins in development
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Admin-Key']
