@@ -50,7 +50,7 @@ export default function ProductCard({ product, variant = 'default' }: ProductCar
   };
 
   return (
-    <div className="product-card bg-white rounded-lg shadow-sm overflow-hidden relative">
+    <div className="product-card bg-white rounded-lg shadow-sm overflow-hidden relative hover:shadow-md transition-all group">
       {product.isNew && (
         <span className="absolute top-2 left-2 bg-amber-500 text-white text-xs px-2 py-1 rounded-full z-10">
           Mới
@@ -103,13 +103,13 @@ export default function ProductCard({ product, variant = 'default' }: ProductCar
               </span>
             )}
           </div>
-          <div className="product-cta opacity-0 transform translate-y-2 transition-all">
+          <div className="product-cta opacity-0 transform translate-y-2 transition-all flex items-center gap-2">
             <Button
-              size="icon"
-              className="bg-primary text-white p-2 rounded-full hover:bg-primary/90"
+              className="bg-primary text-white px-4 py-2 rounded-full hover:bg-primary/90 flex items-center gap-2"
               onClick={handleAddToCart}
             >
               <ShoppingCartIcon className="h-4 w-4" />
+              <span>Mua ngay</span>
             </Button>
           </div>
         </div>
