@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Product, Category } from "@shared/schema";
@@ -12,6 +12,10 @@ import ProductCard from "@/components/product/ProductCard";
 export default function ProductDetail() {
   const { slug } = useParams();
   const [quantity, setQuantity] = useState(1);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const { addItem } = useCart();
   const { toast } = useToast();
 
