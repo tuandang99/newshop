@@ -8,8 +8,11 @@ export default function Hero() {
         <div className="flex flex-col md:flex-row items-center justify-between">
           <div className="md:w-1/2 mb-10 md:mb-0">
             <h1 className="text-3xl md:text-5xl font-bold font-poppins mb-4 leading-tight text-neutral-900">
-              Thực phẩm tự nhiên cho <span className="text-primary">Cuộc sống khỏe mạnh</span>
+              Tuho - Hạt Dinh Dưỡng & Bánh Từ Hạt Dinh Dưỡng Chất Lượng Cao
             </h1>
+            <h2 className="text-2xl md:text-4xl font-bold font-poppins mb-4 leading-tight text-neutral-900">
+              Thực phẩm tự nhiên cho <span className="text-primary">Cuộc sống khỏe mạnh</span>
+            </h2>
             <p className="text-lg mb-8 text-neutral-700">
               Khám phá bộ sưu tập thực phẩm dinh dưỡng cao cấp của chúng tôi, nuôi dưỡng cơ thể và tinh thần của bạn.
             </p>

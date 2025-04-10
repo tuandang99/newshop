@@ -50,7 +50,12 @@ export default function ProductCard({ product, variant = 'default' }: ProductCar
   };
 
   return (
-    <div className="product-card bg-white rounded-lg shadow-sm overflow-hidden relative">
+    <div className="product-card bg-white rounded-lg shadow-sm overflow-hidden relative hover:shadow-md transition-all group">
+      {product.oldPrice && (
+        <span className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full z-10">
+          -{Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)}%
+        </span>
+      )}
       {product.isNew && (
         <span className="absolute top-2 left-2 bg-amber-500 text-white text-xs px-2 py-1 rounded-full z-10">
           Mới
@@ -71,7 +76,7 @@ export default function ProductCard({ product, variant = 'default' }: ProductCar
           Bán chạy
         </span>
       )}
-      <Link href={`/products/${product.slug}`}>
+      <Link href={`/products/${product.slug}`} onClick={() => window.scrollTo(0, 0)}>
         <img
           src={product.image}
           alt={product.name}
@@ -93,23 +98,30 @@ export default function ProductCard({ product, variant = 'default' }: ProductCar
         </div>
         <p className="text-neutral-600 text-sm mb-3">{product.description}</p>
         <div className="flex justify-between items-center">
-          <div>
-            <span className="text-lg font-semibold">
-              {product.price.toLocaleString("vi-VN")}₫
-            </span>
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <span className="text-lg font-semibold text-red-500">
+                {product.price.toLocaleString("vi-VN")}₫
+              </span>
+              {product.oldPrice ? (
+                <span className="text-sm line-through text-neutral-500 ml-2">
+                  {product.oldPrice.toLocaleString("vi-VN")}₫
+                </span>
+              ) : null}
+            </div>
             {product.oldPrice && (
-              <span className="text-sm line-through text-neutral-500 ml-2">
-                {product.oldPrice.toLocaleString("vi-VN")}₫
+              <span className="text-xs text-red-500">
+                Giảm {Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)}%
               </span>
             )}
           </div>
-          <div className="product-cta opacity-0 transform translate-y-2 transition-all">
+          <div className="product-cta opacity-0 transform translate-y-2 transition-all flex items-center gap-2">
             <Button
-              size="icon"
-              className="bg-primary text-white p-2 rounded-full hover:bg-primary/90"
+              className="bg-primary text-white px-4 py-2 rounded-full hover:bg-primary/90 flex items-center gap-2"
               onClick={handleAddToCart}
             >
               <ShoppingCartIcon className="h-4 w-4" />
+              <span>Mua ngay</span>
             </Button>
           </div>
         </div>
