@@ -76,7 +76,7 @@ export default function ProductCard({ product, variant = 'default' }: ProductCar
           Bán chạy
         </span>
       )}
-      <Link href={`/products/${product.slug}`}>
+      <Link href={`/products/${product.slug}`} onClick={() => window.scrollTo(0, 0)}>
         <img
           src={product.image}
           alt={product.name}
