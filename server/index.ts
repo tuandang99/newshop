@@ -4,16 +4,8 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import "./telegram";
 import compression from 'compression';
-import cors from 'cors';
 const app = express();
 app.use(compression());
-
-app.use(cors({
-  origin: true, // Allow all origins in development
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Admin-Key']
-}));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
