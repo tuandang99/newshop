@@ -103,11 +103,11 @@ export default function ProductCard({ product, variant = 'default' }: ProductCar
               <span className="text-lg font-semibold text-red-500">
                 {product.price.toLocaleString("vi-VN")}₫
               </span>
-              {product.oldPrice && (
+              {product.oldPrice ? (
                 <span className="text-sm line-through text-neutral-500 ml-2">
                   {product.oldPrice.toLocaleString("vi-VN")}₫
                 </span>
-              )}
+              ) : null}
             </div>
             {product.oldPrice && (
               <span className="text-xs text-red-500">
