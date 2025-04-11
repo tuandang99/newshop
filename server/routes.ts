@@ -469,6 +469,116 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Product Images
+  app.get("/api/products/:productId/images", async (req: Request, res: Response) => {
+    try {
+      const productId = parseInt(req.params.productId);
+      
+      if (isNaN(productId)) {
+        return res.status(400).json({ message: "Invalid product ID" });
+      }
+      
+      const images = await storage.getProductImages(productId);
+      res.json(images);
+    } catch (error) {
+      console.error("Error fetching product images:", error);
+      res.status(500).json({ message: "Failed to fetch product images" });
+    }
+  });
+  
+  app.post("/api/admin/products/:productId/images", adminAuth, async (req: Request, res: Response) => {
+    try {
+      const productId = parseInt(req.params.productId);
+      
+      if (isNaN(productId)) {
+        return res.status(400).json({ message: "Invalid product ID" });
+      }
+      
+      const imageData = insertProductImageSchema.parse({
+        ...req.body,
+        productId
+      });
+      
+      const image = await storage.addProductImage(imageData);
+      res.status(201).json(image);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: "Invalid image data", errors: error.errors });
+      }
+      console.error("Error creating product image:", error);
+      res.status(500).json({ message: "Failed to create product image" });
+    }
+  });
+  
+  app.put("/api/admin/product-images/:id", adminAuth, async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid image ID" });
+      }
+      
+      const partialSchema = insertProductImageSchema.partial();
+      const imageData = partialSchema.parse(req.body);
+      
+      const updatedImage = await storage.updateProductImage(id, imageData);
+      
+      if (!updatedImage) {
+        return res.status(404).json({ message: "Product image not found" });
+      }
+      
+      res.json(updatedImage);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: "Invalid image data", errors: error.errors });
+      }
+      console.error("Error updating product image:", error);
+      res.status(500).json({ message: "Failed to update product image" });
+    }
+  });
+  
+  app.delete("/api/admin/product-images/:id", adminAuth, async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid image ID" });
+      }
+      
+      const success = await storage.deleteProductImage(id);
+      
+      if (!success) {
+        return res.status(404).json({ message: "Product image not found" });
+      }
+      
+      res.status(204).end();
+    } catch (error) {
+      console.error("Error deleting product image:", error);
+      res.status(500).json({ message: "Failed to delete product image" });
+    }
+  });
+  
+  app.post("/api/admin/product-images/:id/set-main", adminAuth, async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { productId } = req.body;
+      
+      if (isNaN(id) || !productId || isNaN(parseInt(productId))) {
+        return res.status(400).json({ message: "Invalid image ID or product ID" });
+      }
+      
+      const success = await storage.setMainProductImage(id, parseInt(productId));
+      
+      if (!success) {
+        return res.status(404).json({ message: "Failed to set main image" });
+      }
+      
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error setting main product image:", error);
+      res.status(500).json({ message: "Failed to set main image" });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;
