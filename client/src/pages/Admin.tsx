@@ -666,8 +666,7 @@ export default function Admin() {
       details: Array.isArray(product.details) ? product.details : [],
       newImage: "", //Added for new image upload
     });
-    console.log("Editing product with category ID:", product.categoryId || product.category_id);
-  };
+    };
 
   const handleEditBlogPost = (post: BlogPost) => {
     setEditingBlogPost(post);
