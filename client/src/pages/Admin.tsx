@@ -1077,12 +1077,13 @@ export default function Admin() {
                               <select
                                 className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                 {...field}
-                                value={field.value}
+                                value={editingProduct ? editingProduct.category_id : field.value}
                                 onChange={(e) =>
                                   field.onChange(parseInt(e.target.value))
                                 }
                               >
-                                <option value="">Select Category</option>                                {categories?.map((category: any) => (
+                                <option value="">Select Category</option>
+                                {categories?.map((category: any) => (
                                   <option key={category.id} value={category.id}>
                                     {category.name}
                                   </option>
