@@ -1,117 +1,61 @@
+import { pgTable, text, serial, integer, boolean, doublePrecision } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-// Product Category
-export const insertCategorySchema = z.object({
-  name: z.string(),
-  slug: z.string(),
-  image: z.string().min(1, "Image path is required"),
+// Users table (keeping the existing one)
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  username: text("username").notNull().unique(),
+  password: text("password").notNull(),
 });
 
-export type InsertCategory = z.infer<typeof insertCategorySchema>;
-export type Category = InsertCategory & { id: number };
+export const insertUserSchema = createInsertSchema(users).pick({
+  username: true,
+  password: true,
+});
 
-// Product
-export const insertProductSchema = z.object({
-  name: z.string(),
-  slug: z.string(), 
-  description: z.string(),
-  price: z.number(),
-  oldPrice: z.number().nullable(),
-  image: z.string().min(1, "Image path is required"),
-  categoryId: z.number(),
-  rating: z.number().default(5),
-  isNew: z.boolean().default(false),
-  isOrganic: z.boolean().default(true),
-  isBestseller: z.boolean().default(false),
-  details: z.array(z.string()).default([]),
-  discount: z.number().optional().transform(val => {
-    if (!val) return null;
-    return Math.min(Math.max(val, 0), 100); // Ensure discount is between 0-100%
-  }),
+export type InsertUser = z.infer<typeof insertUserSchema>;
+export type User = typeof users.$inferSelect;
+
+// Products table
+export const products = pgTable("products", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description").notNull(),
+  price: doublePrecision("price").notNull(),
+  originalPrice: doublePrecision("original_price"),
+  imageUrl: text("image_url").notNull(),
+  category: text("category").notNull(),
+  isNew: boolean("is_new").default(false),
+  isFeatured: boolean("is_featured").default(false),
+  rating: doublePrecision("rating").default(0),
+  reviewCount: integer("review_count").default(0),
+  stock: integer("stock").default(0),
+});
+
+export const insertProductSchema = createInsertSchema(products).omit({
+  id: true,
 });
 
 export type InsertProduct = z.infer<typeof insertProductSchema>;
-export type Product = InsertProduct & { id: number };
+export type Product = typeof products.$inferSelect;
 
-// Blog Post
-export const insertBlogPostSchema = z.object({
-  title: z.string(),
-  slug: z.string(),
-  content: z.string(),
-  excerpt: z.string(),
-  image: z.string().min(1, "Image path is required"),
-  category: z.string(),
-  tags: z.string().optional(),
-  author: z.string().optional(),
-  meta_title: z.string().optional(),
-  meta_description: z.string().optional(),
-  featured: z.boolean().optional(),
-  status: z.enum(["published", "draft", "archived"]).optional(),
-  date: z.date(),
+// Cart items table
+export const cartItems = pgTable("cart_items", {
+  id: serial("id").primaryKey(),
+  sessionId: text("session_id").notNull(),
+  productId: integer("product_id").notNull(),
+  quantity: integer("quantity").notNull().default(1),
 });
 
-export type InsertBlogPost = z.infer<typeof insertBlogPostSchema>;
-export type BlogPost = InsertBlogPost & { id: number };
-
-// Testimonials
-export const insertTestimonialSchema = z.object({
-  name: z.string(),
-  avatar: z.string().min(1, "Image path is required"),
-  rating: z.number(),
-  comment: z.string(),
+export const insertCartItemSchema = createInsertSchema(cartItems).omit({
+  id: true,
 });
 
-export type InsertTestimonial = z.infer<typeof insertTestimonialSchema>;
-export type Testimonial = InsertTestimonial & { id: number };
+export type InsertCartItem = z.infer<typeof insertCartItemSchema>;
+export type CartItem = typeof cartItems.$inferSelect;
 
-// Orders
-export const insertOrderSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  phone: z.string().min(5, "Phone number is required"), 
-  address: z.string().min(5, "Address is required"),
-  items: z.string(),
-  total: z.number(),
-  status: z.string().optional(),
-});
-
-export type InsertOrder = z.infer<typeof insertOrderSchema>;
-export type Order = InsertOrder & { 
-  id: number;
-  status: string;
-  createdAt: Date;
+// Extended cart item with product details
+export type CartItemWithProduct = CartItem & {
+  product: Product;
 };
-
-// Contact Form Submissions
-export const insertContactSchema = z.object({
-  name: z.string(),
-  email: z.string(),
-  subject: z.string(),
-  message: z.string(),
-});
-
-export type InsertContact = z.infer<typeof insertContactSchema>;
-export type ContactSubmission = InsertContact & {
-  id: number;
-  createdAt: Date;
-};
-
-// Admin Key
-export const insertAdminKeySchema = z.object({
-  key: z.string(),
-  label: z.string(),
-  active: z.boolean().default(true),
-});
-
-export type InsertAdminKey = z.infer<typeof insertAdminKeySchema>;
-export type AdminKey = InsertAdminKey & { id: number };
-
-// Cart Item type (not stored in database, used for frontend)
-export const cartItemSchema = z.object({
-  id: z.number(),
-  name: z.string(),
-  price: z.number(),
-  image: z.string().min(1, "Image path is required"),
-  quantity: z.number(),
-});
-
-export type CartItem = z.infer<typeof cartItemSchema>;
