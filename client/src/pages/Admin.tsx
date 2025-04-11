@@ -658,7 +658,7 @@ export default function Admin() {
       price: product.price,
       oldPrice: product.old_price || null,
       image: product.image,
-      categoryId: product.category_id,
+      categoryId: product.categoryId || product.category_id, // Handle both field names
       rating: product.rating,
       isNew: product.isNew,
       isOrganic: product.isOrganic,
@@ -666,6 +666,7 @@ export default function Admin() {
       details: Array.isArray(product.details) ? product.details : [],
       newImage: "", //Added for new image upload
     });
+    console.log("Editing product with category ID:", product.categoryId || product.category_id);
   };
 
   const handleEditBlogPost = (post: BlogPost) => {
