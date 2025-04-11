@@ -117,14 +117,48 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createProduct(product: InsertProduct): Promise<Product> {
-    const [newProduct] = await db.insert(products).values(product).returning();
+    const insertData = {
+      name: product.name,
+      slug: product.slug,
+      description: product.description,
+      price: product.price,
+      oldPrice: product.oldPrice,
+      image: product.image,
+      categoryId: product.categoryId,
+      rating: product.rating,
+      isNew: product.isNew,
+      isOrganic: product.isOrganic,
+      isBestseller: product.isBestseller,
+      details: product.details,
+      discount: product.discount
+    };
+    
+    const result = await db.insert(products).values(insertData);
+    const [newProduct] = await db.select().from(products).where(eq(products.slug, product.slug));
     return newProduct;
   }
 
   async updateProduct(id: number, product: Partial<InsertProduct>): Promise<Product | undefined> {
+    // Extract actual fields to update and avoid type issues
+    const updateData: Record<string, any> = {};
+    
+    if (product.name !== undefined) updateData.name = product.name;
+    if (product.slug !== undefined) updateData.slug = product.slug;
+    if (product.description !== undefined) updateData.description = product.description;
+    if (product.price !== undefined) updateData.price = product.price;
+    if (product.oldPrice !== undefined) updateData.oldPrice = product.oldPrice;
+    if (product.image !== undefined) updateData.image = product.image;
+    if (product.categoryId !== undefined) updateData.categoryId = product.categoryId;
+    if (product.rating !== undefined) updateData.rating = product.rating;
+    if (product.isNew !== undefined) updateData.isNew = product.isNew;
+    if (product.isOrganic !== undefined) updateData.isOrganic = product.isOrganic;
+    if (product.isBestseller !== undefined) updateData.isBestseller = product.isBestseller;
+    if (product.details !== undefined) updateData.details = product.details;
+    if (product.discount !== undefined) updateData.discount = product.discount;
+    
     const [updatedProduct] = await db
       .update(products)
-      .set(product)
+      .set(updateData)
       .where(eq(products.id, id))
       .returning();
     return updatedProduct;
