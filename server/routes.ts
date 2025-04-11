@@ -36,6 +36,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Categories
   app.get("/api/categories", async (req: Request, res: Response) => {
     const categories = await storage.getCategories();
+    console.log("[categories] Current categories:", JSON.stringify(categories, null, 2));
     res.json(categories);
   });
 
