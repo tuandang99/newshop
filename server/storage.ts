@@ -1,357 +1,302 @@
-import { 
-  users, type User, type InsertUser,
-  products, type Product, type InsertProduct,
-  cartItems, type CartItem, type InsertCartItem,
-  type CartItemWithProduct
+
+import mysql from 'mysql2/promise';
+import {
+  type Category,
+  type InsertCategory,
+  type Product,
+  type InsertProduct,
+  type BlogPost,
+  type InsertBlogPost,
+  type Testimonial,
+  type InsertTestimonial,
+  type Order,
+  type InsertOrder,
+  type ContactSubmission,
+  type InsertContact,
 } from "@shared/schema";
 
-export interface IStorage {
-  // User methods
-  getUser(id: number): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+const pool = mysql.createPool({
+  host: process.env.MARIADB_HOST || 'localhost',
+  port: parseInt(process.env.MARIADB_PORT || '3306'),
+  user: process.env.MARIADB_USER || 'root',
+  password: process.env.MARIADB_PASSWORD || '',
+  database: process.env.MARIADB_DATABASE || 'tuho_db',
+  waitForConnections: true,
+  connectionLimit: 5,
+  queueLimit: 0,
+  connectTimeout: 10000,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0
+});
 
-  // Product methods
-  getAllProducts(): Promise<Product[]>;
-  getProductsByCategory(category: string): Promise<Product[]>;
-  getProductById(id: number): Promise<Product | undefined>;
-  searchProducts(query: string): Promise<Product[]>;
-  getFeaturedProducts(): Promise<Product[]>;
-  getNewArrivals(): Promise<Product[]>;
-  
-  // Cart methods
-  getCartItems(sessionId: string): Promise<CartItemWithProduct[]>;
-  getCartItem(sessionId: string, productId: number): Promise<CartItemWithProduct | undefined>;
-  addToCart(item: InsertCartItem): Promise<CartItem>;
-  updateCartItem(id: number, quantity: number): Promise<CartItem | undefined>;
-  removeFromCart(id: number): Promise<boolean>;
-  clearCart(sessionId: string): Promise<boolean>;
-}
+// Initialize database tables
+async function initDb() {
+  const conn = await pool.getConnection();
+  try {
+    await conn.query(`
+      CREATE TABLE IF NOT EXISTS categories (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        slug VARCHAR(255) NOT NULL UNIQUE,
+        image TEXT NOT NULL
+      )
+    `);
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private products: Map<number, Product>;
-  private cartItems: Map<number, CartItem>;
-  private currentUserId: number;
-  private currentProductId: number;
-  private currentCartItemId: number;
+    await conn.query(`
+      CREATE TABLE IF NOT EXISTS products (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        slug VARCHAR(255) NOT NULL UNIQUE,
+        description TEXT NOT NULL,
+        price DECIMAL(10,2) NOT NULL,
+        old_price DECIMAL(10,2) NULL,
+        image TEXT NOT NULL,
+        category_id INT NOT NULL,
+        rating DECIMAL(3,2) DEFAULT 5,
+        is_new TINYINT DEFAULT 0,
+        is_organic TINYINT DEFAULT 1,
+        is_bestseller TINYINT DEFAULT 0,
+        details JSON NULL,
+        FOREIGN KEY (category_id) REFERENCES categories(id)
+      )
+    `);
 
-  constructor() {
-    this.users = new Map();
-    this.products = new Map();
-    this.cartItems = new Map();
-    this.currentUserId = 1;
-    this.currentProductId = 1;
-    this.currentCartItemId = 1;
+    await conn.query(`
+      CREATE TABLE IF NOT EXISTS blog_posts (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        slug VARCHAR(255) NOT NULL UNIQUE,
+        content TEXT NOT NULL,
+        excerpt TEXT NOT NULL,
+        image TEXT NOT NULL,
+        category VARCHAR(255) NOT NULL,
+        tags TEXT,
+        author VARCHAR(255),
+        metaTitle VARCHAR(255),
+        metaDescription TEXT,
+        featured BOOLEAN DEFAULT FALSE,
+        status ENUM('published', 'draft', 'archived') DEFAULT 'published',
+        date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
 
-    // Seed with sample products
-    this.seedProducts();
-  }
+    await conn.query(`
+      CREATE TABLE IF NOT EXISTS testimonials (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        avatar TEXT NOT NULL,
+        rating INT NOT NULL,
+        comment TEXT NOT NULL
+      )
+    `);
 
-  // User methods
-  async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
-  }
+    // Drop orders table first
+    await conn.query('DROP TABLE IF EXISTS orders');
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
-  }
+    // Then create new orders table
+    await conn.query(`
+      CREATE TABLE orders (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+        phone VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+        address TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+        items TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+        total DECIMAL(10,2) NOT NULL,
+        status VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'pending',
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
 
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentUserId++;
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
-  }
+    await conn.query(`
+      CREATE TABLE IF NOT EXISTS contacts (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        subject VARCHAR(255) NOT NULL,
+        message TEXT NOT NULL,
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
 
-  // Product methods
-  async getAllProducts(): Promise<Product[]> {
-    return Array.from(this.products.values());
-  }
-
-  async getProductsByCategory(category: string): Promise<Product[]> {
-    return Array.from(this.products.values()).filter(
-      (product) => product.category === category
-    );
-  }
-
-  async getProductById(id: number): Promise<Product | undefined> {
-    return this.products.get(id);
-  }
-
-  async searchProducts(query: string): Promise<Product[]> {
-    const lowercaseQuery = query.toLowerCase();
-    return Array.from(this.products.values()).filter(
-      (product) => 
-        product.name.toLowerCase().includes(lowercaseQuery) || 
-        product.description.toLowerCase().includes(lowercaseQuery) ||
-        product.category.toLowerCase().includes(lowercaseQuery)
-    );
-  }
-
-  async getFeaturedProducts(): Promise<Product[]> {
-    return Array.from(this.products.values()).filter(
-      (product) => product.isFeatured
-    );
-  }
-
-  async getNewArrivals(): Promise<Product[]> {
-    return Array.from(this.products.values()).filter(
-      (product) => product.isNew
-    );
-  }
-
-  // Cart methods
-  async getCartItems(sessionId: string): Promise<CartItemWithProduct[]> {
-    const items = Array.from(this.cartItems.values()).filter(
-      (item) => item.sessionId === sessionId
-    );
-
-    return items.map(item => {
-      const product = this.products.get(item.productId);
-      if (!product) {
-        throw new Error(`Product with id ${item.productId} not found`);
-      }
-      return { ...item, product };
-    });
-  }
-
-  async getCartItem(sessionId: string, productId: number): Promise<CartItemWithProduct | undefined> {
-    const item = Array.from(this.cartItems.values()).find(
-      (item) => item.sessionId === sessionId && item.productId === productId
-    );
-
-    if (!item) {
-      return undefined;
-    }
-
-    const product = this.products.get(item.productId);
-    if (!product) {
-      return undefined;
-    }
-
-    return { ...item, product };
-  }
-
-  async addToCart(insertItem: InsertCartItem): Promise<CartItem> {
-    // Check if product exists
-    const product = this.products.get(insertItem.productId);
-    if (!product) {
-      throw new Error(`Product with id ${insertItem.productId} not found`);
-    }
-
-    // Check if item already exists in cart
-    const existingItem = Array.from(this.cartItems.values()).find(
-      (item) => item.sessionId === insertItem.sessionId && item.productId === insertItem.productId
-    );
-
-    if (existingItem) {
-      // Update quantity
-      existingItem.quantity += insertItem.quantity;
-      this.cartItems.set(existingItem.id, existingItem);
-      return existingItem;
-    } else {
-      // Add new item
-      const id = this.currentCartItemId++;
-      const cartItem: CartItem = { ...insertItem, id };
-      this.cartItems.set(id, cartItem);
-      return cartItem;
-    }
-  }
-
-  async updateCartItem(id: number, quantity: number): Promise<CartItem | undefined> {
-    const item = this.cartItems.get(id);
-    if (!item) {
-      return undefined;
-    }
-
-    const updatedItem = { ...item, quantity };
-    this.cartItems.set(id, updatedItem);
-    return updatedItem;
-  }
-
-  async removeFromCart(id: number): Promise<boolean> {
-    return this.cartItems.delete(id);
-  }
-
-  async clearCart(sessionId: string): Promise<boolean> {
-    const itemsToRemove = Array.from(this.cartItems.values())
-      .filter(item => item.sessionId === sessionId)
-      .map(item => item.id);
-    
-    itemsToRemove.forEach(id => this.cartItems.delete(id));
-    
-    return true;
-  }
-
-  // Seed products for the initial store setup
-  private seedProducts() {
-    const products: InsertProduct[] = [
-      {
-        name: "Wireless Headphones",
-        description: "Premium wireless headphones with noise cancellation technology",
-        price: 129.99,
-        originalPrice: 159.99,
-        imageUrl: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e",
-        category: "Electronics",
-        isNew: false,
-        isFeatured: true,
-        rating: 4.5,
-        reviewCount: 42,
-        stock: 15
-      },
-      {
-        name: "Smart Watch",
-        description: "Feature-packed smartwatch with health monitoring and notifications",
-        price: 249.99,
-        originalPrice: 249.99,
-        imageUrl: "https://images.unsplash.com/photo-1600080972464-8e5f35f63d08",
-        category: "Electronics",
-        isNew: false,
-        isFeatured: true,
-        rating: 5.0,
-        reviewCount: 87,
-        stock: 10
-      },
-      {
-        name: "Running Shoes",
-        description: "Lightweight and comfortable running shoes for professional athletes",
-        price: 89.99,
-        originalPrice: 119.99,
-        imageUrl: "https://images.unsplash.com/photo-1542291026-7eec264c27ff",
-        category: "Sports",
-        isNew: false,
-        isFeatured: true,
-        rating: 4.0,
-        reviewCount: 29,
-        stock: 25
-      },
-      {
-        name: "Bluetooth Speaker",
-        description: "Portable Bluetooth speaker with immersive sound quality",
-        price: 79.99,
-        originalPrice: 79.99,
-        imageUrl: "https://images.unsplash.com/photo-1585155770447-2f66e2a397b5",
-        category: "Electronics",
-        isNew: false,
-        isFeatured: true,
-        rating: 3.5,
-        reviewCount: 18,
-        stock: 12
-      },
-      {
-        name: "Athletic Shoes",
-        description: "High-performance athletic shoes for everyday use",
-        price: 109.99,
-        originalPrice: 109.99,
-        imageUrl: "https://images.unsplash.com/photo-1491553895911-0055eca6402d",
-        category: "Sports",
-        isNew: true,
-        isFeatured: false,
-        rating: 4.0,
-        reviewCount: 12,
-        stock: 8
-      },
-      {
-        name: "Smartphone",
-        description: "Latest model smartphone with advanced camera features",
-        price: 699.99,
-        originalPrice: 699.99,
-        imageUrl: "https://images.unsplash.com/photo-1583394838336-acd977736f90",
-        category: "Electronics",
-        isNew: true,
-        isFeatured: false,
-        rating: 4.5,
-        reviewCount: 8,
-        stock: 5
-      },
-      {
-        name: "Coffee Maker",
-        description: "Programmable coffee maker for perfect brewing every time",
-        price: 149.99,
-        originalPrice: 149.99,
-        imageUrl: "https://images.unsplash.com/photo-1601924994987-69e26d50dc26",
-        category: "Home & Kitchen",
-        isNew: true,
-        isFeatured: false,
-        rating: 5.0,
-        reviewCount: 5,
-        stock: 7
-      },
-      {
-        name: "Travel Backpack",
-        description: "Durable and spacious backpack perfect for travel and hiking",
-        price: 59.99,
-        originalPrice: 59.99,
-        imageUrl: "https://images.unsplash.com/photo-1544816155-12df9643f363",
-        category: "Fashion",
-        isNew: true,
-        isFeatured: false,
-        rating: 3.5,
-        reviewCount: 9,
-        stock: 20
-      },
-      {
-        name: "Dress Shirt",
-        description: "Formal dress shirt made from high-quality cotton",
-        price: 45.99,
-        originalPrice: 59.99,
-        imageUrl: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c",
-        category: "Fashion",
-        isNew: false,
-        isFeatured: false,
-        rating: 4.2,
-        reviewCount: 15,
-        stock: 30
-      },
-      {
-        name: "Tablet",
-        description: "Powerful tablet for work and entertainment",
-        price: 399.99,
-        originalPrice: 449.99,
-        imageUrl: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0",
-        category: "Electronics",
-        isNew: false,
-        isFeatured: false,
-        rating: 4.7,
-        reviewCount: 23,
-        stock: 6
-      },
-      {
-        name: "Kitchen Knife Set",
-        description: "Professional-grade kitchen knife set with block",
-        price: 129.99,
-        originalPrice: 169.99,
-        imageUrl: "https://images.unsplash.com/photo-1593618998160-e34014e67546",
-        category: "Home & Kitchen",
-        isNew: false,
-        isFeatured: false,
-        rating: 4.8,
-        reviewCount: 34,
-        stock: 9
-      },
-      {
-        name: "Yoga Mat",
-        description: "Non-slip yoga mat with carrying strap",
-        price: 29.99,
-        originalPrice: 29.99,
-        imageUrl: "https://images.unsplash.com/photo-1592432678016-e910b452f9a2",
-        category: "Sports",
-        isNew: false,
-        isFeatured: false,
-        rating: 4.3,
-        reviewCount: 47,
-        stock: 22
-      }
-    ];
-
-    products.forEach(product => {
-      const id = this.currentProductId++;
-      this.products.set(id, { ...product, id });
-    });
+  } finally {
+    conn.release();
   }
 }
 
-export const storage = new MemStorage();
+// Initialize the database when the server starts
+initDb().catch(console.error);
+
+export const storage = {
+  async getCategories(): Promise<Category[]> {
+    const [rows] = await pool.query('SELECT * FROM categories');
+    return rows as Category[];
+  },
+
+  async getCategoryBySlug(slug: string): Promise<Category | undefined> {
+    const [rows] = await pool.query('SELECT * FROM categories WHERE slug = ?', [slug]);
+    return (rows as Category[])[0];
+  },
+
+  async getProducts(): Promise<Product[]> {
+    const [rows] = await pool.query('SELECT * FROM products');
+    return (rows as Product[]).map(product => {
+      try {
+        if (product.details) {
+          product.details = JSON.parse(product.details as unknown as string);
+        } else {
+          product.details = [];
+        }
+      } catch (error) {
+        console.error('Error parsing product details:', error);
+        product.details = [];
+      }
+      return product;
+    });
+  },
+
+  async getProductsByCategory(categoryId: number): Promise<Product[]> {
+    const [rows] = await pool.query('SELECT * FROM products WHERE category_id = ?', [categoryId]);
+    return rows as Product[];
+  },
+
+  async getProductBySlug(slug: string): Promise<Product | undefined> {
+    const [rows] = await pool.query('SELECT * FROM products WHERE slug = ?', [slug]);
+    const product = (rows as Product[])[0];
+    if (product && product.details) {
+      product.details = JSON.parse(product.details as unknown as string);
+    }
+    return product;
+  },
+
+  async getFeaturedProducts(limit = 8): Promise<Product[]> {
+    const [rows] = await pool.query('SELECT * FROM products ORDER BY RAND() LIMIT ?', [limit]);
+    return rows as Product[];
+  },
+
+  async createProduct(product: InsertProduct): Promise<Product> {
+    const [result] = await pool.query(
+      'INSERT INTO products SET ?',
+      {
+        name: product.name,
+        slug: product.slug,
+        description: product.description,
+        price: product.price,
+        old_price: product.oldPrice,
+        image: product.image,
+        category_id: product.categoryId,
+        rating: product.rating,
+        is_new: product.isNew ? 1 : 0,
+        is_organic: product.isOrganic ? 1 : 0,
+        is_bestseller: product.isBestseller ? 1 : 0,
+        details: Array.isArray(product.details) ? JSON.stringify(product.details) : '[]'
+      }
+    );
+    const [rows] = await pool.query('SELECT * FROM products WHERE id = ?', [(result as any).insertId]);
+    const newProduct = (rows as Product[])[0];
+    if (newProduct.details) {
+      try {
+        newProduct.details = JSON.parse(newProduct.details as unknown as string);
+      } catch (error) {
+        console.error('Error parsing product details:', error);
+        newProduct.details = [];
+      }
+    }
+    return newProduct;
+  },
+
+  async updateProduct(id: number, product: Partial<InsertProduct>): Promise<Product | undefined> {
+    const dbProduct = {
+      name: product.name,
+      slug: product.slug,
+      description: product.description,
+      price: product.price,
+      old_price: product.oldPrice,
+      image: product.image,
+      category_id: product.categoryId,
+      rating: product.rating,
+      is_new: product.isNew ? 1 : 0,
+      is_organic: product.isOrganic ? 1 : 0,
+      is_bestseller: product.isBestseller ? 1 : 0,
+      details: product.details ? JSON.stringify(product.details) : null
+    };
+    await pool.query('UPDATE products SET ? WHERE id = ?', [dbProduct, id]);
+    const [updated] = await pool.query('SELECT * FROM products WHERE id = ?', [id]);
+    const result = (updated as Product[])[0];
+    if (result && result.details) {
+      result.details = JSON.parse(result.details as unknown as string);
+    }
+    return result;
+  },
+
+  async deleteProduct(id: number): Promise<boolean> {
+    const [result] = await pool.query('DELETE FROM products WHERE id = ?', [id]);
+    return (result as any).affectedRows > 0;
+  },
+
+  async getBlogPosts(): Promise<BlogPost[]> {
+    const [rows] = await pool.query('SELECT * FROM blog_posts ORDER BY date DESC');
+    return rows as BlogPost[];
+  },
+
+  async getBlogPostBySlug(slug: string): Promise<BlogPost | undefined> {
+    const [rows] = await pool.query('SELECT * FROM blog_posts WHERE slug = ?', [slug]);
+    return (rows as BlogPost[])[0];
+  },
+
+  async getRecentBlogPosts(limit = 3): Promise<BlogPost[]> {
+    const [rows] = await pool.query('SELECT * FROM blog_posts ORDER BY date DESC LIMIT ?', [limit]);
+    return rows as BlogPost[];
+  },
+
+  async createBlogPost(blogPost: InsertBlogPost): Promise<BlogPost> {
+    const [result] = await pool.query('INSERT INTO blog_posts SET ?', blogPost);
+    const [newPost] = await pool.query('SELECT * FROM blog_posts WHERE id = ?', [(result as any).insertId]);
+    return (newPost as BlogPost[])[0];
+  },
+
+  async updateBlogPost(id: number, blogPost: Partial<InsertBlogPost>): Promise<BlogPost | undefined> {
+    await pool.query('UPDATE blog_posts SET ? WHERE id = ?', [blogPost, id]);
+    const [updated] = await pool.query('SELECT * FROM blog_posts WHERE id = ?', [id]);
+    return (updated as BlogPost[])[0];
+  },
+
+  async deleteBlogPost(id: number): Promise<boolean> {
+    const [result] = await pool.query('DELETE FROM blog_posts WHERE id = ?', [id]);
+    return (result as any).affectedRows > 0;
+  },
+
+  async getTestimonials(): Promise<Testimonial[]> {
+    const [rows] = await pool.query('SELECT * FROM testimonials');
+    return rows as Testimonial[];
+  },
+
+  async createOrder(order: InsertOrder): Promise<Order> {
+    const [result] = await pool.query('INSERT INTO orders SET ?', order);
+    const [newOrder] = await pool.query('SELECT * FROM orders WHERE id = ?', [(result as any).insertId]);
+    return (newOrder as Order[])[0];
+  },
+
+  async submitContactForm(contact: InsertContact): Promise<ContactSubmission> {
+    const [result] = await pool.query('INSERT INTO contacts SET ?', contact);
+    const [submission] = await pool.query('SELECT * FROM contacts WHERE id = ?', [(result as any).insertId]);
+    return (submission as ContactSubmission[])[0];
+  },
+
+  async verifyAdminKey(key: string): Promise<boolean> {
+    return key === process.env.ADMIN_KEY;
+  },
+
+  async updateAdminKey(oldKey: string, newKey: string): Promise<boolean> {
+    if (oldKey === process.env.ADMIN_KEY) {
+      process.env.ADMIN_KEY = newKey;
+      return true;
+    }
+    return false;
+  },
+
+  async createCategory(category: InsertCategory): Promise<Category> {
+    const [result] = await pool.query('INSERT INTO categories SET ?', category);
+    const [newCategory] = await pool.query('SELECT * FROM categories WHERE id = ?', [(result as any).insertId]);
+    return (newCategory as Category[])[0];
+  }
+};
