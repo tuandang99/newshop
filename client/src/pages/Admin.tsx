@@ -658,7 +658,7 @@ export default function Admin() {
       price: product.price,
       oldPrice: product.old_price || null,
       image: product.image,
-      categoryId: product.category_id || 0,
+      categoryId: product.category_id,
       rating: product.rating,
       isNew: product.isNew,
       isOrganic: product.isOrganic,
@@ -1077,7 +1077,7 @@ export default function Admin() {
                               <select
                                 className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                 {...field}
-                                value={editingProduct ? editingProduct.category_id : field.value}
+                                value={field.value}
                                 onChange={(e) =>
                                   field.onChange(parseInt(e.target.value))
                                 }
