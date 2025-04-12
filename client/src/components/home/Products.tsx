@@ -31,19 +31,23 @@ export default function Products() {
   const products = productsResponse?.products || [];
 
   const filteredProducts = products.filter(product => {
-    console.log('Filtering product:', { 
+    console.log('=== START FILTERING ===');
+    console.log('Product being filtered:', { 
       name: product.name, 
       categoryId: product.categoryId,
       category_id: product.category_id 
     });
+    console.log('Current active filter:', activeFilter);
 
     // Category filter
     if (activeFilter !== 'all') {
       const category = categories?.find(cat => cat.slug === activeFilter);
-      console.log('Active filter:', {
+      const matches = category ? (product.categoryId === category.id || product.category_id === category.id) : false;
+      
+      console.log('Filter details:', {
         filter: activeFilter,
         foundCategory: category ? { id: category.id, name: category.name } : null,
-        matches: category ? (product.categoryId === category.id || product.category_id === category.id) : false
+        productMatches: matches
       });
       
       if (!category) return false;
