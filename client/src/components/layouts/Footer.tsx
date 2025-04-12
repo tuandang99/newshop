@@ -178,7 +178,7 @@ export default function Footer() {
               Địa chỉ: Thôn Hải Hà, Xã Ea Tân, Huyện Krông Năng, Tỉnh Đắk Lắk,
               Việt Nam
             </p>
-            <p className="mb-1">Email: Tuhohealthyfood@gmail.com</p>
+            <p className="mb-1">Email: tuhohealthyfood@gmail.com</p>
           </div>
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-neutral-400 mb-4 md:mb-0">
