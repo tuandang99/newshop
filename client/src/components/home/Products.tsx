@@ -106,13 +106,14 @@ export default function Products() {
         <div className="text-center mt-10">
           <Button 
             variant="outline" 
-            asChild
+            onClick={() => {
+              window.scrollTo(0, 0);
+              window.location.href = '/products';
+            }}
             className="border-primary text-primary hover:bg-primary/10 inline-flex items-center"
           >
-            <Link href="/products">
-              Xem tất cả sản phẩm
-              <ArrowRightIcon className="ml-2 h-4 w-4" />
-            </Link>
+            Xem tất cả sản phẩm
+            <ArrowRightIcon className="ml-2 h-4 w-4" />
           </Button>
         </div>
       </div>
