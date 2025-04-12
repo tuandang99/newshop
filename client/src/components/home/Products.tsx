@@ -72,26 +72,29 @@ export default function Products() {
             <p className="text-neutral-700">Lựa chọn những sản phẩm tốt nhất</p>
           </div>
           <div className="relative w-full md:w-auto">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:flex md:flex-row gap-2 mt-4 md:mt-0">
-              <Button 
-                variant={activeFilter === 'all' ? 'default' : 'outline'} 
-                onClick={() => setActiveFilter('all')}
-                className={`w-full md:w-auto justify-center ${activeFilter === 'all' ? 'bg-primary text-white' : 'bg-neutral-100 hover:bg-neutral-200'}`}
-              >
-                Tất cả
-              </Button>
-              {categories?.map((category) => (
-                <Button
-                  key={category.id}
-                  variant={activeFilter === category.slug ? 'default' : 'outline'}
-                  onClick={() => setActiveFilter(category.slug)}
-                  className={`w-full md:w-auto justify-center ${activeFilter === category.slug ? 'bg-primary text-white' : 'bg-neutral-100 hover:bg-neutral-200'}`}
-                >
-                  {category.name}
-                </Button>
-              ))}
+              <div className="flex flex-wrap gap-4 mt-4 md:mt-0">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={activeFilter === 'all'}
+                    onChange={() => setActiveFilter('all')}
+                    className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
+                  />
+                  <span className="text-sm font-medium">Tất cả</span>
+                </label>
+                {categories?.map((category) => (
+                  <label key={category.id} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={activeFilter === category.slug}
+                      onChange={() => setActiveFilter(category.slug)}
+                      className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
+                    />
+                    <span className="text-sm font-medium">{category.name}</span>
+                  </label>
+                ))}
+              </div>
             </div>
-          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
