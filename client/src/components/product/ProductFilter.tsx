@@ -1,8 +1,11 @@
+
 import { useState, useEffect } from "react";
-import { Category } from "@shared/schema";
 import { useQuery } from "@tanstack/react-query";
+import { Category } from "@shared/schema";
 import { Input } from "@/components/ui/input";
 import { SearchIcon } from "@/lib/icons";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 interface ProductFilterProps {
   onFilter: (filters: {
@@ -38,8 +41,9 @@ export default function ProductFilter({ onFilter, selectedCategory, initialFilte
   }, [search, category, onFilter]);
 
   return (
-    <div className="bg-white rounded-lg p-4 space-y-4">
-      <div className="space-y-4">
+    <div className="bg-white rounded-lg p-6 space-y-6 shadow-sm">
+      <div>
+        <Label className="text-sm font-medium mb-2 block">Tìm kiếm</Label>
         <div className="relative">
           <Input
             placeholder="Tìm kiếm sản phẩm..."
@@ -49,21 +53,30 @@ export default function ProductFilter({ onFilter, selectedCategory, initialFilte
           />
           <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
         </div>
+      </div>
 
-        <div>
-          <label className="text-sm font-medium">Danh mục sản phẩm</label>
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="w-full mt-1 px-3 py-2 bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-          >
-            <option value="">Tất cả danh mục</option>
-            {categories?.map((cat) => (
-              <option key={cat.id} value={cat.slug}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
+      <div>
+        <Label className="text-sm font-medium mb-3 block">Danh mục sản phẩm</Label>
+        <div className="space-y-3">
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="all"
+              checked={category === ""}
+              onCheckedChange={() => setCategory("")}
+            />
+            <Label htmlFor="all" className="text-sm">Tất cả sản phẩm</Label>
+          </div>
+          
+          {categories?.map((cat) => (
+            <div key={cat.id} className="flex items-center space-x-2">
+              <Checkbox
+                id={cat.slug}
+                checked={category === cat.slug}
+                onCheckedChange={() => setCategory(cat.slug)}
+              />
+              <Label htmlFor={cat.slug} className="text-sm">{cat.name}</Label>
+            </div>
+          ))}
         </div>
       </div>
     </div>
