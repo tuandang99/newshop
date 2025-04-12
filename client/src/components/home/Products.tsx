@@ -33,9 +33,10 @@ export default function Products() {
   const filteredProducts = activeFilter === 'all' 
     ? products 
     : products.filter(product => {
-        const category = categories?.find(cat => cat.slug === activeFilter);
-        console.log('Product:', product.name, 'CategoryId:', product.categoryId, 'Category:', category);
-        return category ? (product.categoryId === category.id || product.category_id === category.id) : false;
+        if (!categories) return true;
+        const category = categories.find(cat => cat.slug === activeFilter);
+        if (!category) return true;
+        return product.categoryId === category.id;
       });
 
   if (!products || !categories) {
