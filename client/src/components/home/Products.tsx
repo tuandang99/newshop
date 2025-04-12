@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
@@ -31,29 +30,12 @@ export default function Products() {
   const products = productsResponse?.products || [];
 
   const filteredProducts = products.filter(product => {
-    console.log('=== START FILTERING ===');
-    console.log('Product being filtered:', { 
-      name: product.name, 
-      categoryId: product.categoryId,
-      category_id: product.category_id 
-    });
-    console.log('Current active filter:', activeFilter);
+    if (activeFilter === 'all') return true;
 
-    // Category filter
-    if (activeFilter !== 'all') {
-      const category = categories?.find(cat => cat.slug === activeFilter);
-      const matches = category ? (product.categoryId === category.id || product.category_id === category.id) : false;
-      
-      console.log('Filter details:', {
-        filter: activeFilter,
-        foundCategory: category ? { id: category.id, name: category.name } : null,
-        productMatches: matches
-      });
-      
-      if (!category) return false;
-      return product.categoryId === category.id || product.category_id === category.id;
-    }
-    return true;
+    const category = categories?.find(cat => cat.slug === activeFilter);
+    if (!category) return false;
+
+    return product.categoryId === category.id || product.category_id === category.id;
   });
 
   if (!products || !categories) {
@@ -63,7 +45,7 @@ export default function Products() {
           <div className="flex flex-col md:flex-row justify-between items-center mb-8">
             <div>
               <h2 className="text-3xl font-bold font-poppins mb-2">Danh mục sản phẩm</h2>
-              <p className="text-neutral-700">Lựa chọn những sản phẩm tốt nhất</p>
+              <p className="text-neutral-700">Lựa chọn những sản phẩm tốt</p>
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -87,39 +69,33 @@ export default function Products() {
         <div className="flex flex-col md:flex-row justify-between items-center mb-8">
           <div>
             <h2 className="text-3xl font-bold font-poppins mb-2">Danh mục sản phẩm</h2>
-            <p className="text-neutral-700">Lựa chọn những sản phẩm tốt nhất</p>
+            <p className="text-neutral-700">Lựa chọn những sản phẩm tốt</p>
           </div>
           <div className="relative w-full md:w-auto">
-              <div className="flex flex-wrap gap-2 mt-4 md:mt-0">
-                <button
-                  onClick={() => setActiveFilter('all')}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                    activeFilter === 'all'
-                      ? 'bg-primary text-white'
-                      : 'bg-white text-neutral-700 border border-neutral-200 hover:bg-neutral-50'
-                  }`}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:flex md:flex-row gap-2 mt-4 md:mt-0">
+              <Button 
+                variant={activeFilter === 'all' ? 'default' : 'outline'} 
+                onClick={() => setActiveFilter('all')}
+                className={`w-full md:w-auto justify-center ${activeFilter === 'all' ? 'bg-primary text-white' : 'bg-neutral-100 hover:bg-neutral-200'}`}
+              >
+                Tất cả
+              </Button>
+              {categories?.map((category) => (
+                <Button
+                  key={category.id}
+                  variant={activeFilter === category.slug ? 'default' : 'outline'}
+                  onClick={() => setActiveFilter(category.slug)}
+                  className={`w-full md:w-auto justify-center text-center ${activeFilter === category.slug ? 'bg-primary text-white' : 'bg-neutral-100 hover:bg-neutral-200'}`}
                 >
-                  Tất cả
-                </button>
-                {categories?.map((category) => (
-                  <button
-                    key={category.id}
-                    onClick={() => setActiveFilter(category.slug)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                      activeFilter === category.slug
-                        ? 'bg-primary text-white'
-                        : 'bg-white text-neutral-700 border border-neutral-200 hover:bg-neutral-50'
-                    }`}
-                  >
-                    {category.name}
-                  </button>
-                ))}
-              </div>
+                  {category.name}
+                </Button>
+              ))}
             </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filteredProducts.map((product) => (
+          {filteredProducts && filteredProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
@@ -127,14 +103,13 @@ export default function Products() {
         <div className="text-center mt-10">
           <Button 
             variant="outline" 
-            onClick={() => {
-              window.scrollTo(0, 0);
-              window.location.href = '/products';
-            }}
+            asChild
             className="border-primary text-primary hover:bg-primary/10 inline-flex items-center"
           >
-            Xem tất cả sản phẩm
-            <ArrowRightIcon className="ml-2 h-4 w-4" />
+            <Link href="/products">
+              Xem tất cả sản phẩm
+              <ArrowRightIcon className="ml-2 h-4 w-4" />
+            </Link>
           </Button>
         </div>
       </div>
