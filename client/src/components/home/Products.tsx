@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
@@ -6,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import ProductCard from "@/components/product/ProductCard";
 import { ArrowRightIcon } from "@/lib/icons";
 
-// Define the API response structure
 interface ProductsResponse {
   products: Product[];
   pagination: {
@@ -20,7 +20,7 @@ interface ProductsResponse {
 export default function Products() {
   const [activeFilter, setActiveFilter] = useState('all');
 
-  const { data: productsResponse, isLoading, error } = useQuery<ProductsResponse>({
+  const { data: productsResponse } = useQuery<ProductsResponse>({
     queryKey: ['/api/featured-products'],
   });
 
@@ -28,17 +28,16 @@ export default function Products() {
     queryKey: ['/api/categories'],
   });
 
-  // Extract products from the response
-  const products = productsResponse?.products;
+  const products = productsResponse?.products || [];
 
-  const filteredProducts = products && activeFilter !== 'all' && categories
-    ? products.filter(product => {
-        const category = categories.find(cat => cat.slug === activeFilter);
-        return category ? product.category_id === category.id : true;
-      })
-    : products;
+  const filteredProducts = activeFilter === 'all' 
+    ? products 
+    : products.filter(product => {
+        const category = categories?.find(cat => cat.slug === activeFilter);
+        return category ? product.categoryId === category.id : false;
+      });
 
-  if (isLoading) {
+  if (!products || !categories) {
     return (
       <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
@@ -63,24 +62,13 @@ export default function Products() {
     );
   }
 
-  if (error || !products) {
-    return (
-      <section className="py-12 bg-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold font-poppins mb-2">Danh mục sản phẩm</h2>
-          <p className="text-red-500">Failed to load products. Please try again later.</p>
-        </div>
-      </section>
-    );
-  }
-
   return (
     <section id="products" className="py-12 bg-white">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center mb-8">
           <div>
             <h2 className="text-3xl font-bold font-poppins mb-2">Danh mục sản phẩm</h2>
-            <p className="text-neutral-700">Lựa chọn những sản phẩm tốt </p>
+            <p className="text-neutral-700">Lựa chọn những sản phẩm tốt nhất</p>
           </div>
           <div className="relative w-full md:w-auto">
             <div className="grid grid-cols-2 sm:grid-cols-3 md:flex md:flex-row gap-2 mt-4 md:mt-0">
@@ -96,7 +84,7 @@ export default function Products() {
                   key={category.id}
                   variant={activeFilter === category.slug ? 'default' : 'outline'}
                   onClick={() => setActiveFilter(category.slug)}
-                  className={`w-full md:w-auto justify-center text-center ${activeFilter === category.slug ? 'bg-primary text-white' : 'bg-neutral-100 hover:bg-neutral-200'}`}
+                  className={`w-full md:w-auto justify-center ${activeFilter === category.slug ? 'bg-primary text-white' : 'bg-neutral-100 hover:bg-neutral-200'}`}
                 >
                   {category.name}
                 </Button>
@@ -106,7 +94,7 @@ export default function Products() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filteredProducts && filteredProducts.map((product) => (
+          {filteredProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
