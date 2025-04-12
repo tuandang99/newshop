@@ -34,8 +34,8 @@ export default function Products() {
     // Category filter
     if (activeFilter !== 'all') {
       const category = categories?.find(cat => cat.slug === activeFilter);
-      if (!category) return true;
-      return product.categoryId === category.id;
+      if (!category) return false;
+      return product.categoryId === category.id || product.category_id === category.id;
     }
     return true;
   });
