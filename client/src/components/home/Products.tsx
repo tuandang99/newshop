@@ -72,26 +72,29 @@ export default function Products() {
             <p className="text-neutral-700">Lựa chọn những sản phẩm tốt nhất</p>
           </div>
           <div className="relative w-full md:w-auto">
-              <div className="flex flex-wrap gap-4 mt-4 md:mt-0">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={activeFilter === 'all'}
-                    onChange={() => setActiveFilter('all')}
-                    className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
-                  />
-                  <span className="text-sm font-medium">Tất cả</span>
-                </label>
+              <div className="flex flex-wrap gap-2 mt-4 md:mt-0">
+                <button
+                  onClick={() => setActiveFilter('all')}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                    activeFilter === 'all'
+                      ? 'bg-primary text-white'
+                      : 'bg-white text-neutral-700 border border-neutral-200 hover:bg-neutral-50'
+                  }`}
+                >
+                  Tất cả
+                </button>
                 {categories?.map((category) => (
-                  <label key={category.id} className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={activeFilter === category.slug}
-                      onChange={() => setActiveFilter(category.slug)}
-                      className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
-                    />
-                    <span className="text-sm font-medium">{category.name}</span>
-                  </label>
+                  <button
+                    key={category.id}
+                    onClick={() => setActiveFilter(category.slug)}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                      activeFilter === category.slug
+                        ? 'bg-primary text-white'
+                        : 'bg-white text-neutral-700 border border-neutral-200 hover:bg-neutral-50'
+                    }`}
+                  >
+                    {category.name}
+                  </button>
                 ))}
               </div>
             </div>
