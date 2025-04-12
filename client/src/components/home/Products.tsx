@@ -30,14 +30,28 @@ export default function Products() {
 
   const products = productsResponse?.products || [];
 
-  const filteredProducts = activeFilter === 'all' 
-    ? products 
-    : products.filter(product => {
-        if (!categories) return true;
-        const category = categories.find(cat => cat.slug === activeFilter);
-        if (!category) return true;
-        return product.categoryId === category.id;
-      });
+  const filteredProducts = products.filter(product => {
+    // Category filter
+    if (activeFilter !== 'all') {
+      const category = categories?.find(cat => cat.slug === activeFilter);
+      if (!category) return true;
+      if (!(product.categoryId === category.id || product.category_id === category.id)) {
+        return false;
+      }
+    }
+
+    // Organic filter
+    if (product.isOrganic !== undefined && !product.isOrganic) {
+      return false;
+    }
+
+    // New product filter 
+    if (product.isNew !== undefined && !product.isNew) {
+      return false;
+    }
+
+    return true;
+  });
 
   if (!products || !categories) {
     return (
