@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from "react";
 import { useLocation, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
@@ -57,7 +56,7 @@ export default function Products() {
     if (filters.category) {
       const category = categories?.find(cat => cat.slug === filters.category);
       if (!category) return true;
-      return product.category_id === category.id;
+      return product.categoryId === category.id || product.category_id === category.id;
     }
 
     // Price filter
