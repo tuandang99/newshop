@@ -18,7 +18,7 @@ interface ProductsResponse {
 }
 
 export default function Products() {
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(['all']);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   const { data: productsResponse } = useQuery<ProductsResponse>({
     queryKey: ['/api/featured-products'],
@@ -33,18 +33,18 @@ export default function Products() {
   const handleCategoryChange = (categorySlug: string) => {
     setSelectedCategories(prev => {
       if (categorySlug === 'all') {
-        return ['all'];
+        return prev.length === categories?.length ? [] : categories?.map(c => c.slug) || [];
       }
       
       const newSelection = prev.includes(categorySlug)
         ? prev.filter(c => c !== categorySlug)
-        : [...prev.filter(c => c !== 'all'), categorySlug];
+        : [...prev, categorySlug];
         
-      return newSelection.length === 0 ? ['all'] : newSelection;
+      return newSelection;
     });
   };
 
-  const filteredProducts = selectedCategories.includes('all')
+  const filteredProducts = selectedCategories.length === 0
     ? products
     : products.filter(product => {
         return selectedCategories.some(slug => {
@@ -91,14 +91,14 @@ export default function Products() {
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={selectedCategories.includes('all')}
+                    checked={categories && selectedCategories.length === categories.length}
                     onChange={() => handleCategoryChange('all')}
                     className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
                   />
                   <span className="text-sm font-medium">Tất cả</span>
                 </label>
                 {categories?.map((category) => (
-                  <label key={category.id} className="flex items-center gap-2 cursor-pointer">
+                  <label key={category.id} className="flex items-center gap-2 cursor-pointer hover:bg-gray-100 p-2 rounded-md transition-colors">
                     <input
                       type="checkbox"
                       checked={selectedCategories.includes(category.slug)}
