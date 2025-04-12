@@ -56,16 +56,18 @@ export default function Products() {
     if (filters.category) {
       const category = categories?.find(cat => cat.slug === filters.category);
       if (!category) return true;
-      return product.categoryId === category.id || product.category_id === category.id;
+      if (!(product.categoryId === category.id || product.category_id === category.id)) {
+        return false;
+      }
     }
 
-    // Price filter
-    if (product.price < filters.minPrice || product.price > filters.maxPrice) {
+    // Organic filter
+    if (filters.isOrganic && !product.isOrganic) {
       return false;
     }
 
-    // Rating filter
-    if (product.rating < filters.minRating) {
+    // New product filter
+    if (filters.isNew && !product.isNew) {
       return false;
     }
 
