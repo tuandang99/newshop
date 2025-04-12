@@ -34,7 +34,8 @@ export default function Products() {
     ? products 
     : products.filter(product => {
         const category = categories?.find(cat => cat.slug === activeFilter);
-        return category ? product.categoryId === category.id : false;
+        console.log('Product:', product.name, 'CategoryId:', product.categoryId, 'Category:', category);
+        return category ? (product.categoryId === category.id || product.category_id === category.id) : false;
       });
 
   if (!products || !categories) {
