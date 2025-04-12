@@ -84,46 +84,59 @@ export default function Products() {
         />
       </Helmet>
 
-      <section className="py-10 bg-white">
+      <section className="py-8 bg-neutral-50">
         <div className="container mx-auto px-4">
-          <div className="mb-6 flex flex-col md:flex-row gap-6">
-            <div className="md:w-1/4">
-              <ProductFilter 
-                selectedCategory={categorySlug || ''} 
-                onFilter={handleFilter}
-                initialFilters={{
-                  search: searchQuery || '',
-                  category: categorySlug || '',
-                  priceRange: [filters.minPrice, filters.maxPrice],
-                  rating: filters.minRating
-                }}
-              />
+          <div className="flex justify-between items-center mb-8">
+            <div>
+              <h1 className="text-3xl font-bold font-poppins mb-2">
+                {filters.category 
+                  ? categories?.find(cat => cat.slug === filters.category)?.name 
+                  : "Tất cả sản phẩm"}
+              </h1>
+              <p className="text-neutral-600">
+                Khám phá các sản phẩm organic & healthy của chúng tôi
+              </p>
+            </div>
+            <Button asChild variant="outline" className="hover:bg-primary/10">
+              <Link href="/">
+                <ArrowLeftIcon className="h-4 w-4 mr-2" />
+                Trang chủ
+              </Link>
+            </Button>
+          </div>
+
+          <div className="flex flex-col lg:flex-row gap-8">
+            <div className="lg:w-1/4">
+              <div className="sticky top-4">
+                <ProductFilter 
+                  selectedCategory={categorySlug || ''} 
+                  onFilter={handleFilter}
+                  initialFilters={{
+                    search: searchQuery || '',
+                    category: categorySlug || '',
+                    priceRange: [filters.minPrice, filters.maxPrice],
+                    rating: filters.minRating
+                  }}
+                />
+              </div>
             </div>
             
-            <div className="md:w-3/4">
-              <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold">
-                  {filters.category 
-                    ? categories?.find(cat => cat.slug === filters.category)?.name 
-                    : "Tất cả sản phẩm"}
-                </h1>
-                <Button asChild variant="outline">
-                  <Link href="/">
-                    <ArrowLeftIcon className="h-4 w-4 mr-2" />
-                    Quay lại
-                  </Link>
-                </Button>
-              </div>
-
+            <div className="lg:w-3/4">
               {filteredProducts && filteredProducts.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredProducts.map((product) => (
-                    <ProductCard key={product.id} product={product} />
-                  ))}
-                </div>
+                <>
+                  <div className="text-sm text-neutral-600 mb-4">
+                    Hiển thị {filteredProducts.length} sản phẩm
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                    {filteredProducts.map((product) => (
+                      <ProductCard key={product.id} product={product} />
+                    ))}
+                  </div>
+                </>
               ) : (
-                <div className="text-center py-10">
-                  <p className="text-gray-500">Không tìm thấy sản phẩm phù hợp</p>
+                <div className="bg-white rounded-lg shadow-sm p-8 text-center">
+                  <p className="text-neutral-600 mb-2">Không tìm thấy sản phẩm phù hợp</p>
+                  <p className="text-sm text-neutral-500">Vui lòng thử lại với bộ lọc khác</p>
                 </div>
               )}
             </div>
