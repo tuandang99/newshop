@@ -102,10 +102,13 @@ export default function Products() {
           </div>
         </div>
 
-        <div className="overflow-x-auto pb-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 min-w-[300px]">
+        {/* Sản phẩm grid - điều chỉnh để tránh overflow */}
+        <div className="w-full overflow-x-auto pb-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6" style={{ minWidth: "640px" }}>
             {filteredProducts && filteredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <div key={product.id} className="w-full">
+                <ProductCard product={product} />
+              </div>
             ))}
           </div>
         </div>
