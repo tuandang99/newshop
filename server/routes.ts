@@ -114,8 +114,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Blog
   app.get("/api/blog-posts", async (req: Request, res: Response) => {
-    const blogPosts = await storage.getBlogPosts();
-    res.json(blogPosts);
+    try {
+      const page = req.query.page ? parseInt(req.query.page as string) : 1;
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+      
+      if (isNaN(page) || page < 1 || isNaN(limit) || limit < 1) {
+        return res.status(400).json({ message: "Invalid pagination parameters" });
+      }
+      
+      const blogPosts = await storage.getBlogPosts();
+      
+      // Format dates
+      const postsWithFormattedDates = blogPosts.map(post => ({
+        ...post,
+        formattedDate: format(new Date(post.date || new Date()), "dd MMMM, yyyy", { locale: vi })
+      }));
+      
+      res.json({
+        posts: postsWithFormattedDates,
+        pagination: {
+          total: postsWithFormattedDates.length,
+          page: page,
+          limit: limit,
+          totalPages: Math.ceil(postsWithFormattedDates.length / limit)
+        }
+      });
+    } catch (error) {
+      console.error("Error fetching blog posts:", error);
+      res.status(500).json({ message: "Failed to fetch blog posts" });
+    }
   });
 
   app.get("/api/blog-posts/:slug", async (req: Request, res: Response) => {
@@ -136,21 +163,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.get("/api/recent-blog-posts", async (req: Request, res: Response) => {
-    const limit = req.query.limit ? parseInt(req.query.limit as string) : 3;
-    
-    if (isNaN(limit) || limit < 1) {
-      return res.status(400).json({ message: "Invalid limit parameter" });
+    try {
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 3;
+      
+      if (isNaN(limit) || limit < 1) {
+        return res.status(400).json({ message: "Invalid limit parameter" });
+      }
+      
+      const recentPosts = await storage.getRecentBlogPosts(limit);
+      
+      // Format dates in Vietnamese
+      const postsWithFormattedDates = recentPosts.map(post => ({
+        ...post,
+        formattedDate: format(new Date(post.date || new Date()), "dd MMMM, yyyy", { locale: vi })
+      }));
+      
+      res.json({
+        posts: postsWithFormattedDates,
+        pagination: {
+          total: postsWithFormattedDates.length,
+          page: 1,
+          limit: limit,
+          totalPages: 1
+        }
+      });
+    } catch (error) {
+      console.error("Error fetching recent blog posts:", error);
+      res.status(500).json({ message: "Failed to fetch recent blog posts" });
     }
-    
-    const recentPosts = await storage.getRecentBlogPosts(limit);
-    
-    // Format dates in Vietnamese
-    const postsWithFormattedDates = recentPosts.map(post => ({
-      ...post,
-      formattedDate: format(new Date(post.date || new Date()), "dd MMMM, yyyy", { locale: vi })
-    }));
-    
-    res.json(postsWithFormattedDates);
   });
 
   // Testimonials
