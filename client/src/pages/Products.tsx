@@ -77,16 +77,16 @@ export default function Products() {
 
     // Organic filter
     if (filters.isOrganic) {
-      console.log("Checking isOrganic:", product.name, product.isOrganic);
-      if (!product.isOrganic) {
+      console.log("Checking isOrganic:", product.name, product.isOrganic, (product as any).is_organic);
+      if (!(product.isOrganic === true || (product as any).is_organic === true)) {
         return false;
       }
     }
 
     // New product filter
     if (filters.isNew) {
-      console.log("Checking isNew:", product.name, product.isNew);
-      if (!product.isNew) {
+      console.log("Checking isNew:", product.name, product.isNew, (product as any).is_new);
+      if (!(product.isNew === true || (product as any).is_new === true)) {
         return false;
       }
     }

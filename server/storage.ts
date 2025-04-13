@@ -73,6 +73,16 @@ export interface IStorage {
   updateAdminKey(oldKey: string, newKey: string): Promise<boolean>;
 }
 
+// Helper function to normalize product data
+function normalizeProduct(product: any): Product {
+  return {
+    ...product,
+    isNew: product.isNew === true || product.is_new === true,
+    isOrganic: product.isOrganic === true || product.is_organic === true,
+    isBestseller: product.isBestseller === true || product.is_bestseller === true,
+  };
+}
+
 export class DatabaseStorage implements IStorage {
   async getCategories(): Promise<Category[]> {
     return await db.select().from(categories).orderBy(categories.name);
@@ -89,31 +99,35 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getProducts(): Promise<Product[]> {
-    return await db.select().from(products);
+    const rawProducts = await db.select().from(products);
+    return rawProducts.map(normalizeProduct);
   }
 
   async getProductsByCategory(categoryId: number): Promise<Product[]> {
-    return await db.select().from(products).where(eq(products.categoryId, categoryId));
+    const rawProducts = await db.select().from(products).where(eq(products.categoryId, categoryId));
+    return rawProducts.map(normalizeProduct);
   }
 
   async getProductBySlug(slug: string): Promise<Product | undefined> {
     const results = await db.select().from(products).where(eq(products.slug, slug));
-    return results[0];
+    return results.length ? normalizeProduct(results[0]) : undefined;
   }
 
   async getFeaturedProducts(limit = 8): Promise<Product[]> {
-    return await db.select()
+    const rawProducts = await db.select()
       .from(products)
       .where(eq(products.isBestseller, true))
       .limit(limit);
+    return rawProducts.map(normalizeProduct);
   }
 
   async getNewArrivals(limit = 8): Promise<Product[]> {
-    return await db.select()
+    const rawProducts = await db.select()
       .from(products)
       .where(eq(products.isNew, true))
       .orderBy(desc(products.createdAt))
       .limit(limit);
+    return rawProducts.map(normalizeProduct);
   }
 
   async createProduct(product: InsertProduct): Promise<Product> {
@@ -135,7 +149,7 @@ export class DatabaseStorage implements IStorage {
     
     const result = await db.insert(products).values(insertData);
     const [newProduct] = await db.select().from(products).where(eq(products.slug, product.slug));
-    return newProduct;
+    return normalizeProduct(newProduct);
   }
 
   async updateProduct(id: number, product: Partial<InsertProduct>): Promise<Product | undefined> {
@@ -161,7 +175,7 @@ export class DatabaseStorage implements IStorage {
       .set(updateData)
       .where(eq(products.id, id))
       .returning();
-    return updatedProduct;
+    return updatedProduct ? normalizeProduct(updatedProduct) : undefined;
   }
 
   async deleteProduct(id: number): Promise<boolean> {
@@ -170,7 +184,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async searchProducts(query: string): Promise<Product[]> {
-    return await db.select()
+    const rawProducts = await db.select()
       .from(products)
       .where(
         or(
@@ -178,6 +192,7 @@ export class DatabaseStorage implements IStorage {
           like(products.description, `%${query}%`)
         )
       );
+    return rawProducts.map(normalizeProduct);
   }
 
   // Product Images methods
