@@ -12,27 +12,7 @@ import {
 } from "./telegram";
 import { insertProductSchema, insertBlogPostSchema, insertContactSchema } from "@shared/schema";
 
-const ADMIN_KEY = process.env.ADMIN_KEY || "secret-key-1234";
 
-const adminAuth = async (req: Request, res: Response, next: NextFunction) => {
-  const authorization = req.headers.authorization;
-
-  if (!authorization) {
-    return res.status(401).json({ message: "Unauthorized: No API key provided" });
-  }
-
-  // Try stored admin key first
-  if (await storage.verifyAdminKey(authorization)) {
-    return next();
-  }
-
-  // Fall back to environment variable admin key
-  if (authorization === ADMIN_KEY) {
-    return next();
-  }
-
-  return res.status(401).json({ message: "Unauthorized: Invalid API key" });
-};
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // API routes with prefix /api
