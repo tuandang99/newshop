@@ -188,24 +188,3 @@ export const cartItemSchema = z.object({
 });
 
 export type CartItem = z.infer<typeof cartItemSchema>;
-
-// API Response types
-export interface BlogPostsResponse {
-  posts: BlogPost[];
-  pagination: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  };
-}
-
-export interface ProductsResponse {
-  products: Product[];
-  pagination: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  };
-}
