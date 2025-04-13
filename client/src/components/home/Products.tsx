@@ -35,7 +35,7 @@ export default function Products() {
     const category = categories?.find(cat => cat.slug === activeFilter);
     if (!category) return false;
 
-    return product.categoryId === category.id || product.category_id === category.id;
+    return product.categoryId === category.id;
   });
 
   if (!products || !categories) {
