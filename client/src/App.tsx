@@ -10,7 +10,7 @@ import { Skeleton } from './components/ui/skeleton';
 import { ZaloButton } from '@/components/ui/zalo-button';
 
 const About = lazy(() => import(/* webpackPrefetch: true */ './pages/About'));
-const Admin = lazy(() => import(/* webpackPrefetch: true */ './pages/Admin'));
+//const Admin = lazy(() => import(/* webpackPrefetch: true */ './pages/Admin')); //Removed Admin import
 const ShippingPolicy = lazy(() => import(/* webpackPrefetch: true */ './pages/support/ShippingPolicy'));
 const RefundPolicy = lazy(() => import(/* webpackPrefetch: true */ './pages/support/RefundPolicy'));
 const FAQ = lazy(() => import(/* webpackPrefetch: true */ './pages/support/FAQ'));
@@ -34,7 +34,7 @@ function Router() {
           <Route path="/blog" component={Blog} />
           <Route path="/blog/:slug" component={BlogPost} />
           <Route path="/contact" component={Contact} />
-          <Route path="/admin" component={Admin} />
+          {/* <Route path="/admin" component={Admin} /> */} {/*Removed Admin route*/}
           <Route path="/support/shipping" component={ShippingPolicy} />
           <Route path="/support/refund" component={RefundPolicy} />
           <Route path="/support/faq" component={FAQ} />
