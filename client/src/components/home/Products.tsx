@@ -35,7 +35,8 @@ export default function Products() {
     const category = categories?.find(cat => cat.slug === activeFilter);
     if (!category) return false;
 
-    return product.categoryId === category.id;
+    // Handle both camelCase and snake_case property names
+    return product.categoryId === category.id || (product as any).category_id === category.id;
   });
 
   if (!products || !categories) {
