@@ -116,8 +116,8 @@ export default function ProductCard({ product, variant = 'default' }: ProductCar
         )}
         
         {/* Price area */}
-        <div className="flex justify-between items-center">
-          <div className="flex flex-col">
+        <div className="flex flex-wrap justify-between items-start">
+          <div className="flex flex-col mb-2 mr-2">
             <div className="flex items-center gap-1">
               <span className={`font-semibold text-red-500 ${variant === 'compact' ? 'text-sm' : 'text-lg'}`}>
                 {product.price.toLocaleString("vi-VN")}₫
@@ -135,15 +135,17 @@ export default function ProductCard({ product, variant = 'default' }: ProductCar
             )}
           </div>
           
-          {/* Buy button - show in normal view, hidden initially */}
+          {/* Buy button - Always show on small screen, hover on desktop */}
           {variant !== 'compact' && (
-            <div className="product-cta opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all flex items-center gap-2">
+            <div className="mt-1 sm:opacity-0 sm:group-hover:opacity-100 transition-all">
               <Button
-                className="bg-primary text-white px-4 py-2 rounded-full hover:bg-primary/90 flex items-center gap-2"
+                variant="default"
+                size="sm"
+                className="bg-primary text-white hover:bg-primary/90 text-xs sm:text-sm"
                 onClick={handleAddToCart}
               >
-                <ShoppingCartIcon className="h-4 w-4" />
-                <span>Mua ngay</span>
+                <ShoppingCartIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                Mua ngay
               </Button>
             </div>
           )}
