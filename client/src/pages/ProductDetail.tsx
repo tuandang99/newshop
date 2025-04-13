@@ -223,12 +223,14 @@ export default function ProductDetail() {
               <div className="border-t border-neutral-200 pt-6 mt-6">
                 <h3 className="text-lg font-bold mb-4">Sản phẩm liên quan</h3>
                 <div className="overflow-x-auto pb-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 min-w-[600px]">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full" style={{ minWidth: "280px" }}>
                     {productsResponse?.products
                       .filter(p => p.categoryId === product.categoryId && p.id !== product.id)
                       .slice(0, 3)
                       .map(relatedProduct => (
-                        <ProductCard key={relatedProduct.id} product={relatedProduct} variant="compact" />
+                        <div key={relatedProduct.id} className="w-full">
+                          <ProductCard product={relatedProduct} variant="compact" />
+                        </div>
                       ))}
                   </div>
                 </div>
