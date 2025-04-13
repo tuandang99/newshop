@@ -159,46 +159,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(testimonials);
   });
 
-  // Admin Authentication
-  app.post("/api/admin/verify", async (req: Request, res: Response) => {
-    const { key } = req.body;
-
-    if (!key) {
-      return res.status(400).json({ message: "API key is required" });
-    }
-
-    if (key === ADMIN_KEY || await storage.verifyAdminKey(key)) {
-      return res.json({ valid: true });
-    }
-
-    res.json({ valid: false });
-  });
-
-  app.post("/api/admin/key", adminAuth, async (req: Request, res: Response) => {
-    const { oldKey, newKey } = req.body;
-
-    if (!oldKey || !newKey) {
-      return res.status(400).json({ message: "Both old and new API keys are required" });
-    }
-
-    if (!(oldKey === ADMIN_KEY || await storage.verifyAdminKey(oldKey))) {
-      return res.status(401).json({ message: "Invalid old API key" });
-    }
-
-    try {
-      if (oldKey === ADMIN_KEY) {
-        // Creating first database key
-        await storage.updateAdminKey("", newKey);
-      } else {
-        // Updating existing key
-        await storage.updateAdminKey(oldKey, newKey);
-      }
-      res.json({ success: true });
-    } catch (error) {
-      console.error("Error updating admin key:", error);
-      res.status(500).json({ message: "Failed to update API key" });
-    }
-  });
+  
 
   // Orders
   app.post("/api/orders", async (req: Request, res: Response) => {
