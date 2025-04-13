@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Category } from "@shared/schema";
@@ -6,22 +5,31 @@ import { Input } from "@/components/ui/input";
 import { SearchIcon } from "@/lib/icons";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 
 interface ProductFilterProps {
   onFilter: (filters: {
     search: string;
     category: string | null;
+    isOrganic?: boolean;
+    isNew?: boolean;
   }) => void;
   selectedCategory?: string;
   initialFilters?: {
     search: string;
     category: string;
+    priceRange?: [number, number];
+    rating?: number;
+    isOrganic?: boolean;
+    isNew?: boolean;
   };
 }
 
 export default function ProductFilter({ onFilter, selectedCategory, initialFilters }: ProductFilterProps) {
   const [search, setSearch] = useState(initialFilters?.search || "");
   const [category, setCategory] = useState(selectedCategory || "");
+  const [isOrganic, setIsOrganic] = useState(initialFilters?.isOrganic || false);
+  const [isNew, setIsNew] = useState(initialFilters?.isNew || false);
 
   const { data: categories } = useQuery<Category[]>({
     queryKey: ["/api/categories"],
@@ -37,8 +45,10 @@ export default function ProductFilter({ onFilter, selectedCategory, initialFilte
     onFilter({
       search: search.trim(),
       category: category || null,
+      isOrganic,
+      isNew
     });
-  }, [search, category, onFilter]);
+  }, [search, category, isOrganic, isNew, onFilter]);
 
   return (
     <div className="bg-white rounded-lg p-6 shadow-md border border-neutral-100 hover:shadow-lg transition-shadow">
@@ -55,7 +65,7 @@ export default function ProductFilter({ onFilter, selectedCategory, initialFilte
         </div>
       </div>
 
-      <div>
+      <div className="mb-6">
         <Label className="text-base font-semibold mb-4 block text-neutral-800">Danh mục sản phẩm</Label>
         <div className="space-y-3">
           <label className="flex items-center p-2 rounded-md hover:bg-neutral-50 transition-colors cursor-pointer group">
@@ -79,6 +89,28 @@ export default function ProductFilter({ onFilter, selectedCategory, initialFilte
               <span className="ml-2 text-sm text-neutral-700 group-hover:text-neutral-900">{cat.name}</span>
             </label>
           ))}
+        </div>
+      </div>
+
+      <div className="mb-6">
+        <Label className="text-base font-semibold mb-4 block text-neutral-800">Đặc điểm</Label>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <label htmlFor="organic" className="text-sm text-neutral-700">Sản phẩm hữu cơ</label>
+            <Switch 
+              id="organic" 
+              checked={isOrganic}
+              onCheckedChange={setIsOrganic}
+            />
+          </div>
+          <div className="flex items-center justify-between">
+            <label htmlFor="new" className="text-sm text-neutral-700">Sản phẩm mới</label>
+            <Switch 
+              id="new" 
+              checked={isNew}
+              onCheckedChange={setIsNew}
+            />
+          </div>
         </div>
       </div>
     </div>

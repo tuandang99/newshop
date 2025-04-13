@@ -1,12 +1,22 @@
 import { useState, useEffect, useCallback } from "react";
 import { useLocation, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { Category } from "@shared/schema";
+import { Category, Product } from "@shared/schema";
 import ProductCard from "@/components/product/ProductCard";
 import ProductFilter from "@/components/product/ProductFilter";
 import { Button } from "@/components/ui/button";
 import { ArrowLeftIcon } from "@/lib/icons";
 import { Helmet } from "react-helmet";
+
+interface ProductsResponse {
+  products: Product[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
 
 interface FilterState {
   search: string;
@@ -14,6 +24,8 @@ interface FilterState {
   minPrice: number;
   maxPrice: number;
   minRating: number;
+  isOrganic?: boolean;
+  isNew?: boolean;
 }
 
 export default function Products() {
@@ -27,7 +39,9 @@ export default function Products() {
     category: categorySlug || null,
     minPrice: 0,
     maxPrice: 1000000,
-    minRating: 0
+    minRating: 0,
+    isOrganic: false,
+    isNew: false
   });
 
   const { data: categories } = useQuery<Category[]>({
@@ -38,8 +52,8 @@ export default function Products() {
     queryKey: ['/api/products'],
   });
 
-  const handleFilter = useCallback((newFilters: FilterState) => {
-    setFilters(newFilters);
+  const handleFilter = useCallback((newFilters: Partial<FilterState>) => {
+    setFilters(prev => ({ ...prev, ...newFilters }));
   }, []);
 
   const filteredProducts = products?.products.filter(product => {
@@ -56,7 +70,7 @@ export default function Products() {
     if (filters.category) {
       const category = categories?.find(cat => cat.slug === filters.category);
       if (!category) return true;
-      if (!(product.categoryId === category.id || product.category_id === category.id)) {
+      if (!(product.categoryId === category.id)) {
         return false;
       }
     }
@@ -115,7 +129,9 @@ export default function Products() {
                     search: searchQuery || '',
                     category: categorySlug || '',
                     priceRange: [filters.minPrice, filters.maxPrice],
-                    rating: filters.minRating
+                    rating: filters.minRating,
+                    isOrganic: filters.isOrganic || false,
+                    isNew: filters.isNew || false
                   }}
                 />
               </div>
