@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Input } from "@/components/ui/input";
@@ -74,22 +73,22 @@ export default function Navbar() {
       <div className="container mx-auto px-2 sm:px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center" onClick={closeMenu}>
+          <Link href="/" className="flex items-center flex-shrink-0" onClick={closeMenu}>
             <img src="/logo.png" alt="TUHO Logo" className="h-8 sm:h-10 md:h-12 w-auto mr-2" />
-            <span className="text-base sm:text-lg md:text-xl font-bold font-poppins text-primary">Tuho Foods</span>
+            <span className="text-base sm:text-lg md:text-xl font-bold font-poppins text-primary truncate">Tuho Foods</span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-6">
-            <Link href="/" className={`${isActive("/")} font-medium transition`}>
+          <div className="hidden md:flex items-center space-x-2 lg:space-x-6">
+            <Link href="/" className={`${isActive("/")} font-medium transition px-2`}>
               Trang Chủ
             </Link>
             <div className="relative group">
-              <Link href="/products" className={`${isActive("/products")} font-medium transition flex items-center gap-1`}>
+              <Link href="/products" className={`${isActive("/products")} font-medium transition flex items-center gap-1 px-2`}>
                 Sản Phẩm
                 <ChevronDownIcon className="h-4 w-4" />
               </Link>
-              <div className="absolute left-0 mt-0 pt-2 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+              <div className="absolute left-0 mt-0 pt-2 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                 <div className="bg-white shadow-lg rounded-md py-2 border border-gray-100">
                   {categories?.map((category) => (
                     <Link 
@@ -104,13 +103,13 @@ export default function Navbar() {
                 </div>
               </div>
             </div>
-            <Link href="/about" className={`${isActive("/about")} font-medium transition`}>
+            <Link href="/about" className={`${isActive("/about")} font-medium transition px-2`}>
               Về Chúng Tôi
             </Link>
-            <Link href="/blog" className={`${isActive("/blog")} font-medium transition`}>
+            <Link href="/blog" className={`${isActive("/blog")} font-medium transition px-2`}>
               Tin Tức
             </Link>
-            <Link href="/contact" className={`${isActive("/contact")} font-medium transition`}>
+            <Link href="/contact" className={`${isActive("/contact")} font-medium transition px-2`}>
               Liên Hệ
             </Link>
           </div>
@@ -122,7 +121,7 @@ export default function Navbar() {
                 <Input 
                   type="text" 
                   placeholder="Tìm kiếm sản phẩm..." 
-                  className="pl-10 pr-4 py-2 rounded-full bg-neutral-100 focus:ring-2 focus:ring-primary w-64" 
+                  className="pl-10 pr-4 py-2 rounded-full bg-neutral-100 focus:ring-2 focus:ring-primary w-48 lg:w-64" 
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value);
@@ -135,7 +134,7 @@ export default function Navbar() {
                 </button>
 
                 {showSearchResults && filteredProducts.length > 0 && (
-                  <div className="absolute top-full mt-1 w-full bg-white shadow-lg rounded-md py-2 z-50">
+                  <div className="absolute top-full mt-1 w-full bg-white shadow-lg rounded-md py-2 z-50 border border-gray-100">
                     {filteredProducts.map((product) => (
                       <Link 
                         key={product.id} 
@@ -182,7 +181,7 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden fixed inset-0 top-[57px] sm:top-[65px] bg-white z-50 overflow-y-auto">
+          <div className="md:hidden fixed inset-0 top-[57px] sm:top-[65px] bg-white z-50 overflow-y-auto pb-16">
             <div className="p-4 space-y-4">
               <div className="pb-2">
                 <form onSubmit={handleSearch} className="relative">

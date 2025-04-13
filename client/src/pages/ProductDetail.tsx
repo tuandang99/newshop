@@ -69,8 +69,8 @@ export default function ProductDetail() {
       });
 
       toast({
-        title: "Added to cart",
-        description: `${quantity} x ${product.name} added to your cart`,
+        title: "Đã thêm vào giỏ hàng",
+        description: `${quantity} x ${product.name} đã được thêm vào giỏ hàng`,
       });
     }
   };
@@ -104,7 +104,7 @@ export default function ProductDetail() {
   return (
     <>
       <Helmet>
-        <title>{product.name} - TUHO Healthy FoodFood</title>
+        <title>{product.name} - TUHO Healthy Food</title>
         <meta name="description" content={product.description} />
       </Helmet>
 
@@ -114,7 +114,7 @@ export default function ProductDetail() {
             <Button asChild variant="outline" className="flex items-center">
               <Link href="/products">
                 <ArrowLeftIcon className="mr-2 h-4 w-4" />
-                Back to Products
+                Quay lại sản phẩm
               </Link>
             </Button>
           </div>
@@ -222,13 +222,17 @@ export default function ProductDetail() {
               {/* Related Products */}
               <div className="border-t border-neutral-200 pt-6 mt-6">
                 <h3 className="text-lg font-bold mb-4">Sản phẩm liên quan</h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                  {productsResponse?.products
-                    .filter(p => p.categoryId === product.categoryId && p.id !== product.id)
-                    .slice(0, 3)
-                    .map(relatedProduct => (
-                      <ProductCard key={relatedProduct.id} product={relatedProduct} variant="compact" />
-                    ))}
+                <div className="overflow-x-auto pb-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full" style={{ minWidth: "280px" }}>
+                    {productsResponse?.products
+                      .filter(p => p.categoryId === product.categoryId && p.id !== product.id)
+                      .slice(0, 3)
+                      .map(relatedProduct => (
+                        <div key={relatedProduct.id} className="w-full">
+                          <ProductCard product={relatedProduct} variant="compact" />
+                        </div>
+                      ))}
+                  </div>
                 </div>
               </div>
             </div>

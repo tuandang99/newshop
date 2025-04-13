@@ -30,11 +30,11 @@ export default function BlogPreview() {
 
   if (isLoading) {
     return (
-      <section className="py-12 bg-neutral-100">
+      <section className="py-8 sm:py-12 bg-neutral-100">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row justify-between items-center mb-8">
+          <div className="flex flex-col md:flex-row justify-between items-center mb-6 sm:mb-8">
             <div>
-              <h2 className="text-3xl font-bold font-poppins mb-2">
+              <h2 className="text-2xl sm:text-3xl font-bold font-poppins mb-2">
                 Bài viết mới nhất
               </h2>
               <p className="text-neutral-700">
@@ -42,13 +42,13 @@ export default function BlogPreview() {
               </p>
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
             {Array.from({ length: 3 }).map((_, idx) => (
               <div
                 key={idx}
-                className="bg-white rounded-lg shadow-sm p-4 animate-pulse"
+                className="bg-white rounded-lg shadow-sm p-4 animate-pulse h-full"
               >
-                <div className="w-full h-48 bg-gray-200 rounded mb-4"></div>
+                <div className="w-full h-36 sm:h-48 bg-gray-200 rounded mb-4"></div>
                 <div className="h-4 bg-gray-200 rounded w-1/3 mb-2"></div>
                 <div className="h-6 bg-gray-200 rounded w-3/4 mb-3"></div>
                 <div className="h-4 bg-gray-200 rounded w-full mb-4"></div>
@@ -63,13 +63,13 @@ export default function BlogPreview() {
 
   if (error || !posts) {
     return (
-      <section className="py-12 bg-neutral-100">
+      <section className="py-8 sm:py-12 bg-neutral-100">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold font-poppins mb-2">
+          <h2 className="text-2xl sm:text-3xl font-bold font-poppins mb-2">
             Bài viết mới nhất
           </h2>
           <p className="text-red-500">
-            Failed to load blog posts. Please try again later.
+            Không thể tải bài viết. Vui lòng thử lại sau.
           </p>
         </div>
       </section>
@@ -77,11 +77,11 @@ export default function BlogPreview() {
   }
 
   return (
-    <section className="py-12 bg-neutral-100">
+    <section className="py-8 sm:py-12 bg-neutral-100">
       <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row justify-between items-center mb-8">
+        <div className="flex flex-col md:flex-row justify-between items-center mb-6 sm:mb-8">
           <div>
-            <h2 className="text-3xl font-bold font-poppins mb-2">
+            <h2 className="text-2xl sm:text-3xl font-bold font-poppins mb-2">
               Bài viết mới nhất
             </h2>
             <p className="text-neutral-700">
@@ -96,30 +96,30 @@ export default function BlogPreview() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
           {posts.map((post) => (
             <div
               key={post.id}
-              className="bg-white rounded-lg shadow-sm overflow-hidden"
+              className="bg-white rounded-lg shadow-sm overflow-hidden h-full flex flex-col"
             >
-              <Link href={`/blog/${post.slug}`}>
+              <Link href={`/blog/${post.slug}`} className="block">
                 <img
                   src={post.image}
                   alt={post.title}
                   loading="lazy"
                   width={400}
-                  height={192}
-                  className="w-full h-48 object-cover"
+                  height={200}
+                  className="w-full h-36 sm:h-48 object-cover transition-transform duration-300 hover:scale-105"
                 />
               </Link>
-              <div className="p-6">
-                <div className="flex items-center text-sm text-neutral-500 mb-3">
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  <span>{format(new Date(post.date), "MMMM d, yyyy")}</span>
+              <div className="p-4 sm:p-6 flex-grow flex flex-col">
+                <div className="flex flex-wrap items-center text-xs sm:text-sm text-neutral-500 mb-2 sm:mb-3">
+                  <CalendarIcon className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+                  <span>{format(new Date(post.date), "d MMMM, yyyy")}</span>
                   <span className="mx-2">•</span>
                   <span>{post.category}</span>
                 </div>
-                <h3 className="font-semibold text-xl mb-2 font-poppins">
+                <h3 className="font-semibold text-lg sm:text-xl mb-2 line-clamp-2 flex-grow">
                   <Link
                     href={`/blog/${post.slug}`}
                     className="hover:text-primary transition"
@@ -127,13 +127,13 @@ export default function BlogPreview() {
                     {post.title}
                   </Link>
                 </h3>
-                <p className="text-neutral-700 mb-4">{post.excerpt}</p>
+                <p className="text-neutral-700 mb-4 text-sm sm:text-base line-clamp-2">{post.excerpt}</p>
                 <Link
                   href={`/blog/${post.slug}`}
-                  className="text-primary font-medium hover:underline flex items-center"
+                  className="text-primary font-medium hover:underline flex items-center text-sm sm:text-base mt-auto"
                 >
-                  Read More
-                  <ArrowRightIcon className="ml-1 h-4 w-4" />
+                  Đọc thêm
+                  <ArrowRightIcon className="ml-1 h-3 w-3 sm:h-4 sm:w-4" />
                 </Link>
               </div>
             </div>
