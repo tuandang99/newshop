@@ -1,4 +1,3 @@
-
 import { LucideProps } from "lucide-react";
 
 import {
@@ -20,6 +19,8 @@ import {
   Search,
   Menu,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   ArrowRight,
   ArrowLeft,
   Calendar,
@@ -52,6 +53,8 @@ export const ShoppingCartIcon = (props: LucideProps) => <ShoppingCart {...props}
 export const SearchIcon = (props: LucideProps) => <Search {...props} />;
 export const MenuIcon = (props: LucideProps) => <Menu {...props} />;
 export const ChevronDownIcon = (props: LucideProps) => <ChevronDown {...props} />;
+export const ChevronLeftIcon = (props: LucideProps) => <ChevronLeft {...props} />;
+export const ChevronRightIcon = (props: LucideProps) => <ChevronRight {...props} />;
 export const PlusIcon = (props: LucideProps) => <Plus {...props} />;
 export const MinusIcon = (props: LucideProps) => <Minus {...props} />;
 export const CloseIcon = (props: LucideProps) => <X {...props} />;
@@ -86,6 +89,8 @@ export {
   Search,
   Menu,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   ArrowRight,
   ArrowLeft,
   Calendar,

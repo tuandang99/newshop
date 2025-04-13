@@ -73,6 +73,7 @@ const productFormSchema = z.object({
           .filter((s) => s && s !== "-"),
       ),
     ),
+  newImage: z.string().optional(), // Added for new image upload
 });
 
 type ProductFormValues = z.infer<typeof productFormSchema>;
@@ -163,6 +164,7 @@ export default function Admin() {
       isOrganic: true,
       isBestseller: false,
       details: [],
+      newImage: "", // Added for new image upload
     },
   });
 
@@ -218,6 +220,12 @@ export default function Admin() {
 
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [editingBlogPost, setEditingBlogPost] = useState<BlogPost | null>(null);
+
+  // Query for product images when editing
+  const { data: productImages = [] } = useQuery<ProductImage[]>({
+    queryKey: [`/api/products/${editingProduct?.id}/images`],
+    enabled: !!editingProduct,
+  });
 
   // Update product mutation
   const updateProductMutation = useMutation({
@@ -650,14 +658,15 @@ export default function Admin() {
       price: product.price,
       oldPrice: product.old_price || null,
       image: product.image,
-      categoryId: product.category_id || 0,
+      categoryId: product.categoryId || product.category_id, // Handle both field names
       rating: product.rating,
       isNew: product.isNew,
       isOrganic: product.isOrganic,
       isBestseller: product.isBestseller,
       details: Array.isArray(product.details) ? product.details : [],
+      newImage: "", //Added for new image upload
     });
-  };
+    };
 
   const handleEditBlogPost = (post: BlogPost) => {
     setEditingBlogPost(post);
@@ -1214,6 +1223,132 @@ export default function Admin() {
                         )}
                       />
                     </div>
+
+                    {/* Product Images Section */}
+                    {editingProduct && (
+                      <div className="space-y-4 border p-4 rounded-lg">
+                        <h3 className="font-semibold">Product Images</h3>
+
+                        {/* Image Upload Form */}
+                        <div className="space-y-2">
+                          <FormField
+                            control={productForm.control}
+                            name="newImage"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Add New Image</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    placeholder="/images/products/product-2.jpg"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <div className="flex gap-2">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              onClick={() => {
+                                const imagePath = productForm.getValues("newImage");
+                                if (imagePath) {
+                                  fetch(`/api/admin/products/${editingProduct.id}/images`, {
+                                    method: "POST",
+                                    headers: {
+                                      "Content-Type": "application/json",
+                                      "Admin-Key": adminKey,
+                                    },
+                                    body: JSON.stringify({
+                                      imagePath,
+                                      productId: editingProduct.id,
+                                      isMain: false,
+                                      displayOrder: 0
+                                    }),
+                                  }).then(() => {
+                                    queryClient.invalidateQueries({ queryKey: [`/api/products/${editingProduct.id}/images`] });
+                                    productForm.setValue("newImage", "");
+                                    toast({
+                                      title: "Image Added",
+                                      description: "Product image has been added successfully",
+                                    });
+                                  });
+                                }
+                              }}
+                            >
+                              Add Image
+                            </Button>
+                          </div>
+                        </div>
+
+                        {/* Image Gallery */}
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4">
+                          {productImages?.map((image) => (
+                            <div key={image.id} className="relative group">
+                              <img
+                                src={image.imagePath}
+                                alt="Product"
+                                className="w-full h-32 object-cover rounded-lg"
+                              />
+                              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                <Button
+                                  variant="secondary"
+                                  size="sm"
+                                  onClick={() => {
+                                    fetch(`/api/admin/product-images/${image.id}/set-main`, {
+                                      method: "POST",
+                                      headers: {
+                                        "Content-Type": "application/json",
+                                        "Admin-Key": adminKey,
+                                      },
+                                      body: JSON.stringify({
+                                        productId: editingProduct.id
+                                      }),
+                                    }).then(() => {
+                                      queryClient.invalidateQueries({ queryKey: [`/api/products/${editingProduct.id}/images`] });
+                                      toast({
+                                        title: "Main Image Set",
+                                        description: "Main product image has been updated",
+                                      });
+                                    });
+                                  }}
+                                >
+                                  Set Main
+                                </Button>
+                                <Button
+                                  variant="destructive"
+                                  size="sm"
+                                  onClick={() => {
+                                    if (window.confirm("Are you sure you want to delete this image?")) {
+                                      fetch(`/api/admin/product-images/${image.id}`, {
+                                        method: "DELETE",
+                                        headers: {
+                                          "Admin-Key": adminKey,
+                                        },
+                                      }).then(() => {
+                                        queryClient.invalidateQueries({ queryKey: [`/api/products/${editingProduct.id}/images`] });
+                                        toast({
+                                          title: "Image Deleted",
+                                          description: "Product image has been deleted",
+                                        });
+                                      });
+                                    }
+                                  }}
+                                >
+                                  Delete
+                                </Button>
+                              </div>
+                              {image.isMain && (
+                                <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-full text-xs">
+                                  Main
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
                     <Button
                       type="submit"

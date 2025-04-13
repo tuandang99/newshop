@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import ProductCard from "@/components/product/ProductCard";
 import { ArrowRightIcon } from "@/lib/icons";
 
-// Define the API response structure
 interface ProductsResponse {
   products: Product[];
   pagination: {
@@ -20,7 +19,7 @@ interface ProductsResponse {
 export default function Products() {
   const [activeFilter, setActiveFilter] = useState('all');
 
-  const { data: productsResponse, isLoading, error } = useQuery<ProductsResponse>({
+  const { data: productsResponse } = useQuery<ProductsResponse>({
     queryKey: ['/api/featured-products'],
   });
 
@@ -28,24 +27,33 @@ export default function Products() {
     queryKey: ['/api/categories'],
   });
 
-  // Extract products from the response
-  const products = productsResponse?.products;
+  const products = productsResponse?.products || [];
 
-  const filteredProducts = products && activeFilter !== 'all' && categories
-    ? products.filter(product => {
-        const category = categories.find(cat => cat.slug === activeFilter);
-        return category ? product.category_id === category.id : true;
-      })
-    : products;
+  // Apply the same filtering logic as in the Products page
+  const filteredProducts = products.filter(product => {
+    // Skip category filter if set to "all"
+    if (activeFilter === 'all') return true;
 
-  if (isLoading) {
+    // Category filter logic
+    const category = categories?.find(cat => cat.slug === activeFilter);
+    if (!category) return false;
+    
+    // Check both camelCase and snake_case versions of categoryId
+    if (!(product.categoryId === category.id || (product as any).category_id === category.id)) {
+      return false;
+    }
+    
+    return true;
+  });
+
+  if (!products || !categories) {
     return (
       <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center mb-8">
             <div>
               <h2 className="text-3xl font-bold font-poppins mb-2">Danh mục sản phẩm</h2>
-              <p className="text-neutral-700">Lựa chọn những sản phẩm tốt nhất</p>
+              <p className="text-neutral-700">Lựa chọn những sản phẩm tốt</p>
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -63,24 +71,13 @@ export default function Products() {
     );
   }
 
-  if (error || !products) {
-    return (
-      <section className="py-12 bg-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold font-poppins mb-2">Danh mục sản phẩm</h2>
-          <p className="text-red-500">Failed to load products. Please try again later.</p>
-        </div>
-      </section>
-    );
-  }
-
   return (
     <section id="products" className="py-12 bg-white">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center mb-8">
           <div>
             <h2 className="text-3xl font-bold font-poppins mb-2">Danh mục sản phẩm</h2>
-            <p className="text-neutral-700">Lựa chọn những sản phẩm tốt </p>
+            <p className="text-neutral-700">Lựa chọn những sản phẩm tốt</p>
           </div>
           <div className="relative w-full md:w-auto">
             <div className="grid grid-cols-2 sm:grid-cols-3 md:flex md:flex-row gap-2 mt-4 md:mt-0">

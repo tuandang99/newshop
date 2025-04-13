@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { Product, Category } from "@shared/schema";
+import { Product, Category, ProductImage } from "@shared/schema";
 import { Button } from "@/components/ui/button";
-import { StarFilledIcon, Plus, Minus, ArrowLeftIcon } from "@/lib/icons";
+import { StarFilledIcon, Plus, Minus, ArrowLeftIcon, ChevronLeftIcon, ChevronRightIcon } from "@/lib/icons";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
 import { Helmet } from "react-helmet";
 import ProductCard from "@/components/product/ProductCard";
+import ProductGallery from "@/components/product/ProductGallery";
 
 export default function ProductDetail() {
   const { slug } = useParams();
@@ -25,6 +26,14 @@ export default function ProductDetail() {
     error: productError,
   } = useQuery<Product>({
     queryKey: [`/api/products/${slug}`],
+  });
+
+  const {
+    data: productImages,
+    isLoading: imagesLoading,
+  } = useQuery<ProductImage[]>({
+    queryKey: [`/api/products/${product?.id}/images`],
+    enabled: !!product?.id, // Only fetch when product is loaded
   });
 
   const { data: productsResponse } = useQuery({
@@ -112,11 +121,14 @@ export default function ProductDetail() {
 
           <div className="flex flex-col md:flex-row gap-8">
             <div className="md:w-1/2">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="rounded-lg w-full h-auto object-cover max-w-[600px] max-h-[600px]"
-              />
+              {imagesLoading ? (
+                <div className="bg-gray-100 animate-pulse rounded-lg w-full aspect-square"></div>
+              ) : (
+                <ProductGallery 
+                  productImages={productImages || []}
+                  fallbackImage={product.image}
+                />
+              )}
             </div>
 
             <div className="md:w-1/2">
