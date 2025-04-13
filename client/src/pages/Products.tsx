@@ -70,7 +70,7 @@ export default function Products() {
     if (filters.category) {
       const category = categories?.find(cat => cat.slug === filters.category);
       if (!category) return true;
-      if (!(product.categoryId === category.id)) {
+      if (!(product.categoryId === category.id || (product as any).category_id === category.id)) {
         return false;
       }
     }

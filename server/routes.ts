@@ -224,7 +224,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     // Format date in Vietnamese
-    const formattedDate = format(new Date(blogPost.date), "dd MMMM, yyyy", { locale: vi });
+    const formattedDate = format(new Date(blogPost.date || new Date()), "dd MMMM, yyyy", { locale: vi });
 
     res.json({
       ...blogPost,
@@ -244,7 +244,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     // Format dates in Vietnamese
     const postsWithFormattedDates = recentPosts.map(post => ({
       ...post,
-      formattedDate: format(new Date(post.date), "dd MMMM, yyyy", { locale: vi })
+      formattedDate: format(new Date(post.date || new Date()), "dd MMMM, yyyy", { locale: vi })
     }));
     
     res.json(postsWithFormattedDates);

@@ -29,14 +29,21 @@ export default function Products() {
 
   const products = productsResponse?.products || [];
 
+  // Apply the same filtering logic as in the Products page
   const filteredProducts = products.filter(product => {
+    // Skip category filter if set to "all"
     if (activeFilter === 'all') return true;
 
+    // Category filter logic
     const category = categories?.find(cat => cat.slug === activeFilter);
     if (!category) return false;
-
-    // Handle both camelCase and snake_case property names
-    return product.categoryId === category.id || (product as any).category_id === category.id;
+    
+    // Check both camelCase and snake_case versions of categoryId
+    if (!(product.categoryId === category.id || (product as any).category_id === category.id)) {
+      return false;
+    }
+    
+    return true;
   });
 
   if (!products || !categories) {
