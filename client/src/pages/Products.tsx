@@ -149,10 +149,12 @@ export default function Products() {
                   <div className="text-sm text-neutral-600 mb-4">
                     Hiển thị {filteredProducts.length} sản phẩm
                   </div>
-                  <div className="overflow-x-auto pb-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 min-w-[300px]">
+                  <div className="w-full">
+                    <div className="grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
                       {filteredProducts.map((product) => (
-                        <ProductCard key={product.id} product={product} />
+                        <div key={product.id} className="w-full">
+                          <ProductCard product={product} />
+                        </div>
                       ))}
                     </div>
                   </div>
