@@ -76,13 +76,19 @@ export default function Products() {
     }
 
     // Organic filter
-    if (filters.isOrganic && !product.isOrganic) {
-      return false;
+    if (filters.isOrganic) {
+      console.log("Checking isOrganic:", product.name, product.isOrganic);
+      if (!product.isOrganic) {
+        return false;
+      }
     }
 
     // New product filter
-    if (filters.isNew && !product.isNew) {
-      return false;
+    if (filters.isNew) {
+      console.log("Checking isNew:", product.name, product.isNew);
+      if (!product.isNew) {
+        return false;
+      }
     }
 
     return true;
