@@ -106,9 +106,9 @@ export default function Products() {
 
       <section className="py-8 bg-neutral-50">
         <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center mb-8">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
             <div>
-              <h1 className="text-3xl font-bold font-poppins mb-2">
+              <h1 className="text-2xl sm:text-3xl font-bold font-poppins mb-2">
                 {filters.category 
                   ? categories?.find(cat => cat.slug === filters.category)?.name 
                   : "Tất cả sản phẩm"}
@@ -117,7 +117,7 @@ export default function Products() {
                 Khám phá các sản phẩm organic & healthy của chúng tôi
               </p>
             </div>
-            <Button asChild variant="outline" className="hover:bg-primary/10">
+            <Button asChild variant="outline" className="hover:bg-primary/10 mt-4 sm:mt-0">
               <Link href="/">
                 <ArrowLeftIcon className="h-4 w-4 mr-2" />
                 Trang chủ
@@ -149,10 +149,12 @@ export default function Products() {
                   <div className="text-sm text-neutral-600 mb-4">
                     Hiển thị {filteredProducts.length} sản phẩm
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                    {filteredProducts.map((product) => (
-                      <ProductCard key={product.id} product={product} />
-                    ))}
+                  <div className="overflow-x-auto pb-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 min-w-[300px]">
+                      {filteredProducts.map((product) => (
+                        <ProductCard key={product.id} product={product} />
+                      ))}
+                    </div>
                   </div>
                 </>
               ) : (

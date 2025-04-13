@@ -80,11 +80,11 @@ export default function Products() {
             <p className="text-neutral-700">Lựa chọn những sản phẩm tốt</p>
           </div>
           <div className="relative w-full md:w-auto">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:flex md:flex-row gap-2 mt-4 md:mt-0">
+            <div className="flex flex-wrap sm:flex-nowrap gap-2 mt-4 md:mt-0 overflow-x-auto pb-1">
               <Button 
                 variant={activeFilter === 'all' ? 'default' : 'outline'} 
                 onClick={() => setActiveFilter('all')}
-                className={`w-full md:w-auto justify-center ${activeFilter === 'all' ? 'bg-primary text-white' : 'bg-neutral-100 hover:bg-neutral-200'}`}
+                className={`whitespace-nowrap justify-center ${activeFilter === 'all' ? 'bg-primary text-white' : 'bg-neutral-100 hover:bg-neutral-200'}`}
               >
                 Tất cả
               </Button>
@@ -93,7 +93,7 @@ export default function Products() {
                   key={category.id}
                   variant={activeFilter === category.slug ? 'default' : 'outline'}
                   onClick={() => setActiveFilter(category.slug)}
-                  className={`w-full md:w-auto justify-center text-center ${activeFilter === category.slug ? 'bg-primary text-white' : 'bg-neutral-100 hover:bg-neutral-200'}`}
+                  className={`whitespace-nowrap justify-center text-center ${activeFilter === category.slug ? 'bg-primary text-white' : 'bg-neutral-100 hover:bg-neutral-200'}`}
                 >
                   {category.name}
                 </Button>
@@ -102,10 +102,12 @@ export default function Products() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filteredProducts && filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+        <div className="overflow-x-auto pb-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 min-w-[300px]">
+            {filteredProducts && filteredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
         </div>
 
         <div className="text-center mt-10">
