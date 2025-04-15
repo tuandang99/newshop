@@ -51,11 +51,11 @@ export function sendAdminMessage(message: string): Promise<boolean> {
     const numericChatId = parseInt(chatId);
     const targetChatId = isNaN(numericChatId) ? chatId : numericChatId;
 
-    log(`Sending message to chat ID: ${targetChatId}`, 'telegram');
+     //log(`Sending message to chat ID: ${targetChatId}`, 'telegram');
     
     bot.sendMessage(targetChatId, message, { parse_mode: 'HTML' })
       .then(() => {
-        log('Telegram notification sent successfully', 'telegram');
+        //log('Telegram notification sent successfully', 'telegram');
         resolve(true);
       })
       .catch((error) => {
@@ -76,10 +76,10 @@ export async function sendOrderNotification(order: Order, items: CartItem[]): Pr
     }
 
     // Log for debugging
-    log(`Sending order notification for order #${order.id} with ${Array.isArray(items) ? items.length : 'non-array'} items`, 'telegram');
-    if (typeof order.items === 'string') {
-      log(`Order.items string: ${order.items.substring(0, 100)}${order.items.length > 100 ? '...' : ''}`, 'telegram');
-    }
+    // //log(`Sending order notification for order #${order.id} with ${Array.isArray(items) ? items.length : 'non-array'} items`, 'telegram');
+    // if (typeof order.items === 'string') {
+    //   log(`Order.items string: ${order.items.substring(0, 100)}${order.items.length > 100 ? '...' : ''}`, 'telegram');
+    // }
 
     // Create a formatted message with order details
     const message = formatOrderMessage(order, items);
