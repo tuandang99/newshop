@@ -89,11 +89,14 @@ export async function sendOrderNotification(order: Order, items: CartItem[]): Pr
  * Format the order details for the notification message
  */
 function formatOrderMessage(order: Order, items: CartItem[]): string {
+  // Ensure items is an array
+  const itemsArray = Array.isArray(items) ? items : JSON.parse(order.items);
+  
   // Calculate total from order
   const total = order.total;
 
-  // Format items list using the provided items array
-  const itemsList = items
+  // Format items list
+  const itemsList = itemsArray
     .map(item => `• ${item.quantity}x ${item.name} - ${(item.price * item.quantity).toLocaleString('vi-VN')}₫`)
     .join('\n');
   
