@@ -27,7 +27,7 @@ export default function Hero() {
           </div>
           <div className="md:w-1/2">
             <img 
-              src="https://images.unsplash.com/photo-1609951651556-5334e2706168?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600&q=80" 
+              src="images/hero/hero.jpg" 
               alt="Healthy food assortment" 
               className="rounded-lg shadow-lg w-full h-auto"
             />

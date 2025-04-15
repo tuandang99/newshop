@@ -28,7 +28,7 @@ export default function About() {
           <div className="flex flex-col md:flex-row items-center">
             <div className="md:w-1/2 mb-8 md:mb-0">
               <img
-                src="https://i.pinimg.com/736x/54/63/f8/5463f879dafecd317b771aaee0d4a0aa.jpg"
+                src="images/aboutus/story.jpg"
                 alt="TUHO founders"
                 className="rounded-lg shadow-lg"
               />
@@ -140,7 +140,7 @@ export default function About() {
           <div className="flex flex-col md:flex-row-reverse items-center">
             <div className="md:w-1/2 mb-8 md:mb-0 md:pl-12">
               <img
-                src="https://i.pinimg.com/736x/74/6d/cb/746dcb5636244b7d78722cf67640b203.jpg"
+                src="images/aboutus/chatluong.jpg"
                 alt="Sustainable farming"
                 className="rounded-lg shadow-lg"
               />

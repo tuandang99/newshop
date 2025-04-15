@@ -38,7 +38,7 @@ export default function About() {
           </div>
           <div className="md:w-1/2">
             <img
-              src="https://i.pinimg.com/736x/ab/e2/d9/abe2d91b582f27302cc211a4bdfae914.jpg"
+              src="images/aboutus/mainpage.jpg"
               alt="Organic farm"
               className="rounded-lg shadow-lg"
             />
