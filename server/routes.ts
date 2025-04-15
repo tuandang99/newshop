@@ -205,9 +205,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/orders", async (req: Request, res: Response) => {
     try {
       // Validate order data
-      const { customerName, email, phone, address, cart, totalAmount } = req.body;
-      
-      if (!customerName || !email || !phone || !address || !cart || cart.length === 0 || !totalAmount) {
+      const {
+        name: customerName,
+        phone,
+        address,
+        items: cart,
+        total: totalAmount,
+        email = "" // optional if frontend doesn't provide it
+      } = req.body;
+
+      if (!customerName || !phone || !address || !cart || cart.length === 0 || !totalAmount) {
         return res.status(400).json({ message: "Missing required order information" });
       }
 
