@@ -61,6 +61,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       });
     } catch (error) {
+      console.error("Error fetching products:", error);
       res.status(500).json({ message: "Failed to fetch products" });
     }
   });
@@ -224,13 +225,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         phone,
         address,
         items: JSON.stringify(cart),
-        total: totalAmount,
-        status: "pending"
+        total: totalAmount
       });
 
       // Send Telegram notification
       try {
-        await sendOrderNotification(newOrder, cart);
+        // Convert cart to array if needed
+        const cartItems = Array.isArray(cart) ? cart : 
+                         (typeof cart === 'string' ? JSON.parse(cart) : []);
+        
+        console.log("Cart before sending to Telegram:", JSON.stringify(cartItems).substring(0, 100));
+        await sendOrderNotification(newOrder, cartItems);
       } catch (notificationError) {
         console.error("Failed to send order notification:", notificationError);
         // Continue with the order process even if notification fails

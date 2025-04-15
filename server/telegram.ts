@@ -75,6 +75,12 @@ export async function sendOrderNotification(order: Order, items: CartItem[]): Pr
       return false;
     }
 
+    // Log for debugging
+    log(`Sending order notification for order #${order.id} with ${Array.isArray(items) ? items.length : 'non-array'} items`, 'telegram');
+    if (typeof order.items === 'string') {
+      log(`Order.items string: ${order.items.substring(0, 100)}${order.items.length > 100 ? '...' : ''}`, 'telegram');
+    }
+
     // Create a formatted message with order details
     const message = formatOrderMessage(order, items);
     
@@ -89,23 +95,66 @@ export async function sendOrderNotification(order: Order, items: CartItem[]): Pr
  * Format the order details for the notification message
  */
 function formatOrderMessage(order: Order, items: CartItem[]): string {
-  // Ensure items is an array
-  const itemsArray = Array.isArray(items) ? items : JSON.parse(order.items);
+  let itemsArray: CartItem[] = [];
+  
+  try {
+    // Handle different possible formats of items
+    if (Array.isArray(items) && items.length > 0) {
+      // If items is already an array, use it directly
+      itemsArray = items;
+    } else if (typeof order.items === 'string') {
+      // If order.items is a string, parse it
+      itemsArray = JSON.parse(order.items);
+    }
+    
+    // Validate that itemsArray is actually an array after parsing
+    if (!Array.isArray(itemsArray)) {
+      log(`Invalid items format in order #${order.id}: ${typeof itemsArray}`, 'telegram');
+      itemsArray = [];
+    }
+  } catch (error) {
+    log(`Error parsing order items for order #${order.id}: ${error}`, 'telegram');
+    itemsArray = [];
+  }
   
   // Calculate total from order
   const total = order.total;
 
-  // Format items list
-  const itemsList = itemsArray
-    .map(item => `• ${item.quantity}x ${item.name} - ${(item.price * item.quantity).toLocaleString('vi-VN')}₫`)
-    .join('\n');
+  // Format items list or show "No products" message
+  let itemsList = "Không có sản phẩm nào.";
+  
+  console.log("ItemsArray length:", itemsArray?.length);
+  console.log("ItemsArray content:", JSON.stringify(itemsArray).substring(0, 200));
+  
+  if (itemsArray && Array.isArray(itemsArray) && itemsArray.length > 0) {
+    try {
+      itemsList = itemsArray
+        .map(item => {
+          if (!item || typeof item !== 'object') {
+            console.log("Invalid item:", item);
+            return null;
+          }
+          const quantity = item.quantity || 1;
+          return `• ${quantity}x ${item.name} - ${(item.price * quantity).toLocaleString('vi-VN')}₫`;
+        })
+        .filter(Boolean)
+        .join('\n');
+      
+      if (!itemsList || itemsList.trim() === '') {
+        itemsList = "Không có sản phẩm nào.";
+      }
+    } catch (err) {
+      console.error("Error formatting items:", err);
+      itemsList = "Không có sản phẩm nào.";
+    }
+  }
   
   return `🛒 <b>Đơn Hàng Mới #${order.id}</b>\n\n` +
     `<b>Khách hàng:</b> ${order.name}\n` +
     `<b>SĐT:</b> ${order.phone}\n` +
     `<b>Địa chỉ:</b> ${order.address}\n\n` +
     `<b>Chi tiết đơn hàng:</b>\n${itemsList}\n\n` +
-    `<b>Tổng tiền:</b> ${total.toFixed(2)} VND\n` +
+    `<b>Tổng tiền:</b> ${total.toLocaleString('vi-VN')}₫\n` +
     `<b>Trạng thái:</b> ${order.status}\n` +
     `<b>Ngày đặt:</b> ${new Date().toLocaleString('vi-VN')}\n`;
 }
@@ -119,7 +168,7 @@ export async function sendContactNotification(contact: ContactSubmission): Promi
     `<b>Email:</b> ${contact.email}\n` +
     `<b>Chủ đề:</b> ${contact.subject}\n` +
     `<b>Nội dung:</b>\n${contact.message}\n` +
-    `<b>Thời gian:</b> ${new Date(contact.createdAt).toLocaleString()}\n`;
+    `<b>Thời gian:</b> ${new Date().toLocaleString('vi-VN')}\n`;
 
   return await sendAdminMessage(message);
 }

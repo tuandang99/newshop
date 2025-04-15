@@ -200,7 +200,7 @@ export class DatabaseStorage implements IStorage {
     return await db.select()
       .from(productImages)
       .where(eq(productImages.productId, productId))
-      .orderBy(productImages.displayOrder);
+      .orderBy(productImages.isMain);
   }
 
   async addProductImage(image: InsertProductImage): Promise<ProductImage> {
