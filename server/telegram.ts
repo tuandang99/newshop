@@ -147,7 +147,7 @@ export async function sendContactNotification(contact: ContactSubmission): Promi
     `<b>Email:</b> ${contact.email}\n` +
     `<b>Chủ đề:</b> ${contact.subject}\n` +
     `<b>Nội dung:</b>\n${contact.message}\n` +
-    `<b>Thời gian:</b> ${new Date(contact.createdAt).toLocaleString()}\n`;
+    `<b>Thời gian:</b> ${new Date(contact.createdAt || new Date()).toLocaleString()}\n`;
 
   return await sendAdminMessage(message);
 }
