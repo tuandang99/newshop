@@ -56,10 +56,9 @@ export type Product = typeof products.$inferSelect;
 // Product Images (Gallery)
 export const productImages = pgTable("product_images", {
   id: serial("id").primaryKey(),
-  productId: integer("product_id").notNull().references(() => products.id),
-  imagePath: text("image_path").notNull(),
-  isMain: boolean("is_main").default(false),
-  displayOrder: integer("display_order").default(0),
+  productId: integer("productid").notNull().references(() => products.id),
+  imagePath: text("url").notNull(),
+  isMain: boolean("ismain").default(false),
 });
 
 export const productImagesRelations = relations(productImages, ({ one }) => ({

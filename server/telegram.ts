@@ -122,10 +122,31 @@ function formatOrderMessage(order: Order, items: CartItem[]): string {
 
   // Format items list or show "No products" message
   let itemsList = "Không có sản phẩm nào.";
-  if (itemsArray && itemsArray.length > 0) {
-    itemsList = itemsArray
-      .map(item => `• ${item.quantity}x ${item.name} - ${(item.price * item.quantity).toLocaleString('vi-VN')}₫`)
-      .join('\n');
+  
+  console.log("ItemsArray length:", itemsArray?.length);
+  console.log("ItemsArray content:", JSON.stringify(itemsArray));
+  
+  if (itemsArray && Array.isArray(itemsArray) && itemsArray.length > 0) {
+    try {
+      itemsList = itemsArray
+        .map(item => {
+          if (!item || typeof item !== 'object') {
+            console.log("Invalid item:", item);
+            return null;
+          }
+          const quantity = item.quantity || 1;
+          return `• ${quantity}x ${item.name} - ${(item.price * quantity).toLocaleString('vi-VN')}₫`;
+        })
+        .filter(Boolean)
+        .join('\n');
+      
+      if (!itemsList || itemsList.trim() === '') {
+        itemsList = "Không có sản phẩm nào.";
+      }
+    } catch (err) {
+      console.error("Error formatting items:", err);
+      itemsList = "Không có sản phẩm nào.";
+    }
   }
   
   return `🛒 <b>Đơn Hàng Mới #${order.id}</b>\n\n` +
@@ -147,7 +168,7 @@ export async function sendContactNotification(contact: ContactSubmission): Promi
     `<b>Email:</b> ${contact.email}\n` +
     `<b>Chủ đề:</b> ${contact.subject}\n` +
     `<b>Nội dung:</b>\n${contact.message}\n` +
-    `<b>Thời gian:</b> ${new Date(contact.createdAt || new Date()).toLocaleString()}\n`;
+    `<b>Thời gian:</b> ${new Date().toLocaleString('vi-VN')}\n`;
 
   return await sendAdminMessage(message);
 }
