@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { Product, Category, ProductImage } from "@shared/schema";
+import { Product, Category, ProductImage, ProductVariant } from "@shared/schema";
 import { Button } from "@/components/ui/button";
-import { StarFilledIcon, Plus, Minus, ArrowLeftIcon, ChevronLeftIcon, ChevronRightIcon } from "@/lib/icons";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { StarFilledIcon, Plus, Minus, ArrowLeftIcon } from "@/lib/icons";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
 import { Helmet } from "react-helmet";
@@ -13,10 +15,12 @@ import ProductGallery from "@/components/product/ProductGallery";
 export default function ProductDetail() {
   const { slug } = useParams();
   const [quantity, setQuantity] = useState(1);
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+  
   const { addItem } = useCart();
   const { toast } = useToast();
 
@@ -35,6 +39,22 @@ export default function ProductDetail() {
     queryKey: [`/api/products/${product?.id}/images`],
     enabled: !!product?.id, // Only fetch when product is loaded
   });
+
+  const {
+    data: productVariants,
+    isLoading: variantsLoading,
+  } = useQuery<ProductVariant[]>({
+    queryKey: [`/api/products/${product?.id}/variants`],
+    enabled: !!product?.id && product?.hasVariants, // Only fetch when product is loaded and has variants
+  });
+
+  useEffect(() => {
+    // Khi biến thể được tải, tự động chọn biến thể mặc định hoặc biến thể đầu tiên
+    if (productVariants && productVariants.length > 0) {
+      const defaultVariant = productVariants.find(v => v.isDefault) || productVariants[0];
+      setSelectedVariant(defaultVariant);
+    }
+  }, [productVariants]);
 
   const { data: productsResponse } = useQuery({
     queryKey: ['/api/products'],
@@ -60,18 +80,37 @@ export default function ProductDetail() {
 
   const handleAddToCart = () => {
     if (product) {
-      addItem({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        image: product.image,
-        quantity,
-      });
+      if (product.hasVariants && selectedVariant) {
+        // Thêm sản phẩm với biến thể đã chọn
+        addItem({
+          id: product.id,
+          name: `${product.name} - ${selectedVariant.name}`,
+          price: selectedVariant.price,
+          image: product.image,
+          quantity,
+          variantId: selectedVariant.id,
+          variantName: selectedVariant.name
+        });
 
-      toast({
-        title: "Đã thêm vào giỏ hàng",
-        description: `${quantity} x ${product.name} đã được thêm vào giỏ hàng`,
-      });
+        toast({
+          title: "Đã thêm vào giỏ hàng",
+          description: `${quantity} x ${product.name} (${selectedVariant.name}) đã được thêm vào giỏ hàng`,
+        });
+      } else {
+        // Thêm sản phẩm bình thường không có biến thể
+        addItem({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          image: product.image,
+          quantity,
+        });
+
+        toast({
+          title: "Đã thêm vào giỏ hàng",
+          description: `${quantity} x ${product.name} đã được thêm vào giỏ hàng`,
+        });
+      }
     }
   };
 
@@ -100,6 +139,10 @@ export default function ProductDetail() {
       </section>
     );
   }
+
+  // Giá hiển thị dựa trên biến thể được chọn hoặc giá gốc của sản phẩm
+  const displayPrice = selectedVariant ? selectedVariant.price : product.price;
+  const displayOldPrice = selectedVariant ? selectedVariant.oldPrice : product.oldPrice;
 
   return (
     <>
@@ -165,13 +208,50 @@ export default function ProductDetail() {
                 <p className="text-neutral-700">{product.description}</p>
               </div>
 
+              {/* Phần chọn biến thể sản phẩm */}
+              {product.hasVariants && productVariants && productVariants.length > 0 && (
+                <div className="mb-6">
+                  <h3 className="font-semibold mb-2">Chọn quy cách đóng gói:</h3>
+                  <RadioGroup 
+                    value={selectedVariant?.id.toString()} 
+                    onValueChange={(value) => {
+                      const variant = productVariants.find(v => v.id === parseInt(value));
+                      if (variant) {
+                        setSelectedVariant(variant);
+                      }
+                    }}
+                    className="flex flex-wrap gap-2"
+                  >
+                    {productVariants.map((variant) => (
+                      <div key={variant.id} className="flex items-center">
+                        <RadioGroupItem 
+                          value={variant.id.toString()} 
+                          id={`variant-${variant.id}`}
+                          className="peer sr-only"
+                        />
+                        <Label
+                          htmlFor={`variant-${variant.id}`}
+                          className={`px-4 py-2 rounded-md border cursor-pointer transition-colors
+                            peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-white
+                            peer-data-[state=checked]:border-primary
+                            hover:bg-primary/10 hover:text-primary-foreground
+                            ${selectedVariant?.id === variant.id ? 'bg-primary text-white border-primary' : 'bg-white text-neutral-800 border-neutral-300'}`}
+                        >
+                          {variant.name}
+                        </Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+                </div>
+              )}
+
               <div className="flex items-center mb-6">
                 <span className="text-2xl font-bold mr-2">
-                  {product.price.toLocaleString("vi-VN")}₫
+                  {displayPrice.toLocaleString("vi-VN")}₫
                 </span>
-                {product.oldPrice && (
+                {displayOldPrice && (
                   <span className="text-neutral-500 line-through">
-                    {product.oldPrice.toLocaleString("vi-VN")}₫
+                    {displayOldPrice.toLocaleString("vi-VN")}₫
                   </span>
                 )}
               </div>
