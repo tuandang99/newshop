@@ -36,7 +36,7 @@ export const products = pgTable("products", {
   isNew: boolean("isnew").default(false),
   isOrganic: boolean("isorganic").default(true),
   isBestseller: boolean("isfeatured").default(false),
-  details: json("details").$type<string[]>().default([]),
+  details: text("description_details").default(''),
   discount: integer("discount"),
   createdAt: timestamp("created_at").defaultNow(),
 });
