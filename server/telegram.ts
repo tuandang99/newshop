@@ -124,7 +124,7 @@ function formatOrderMessage(order: Order, items: CartItem[]): string {
   let itemsList = "Không có sản phẩm nào.";
   
   console.log("ItemsArray length:", itemsArray?.length);
-  console.log("ItemsArray content:", JSON.stringify(itemsArray));
+  console.log("ItemsArray content:", JSON.stringify(itemsArray).substring(0, 200));
   
   if (itemsArray && Array.isArray(itemsArray) && itemsArray.length > 0) {
     try {

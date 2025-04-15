@@ -230,7 +230,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Send Telegram notification
       try {
-        await sendOrderNotification(newOrder, cart);
+        // Convert cart to array if needed
+        const cartItems = Array.isArray(cart) ? cart : 
+                         (typeof cart === 'string' ? JSON.parse(cart) : []);
+        
+        console.log("Cart before sending to Telegram:", JSON.stringify(cartItems).substring(0, 100));
+        await sendOrderNotification(newOrder, cartItems);
       } catch (notificationError) {
         console.error("Failed to send order notification:", notificationError);
         // Continue with the order process even if notification fails
