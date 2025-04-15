@@ -1,4 +1,3 @@
-
 import TelegramBot from 'node-telegram-bot-api';
 import { Order, CartItem, ContactSubmission } from '@shared/schema';
 import { log } from './vite';
@@ -90,11 +89,14 @@ export async function sendOrderNotification(order: Order, items: CartItem[]): Pr
  * Format the order details for the notification message
  */
 function formatOrderMessage(order: Order, items: CartItem[]): string {
+  // Ensure items is an array
+  const itemsArray = Array.isArray(items) ? items : [];
+
   // Calculate total
-  const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  
+  const total = itemsArray.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
   // Format items list
-  const itemsList = items
+  const itemsList = itemsArray
     .map(item => `• ${item.quantity}x ${item.name} - ${item.price.toFixed(2)} VND`)
     .join('\n');
   
