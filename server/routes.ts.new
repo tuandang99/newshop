@@ -183,6 +183,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { customerName, email, phone, address, cart, totalAmount } = req.body;
       
       if (!customerName || !email || !phone || !address || !cart || cart.length === 0 || !totalAmount) {
+        console.error("Missing order data:", { customerName, email, phone, address, cart: cart ? cart.length : 'no cart', totalAmount });
         return res.status(400).json({ message: "Missing required order information" });
       }
 
