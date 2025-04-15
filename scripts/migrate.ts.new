@@ -136,106 +136,34 @@ async function migrate() {
     // Tạo dữ liệu mẫu cho danh mục và sản phẩm
     console.log('Creating sample data...');
     
-    // Thêm danh mục và lấy ID
-    const categories = [
-      { name: 'Rau củ', slug: 'rau-cu', image: 'https://images.unsplash.com/photo-1566385101042-1a0aa0c1268c?q=80&w=1000' },
-      { name: 'Trái cây', slug: 'trai-cay', image: 'https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?q=80&w=1000' },
-      { name: 'Thực phẩm hữu cơ', slug: 'thuc-pham-huu-co', image: 'https://images.unsplash.com/photo-1550989460-0adf9ea622e2?q=80&w=1000' }
-    ];
+    // Thêm danh mục
+    const insertCategories = `
+    INSERT INTO categories (name, slug, image) VALUES 
+      ('Rau củ', 'rau-cu', 'https://images.unsplash.com/photo-1566385101042-1a0aa0c1268c?q=80&w=1000'),
+      ('Trái cây', 'trai-cay', 'https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?q=80&w=1000'),
+      ('Thực phẩm hữu cơ', 'thuc-pham-huu-co', 'https://images.unsplash.com/photo-1550989460-0adf9ea622e2?q=80&w=1000')
+    ON CONFLICT (slug) DO NOTHING
+    RETURNING id, name;
+    `;
+    await pool.query(insertCategories);
+    console.log('Categories created successfully');
     
-    const categoryIds = {};
-    
-    for (const category of categories) {
-      const insertCategory = `
-      INSERT INTO categories (name, slug, image) 
-      VALUES ($1, $2, $3)
-      ON CONFLICT (slug) DO NOTHING
-      RETURNING id, name;
-      `;
-      const result = await pool.query(insertCategory, [category.name, category.slug, category.image]);
-      
-      // Nếu không có dòng trả về, truy vấn lại để lấy ID
-      if (result.rows.length === 0) {
-        const getCategory = `SELECT id, name FROM categories WHERE slug = $1`;
-        const getCategoryResult = await pool.query(getCategory, [category.slug]);
-        if (getCategoryResult.rows.length > 0) {
-          categoryIds[category.name] = getCategoryResult.rows[0].id;
-        }
-      } else {
-        categoryIds[category.name] = result.rows[0].id;
-      }
-    }
-    
-    console.log('Categories created successfully:', categoryIds);
-    
-    // Thêm sản phẩm với ID danh mục chính xác
-    const products = [
-      { 
-        name: 'Cà rốt hữu cơ', 
-        slug: 'ca-rot-huu-co', 
-        description: 'Cà rốt hữu cơ tươi ngon, giàu vitamin A', 
-        price: 25000, 
-        oldPrice: 30000, 
-        image: 'https://images.unsplash.com/photo-1447175008436-054170c2e979?q=80&w=1000', 
-        categoryName: 'Rau củ' 
-      },
-      { 
-        name: 'Táo đỏ Mỹ', 
-        slug: 'tao-do-my', 
-        description: 'Táo đỏ nhập khẩu từ Mỹ, giòn ngọt', 
-        price: 60000, 
-        oldPrice: 70000, 
-        image: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?q=80&w=1000', 
-        categoryName: 'Trái cây' 
-      },
-      { 
-        name: 'Bột yến mạch', 
-        slug: 'bot-yen-mach', 
-        description: 'Bột yến mạch hữu cơ, không chất bảo quản', 
-        price: 80000, 
-        oldPrice: 95000, 
-        image: 'https://images.unsplash.com/photo-1586765501019-cbe3294828fe?q=80&w=1000', 
-        categoryName: 'Thực phẩm hữu cơ' 
-      }
-    ];
-    
-    const productIds = {};
-    
-    for (const product of products) {
-      if (!categoryIds[product.categoryName]) {
-        console.warn(`Category ${product.categoryName} not found, skipping product ${product.name}`);
-        continue;
-      }
-      
-      const insertProduct = `
-      INSERT INTO products (name, slug, description, price, old_price, image, category_id, is_organic, has_variants) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7, true, true)
-      ON CONFLICT (slug) DO NOTHING
-      RETURNING id, name;
-      `;
-      
-      const result = await pool.query(
-        insertProduct, 
-        [product.name, product.slug, product.description, product.price, product.oldPrice, product.image, categoryIds[product.categoryName]]
-      );
-      
-      // Nếu không có dòng trả về, truy vấn lại để lấy ID
-      if (result.rows.length === 0) {
-        const getProduct = `SELECT id, name FROM products WHERE slug = $1`;
-        const getProductResult = await pool.query(getProduct, [product.slug]);
-        if (getProductResult.rows.length > 0) {
-          productIds[product.name] = getProductResult.rows[0].id;
-        }
-      } else {
-        productIds[product.name] = result.rows[0].id;
-      }
-    }
-    
-    console.log('Products created successfully:', productIds);
+    // Thêm sản phẩm
+    const insertProducts = `
+    INSERT INTO products (name, slug, description, price, old_price, image, category_id, is_organic, has_variants) VALUES 
+      ('Cà rốt hữu cơ', 'ca-rot-huu-co', 'Cà rốt hữu cơ tươi ngon, giàu vitamin A', 25000, 30000, 'https://images.unsplash.com/photo-1447175008436-054170c2e979?q=80&w=1000', 1, true, true),
+      ('Táo đỏ Mỹ', 'tao-do-my', 'Táo đỏ nhập khẩu từ Mỹ, giòn ngọt', 60000, 70000, 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?q=80&w=1000', 2, true, true),
+      ('Bột yến mạch', 'bot-yen-mach', 'Bột yến mạch hữu cơ, không chất bảo quản', 80000, 95000, 'https://images.unsplash.com/photo-1586765501019-cbe3294828fe?q=80&w=1000', 3, true, true)
+    ON CONFLICT (slug) DO NOTHING
+    RETURNING id, name;
+    `;
+    const productResult = await pool.query(insertProducts);
+    console.log('Products created successfully');
     
     // Thêm biến thể cho sản phẩm
-    for (const productName in productIds) {
-      const productId = productIds[productName];
+    for (const row of productResult.rows) {
+      const productId = row.id;
+      const productName = row.name;
       
       // Biến thể 500gr (mặc định)
       let price500gr = 0;
