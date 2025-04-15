@@ -225,8 +225,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         phone,
         address,
         items: JSON.stringify(cart),
-        total: totalAmount,
-        status: "pending"
+        total: totalAmount
       });
 
       // Send Telegram notification

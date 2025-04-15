@@ -1,9 +1,9 @@
-import { z } from "zod";
-import { pgTable, serial, text, varchar, doublePrecision, boolean, integer, timestamp, json } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
-import { relations } from "drizzle-orm";
+import { pgTable, serial, varchar, text, boolean, integer, timestamp, doublePrecision, json } from 'drizzle-orm/pg-core';
+import { relations } from 'drizzle-orm';
+import { createInsertSchema } from 'drizzle-zod';
+import { z } from 'zod';
 
-// Product Category
+// Category
 export const categories = pgTable("categories", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
@@ -36,9 +36,6 @@ export const products = pgTable("products", {
   isNew: boolean("isnew").default(false),
   isOrganic: boolean("isorganic").default(true),
   isBestseller: boolean("isfeatured").default(false),
-  details: text("description").default(''),
-  discount: integer("discount"),
-  createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const productsRelations = relations(products, ({ one, many }) => ({
@@ -51,7 +48,6 @@ export const productsRelations = relations(products, ({ one, many }) => ({
 
 export const insertProductSchema = createInsertSchema(products).omit({
   id: true,
-  createdAt: true,
 });
 
 export type InsertProduct = z.infer<typeof insertProductSchema>;
@@ -64,7 +60,6 @@ export const productImages = pgTable("product_images", {
   imagePath: text("image_path").notNull(),
   isMain: boolean("is_main").default(false),
   displayOrder: integer("display_order").default(0),
-  createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const productImagesRelations = relations(productImages, ({ one }) => ({
@@ -76,7 +71,6 @@ export const productImagesRelations = relations(productImages, ({ one }) => ({
 
 export const insertProductImageSchema = createInsertSchema(productImages).omit({
   id: true,
-  createdAt: true,
 });
 
 export type InsertProductImage = z.infer<typeof insertProductImageSchema>;
@@ -93,8 +87,9 @@ export const blogPosts = pgTable("blog_posts", {
   category: varchar("category", { length: 255 }).notNull(),
   tags: text("tags"),
   author: varchar("author", { length: 255 }),
-  metaTitle: varchar("metatitle", { length: 255 }),
-  metaDescription: text("metadescription"),
+  metaTitle: varchar("meta_title", { length: 255 }),
+  metaDescription: text("meta_description"),
+  summary: text("summary"),
   featured: boolean("featured").default(false),
   status: varchar("status", { length: 20 }).default("published"),
   date: timestamp("date").defaultNow(),
@@ -128,18 +123,17 @@ export type Testimonial = typeof testimonials.$inferSelect;
 export const orders = pgTable("orders", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }),
   phone: varchar("phone", { length: 50 }).notNull(),
   address: text("address").notNull(),
   items: text("items").notNull(),
   total: doublePrecision("total").notNull(),
   status: varchar("status", { length: 50 }).default("pending"),
-  createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const insertOrderSchema = createInsertSchema(orders).omit({
   id: true,
   status: true,
-  createdAt: true,
 });
 
 export type InsertOrder = z.infer<typeof insertOrderSchema>;
@@ -152,12 +146,10 @@ export const contacts = pgTable("contacts", {
   email: varchar("email", { length: 255 }).notNull(),
   subject: varchar("subject", { length: 255 }).notNull(),
   message: text("message").notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const insertContactSchema = createInsertSchema(contacts).omit({
   id: true,
-  createdAt: true,
 });
 
 export type InsertContact = z.infer<typeof insertContactSchema>;
