@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
@@ -20,8 +19,9 @@ interface ProductsResponse {
 export default function Products() {
   const [activeFilter, setActiveFilter] = useState('all');
 
+  // Thay đổi API endpoint từ featured-products sang products
   const { data: productsResponse } = useQuery<ProductsResponse>({
-    queryKey: ['/api/featured-products'],
+    queryKey: ['/api/products'],
   });
 
   const { data: categories } = useQuery<Category[]>({
@@ -30,12 +30,18 @@ export default function Products() {
 
   const products = productsResponse?.products || [];
 
-  const filteredProducts = activeFilter === 'all' 
-    ? products 
-    : products.filter(product => {
-        const category = categories?.find(cat => cat.slug === activeFilter);
-        return category && product.categoryId === category.id;
-      });
+  // Apply the same filtering logic as in the Products page
+  const filteredProducts = products.filter(product => {
+    // Skip category filter if set to "all"
+    if (activeFilter === 'all') return true;
+
+    // Category filter logic
+    const category = categories?.find(cat => cat.slug === activeFilter);
+    
+    if (!category) return false;
+    
+    return product.categoryId === category.id;
+  });
 
   if (!products || !categories) {
     return (
@@ -93,13 +99,20 @@ export default function Products() {
           </div>
         </div>
 
+        {/* Sản phẩm grid - điều chỉnh để tránh overflow */}
         <div className="w-full">
           <div className="grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-            {filteredProducts.map((product) => (
-              <div key={product.id} className="w-full">
-                <ProductCard product={product} />
+            {filteredProducts && filteredProducts.length > 0 ? (
+              filteredProducts.map((product) => (
+                <div key={product.id} className="w-full">
+                  <ProductCard product={product} />
+                </div>
+              ))
+            ) : (
+              <div className="col-span-full text-center py-8">
+                <p className="text-neutral-500">Không tìm thấy sản phẩm trong danh mục này</p>
               </div>
-            ))}
+            )}
           </div>
         </div>
 
