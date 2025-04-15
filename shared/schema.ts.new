@@ -11,6 +11,22 @@ export const categories = pgTable("categories", {
   image: text("image").notNull(),
 });
 
+// Forward reference declaration
+const products = {} as any;
+const productImages = {} as any;
+const productVariants = {} as any;
+
+export const categoriesRelations = relations(categories, ({ many }) => ({
+  products: many(products),
+}));
+
+export const insertCategorySchema = createInsertSchema(categories).omit({
+  id: true,
+});
+
+export type InsertCategory = z.infer<typeof insertCategorySchema>;
+export type Category = typeof categories.$inferSelect;
+
 // Product
 export const products = pgTable("products", {
   id: serial("id").primaryKey(),
@@ -31,16 +47,6 @@ export const products = pgTable("products", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-// Product Images (Gallery)
-export const productImages = pgTable("product_images", {
-  id: serial("id").primaryKey(),
-  productId: integer("product_id").notNull().references(() => products.id),
-  imagePath: text("image_path").notNull(),
-  isMain: boolean("is_main").default(false),
-  displayOrder: integer("display_order").default(0),
-  createdAt: timestamp("created_at").defaultNow(),
-});
-
 // Product Variants (e.g., different weights, sizes, colors)
 export const productVariants = pgTable("product_variants", {
   id: serial("id").primaryKey(),
@@ -54,10 +60,6 @@ export const productVariants = pgTable("product_variants", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const categoriesRelations = relations(categories, ({ many }) => ({
-  products: many(products),
-}));
-
 export const productsRelations = relations(products, ({ one, many }) => ({
   category: one(categories, {
     fields: [products.categoryId],
@@ -67,13 +69,6 @@ export const productsRelations = relations(products, ({ one, many }) => ({
   variants: many(productVariants),
 }));
 
-export const productImagesRelations = relations(productImages, ({ one }) => ({
-  product: one(products, {
-    fields: [productImages.productId],
-    references: [products.id],
-  }),
-}));
-
 export const productVariantsRelations = relations(productVariants, ({ one }) => ({
   product: one(products, {
     fields: [productVariants.productId],
@@ -81,16 +76,7 @@ export const productVariantsRelations = relations(productVariants, ({ one }) => 
   }),
 }));
 
-export const insertCategorySchema = createInsertSchema(categories).omit({
-  id: true,
-});
-
 export const insertProductSchema = createInsertSchema(products).omit({
-  id: true,
-  createdAt: true,
-});
-
-export const insertProductImageSchema = createInsertSchema(productImages).omit({
   id: true,
   createdAt: true,
 });
@@ -100,14 +86,35 @@ export const insertProductVariantSchema = createInsertSchema(productVariants).om
   createdAt: true,
 });
 
-export type InsertCategory = z.infer<typeof insertCategorySchema>;
-export type Category = typeof categories.$inferSelect;
 export type InsertProduct = z.infer<typeof insertProductSchema>;
 export type Product = typeof products.$inferSelect;
-export type InsertProductImage = z.infer<typeof insertProductImageSchema>;
-export type ProductImage = typeof productImages.$inferSelect;
 export type InsertProductVariant = z.infer<typeof insertProductVariantSchema>;
 export type ProductVariant = typeof productVariants.$inferSelect;
+
+// Product Images (Gallery)
+export const productImages = pgTable("product_images", {
+  id: serial("id").primaryKey(),
+  productId: integer("product_id").notNull().references(() => products.id),
+  imagePath: text("image_path").notNull(),
+  isMain: boolean("is_main").default(false),
+  displayOrder: integer("display_order").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const productImagesRelations = relations(productImages, ({ one }) => ({
+  product: one(products, {
+    fields: [productImages.productId],
+    references: [products.id],
+  }),
+}));
+
+export const insertProductImageSchema = createInsertSchema(productImages).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertProductImage = z.infer<typeof insertProductImageSchema>;
+export type ProductImage = typeof productImages.$inferSelect;
 
 // Blog Post
 export const blogPosts = pgTable("blog_posts", {
