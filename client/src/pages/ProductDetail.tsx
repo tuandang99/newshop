@@ -13,10 +13,16 @@ import ProductGallery from "@/components/product/ProductGallery";
 export default function ProductDetail() {
   const { slug } = useParams();
   const [quantity, setQuantity] = useState(1);
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  const { data: variants } = useQuery<ProductVariant[]>({
+    queryKey: [`/api/products/${product?.id}/variants`],
+    enabled: !!product?.id,
+  });
   const { addItem } = useCart();
   const { toast } = useToast();
 
@@ -59,18 +65,19 @@ export default function ProductDetail() {
   };
 
   const handleAddToCart = () => {
-    if (product) {
+    if (product && selectedVariant) {
       addItem({
         id: product.id,
-        name: product.name,
-        price: product.price,
+        variantId: selectedVariant.id,
+        name: `${product.name} - ${selectedVariant.name}`,
+        price: selectedVariant.price,
         image: product.image,
         quantity,
       });
 
       toast({
         title: "Đã thêm vào giỏ hàng",
-        description: `${quantity} x ${product.name} đã được thêm vào giỏ hàng`,
+        description: `${quantity} x ${product.name} - ${selectedVariant.name} đã được thêm vào giỏ hàng`,
       });
     }
   };
@@ -176,6 +183,30 @@ export default function ProductDetail() {
                 )}
               </div>
 
+              {/* Product Variants */}
+              <div className="mb-6">
+                <h3 className="font-semibold mb-2">Chọn loại sản phẩm</h3>
+                <div className="grid grid-cols-2 gap-2">
+                  {variants?.map((variant) => (
+                    <Button
+                      key={variant.id}
+                      variant={selectedVariant?.id === variant.id ? "default" : "outline"}
+                      className="w-full justify-start"
+                      onClick={() => setSelectedVariant(variant)}
+                    >
+                      <div className="flex flex-col items-start">
+                        <span>{variant.name}</span>
+                        <span className="text-sm text-neutral-500">{variant.weight}</span>
+                      </div>
+                      <span className="ml-auto font-semibold">
+                        {variant.price.toLocaleString("vi-VN")}₫
+                      </span>
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Quantity and Add to Cart */}
               <div className="flex items-center mb-6">
                 <div className="flex items-center border border-neutral-300 rounded-md mr-4">
                   <Button
@@ -200,9 +231,10 @@ export default function ProductDetail() {
 
                 <Button
                   onClick={handleAddToCart}
+                  disabled={!selectedVariant}
                   className="bg-primary text-white hover:bg-primary/90 px-8"
                 >
-                  Thêm vào giỏ hàng
+                  {selectedVariant ? 'Thêm vào giỏ hàng' : 'Vui lòng chọn loại sản phẩm'}
                 </Button>
               </div>
 
