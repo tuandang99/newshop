@@ -98,7 +98,7 @@ export default function BlogPost() {
             />
 
             <div className="prose max-w-none sm:prose-lg md:prose-xl break-words" data-color-mode="light">
-              <MDEditor.Markdown source={post.content} />
+              <MDEditor.Markdown source={post.content} skipHtml={false} />
             </div>
 
 

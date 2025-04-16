@@ -132,7 +132,8 @@ function formatOrderMessage(order: Order, items: CartItem[]): string {
             return null;
           }
           const quantity = item.quantity || 1;
-          return `• ${quantity}x ${item.name} - ${(item.price * quantity).toLocaleString('vi-VN')}₫`;
+          const variantInfo = item.variantName ? ` (${item.variantName})` : '';
+          return `• ${quantity}x ${item.name}${variantInfo} - ${(item.price * quantity).toLocaleString('vi-VN')}₫`;
         })
         .filter(Boolean)
         .join('\n');

@@ -48,7 +48,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       );
       
       if (existingItemIndex !== -1) {
-        // Item already exists, update quantity
+        // Item already exists with same variant, update quantity
         const updatedItems = [...currentItems];
         updatedItems[existingItemIndex].quantity += newItem.quantity;
         return updatedItems;

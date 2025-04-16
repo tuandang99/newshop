@@ -89,6 +89,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(product);
   });
 
+  app.get("/api/products/:id/variants", async (req: Request, res: Response) => {
+    const productId = parseInt(req.params.id);
+    
+    if (isNaN(productId)) {
+      return res.status(400).json({ message: "Invalid product ID" });
+    }
+
+    const variants = await storage.getProductVariants(productId);
+    res.json(variants);
+  });
+
   app.get("/api/featured-products", async (req: Request, res: Response) => {
     try {
       const limit = req.query.limit ? parseInt(req.query.limit as string) : 8;
