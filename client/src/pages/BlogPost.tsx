@@ -1,6 +1,7 @@
 import { useParams, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { BlogPost as BlogPostType, BlogPostsResponse } from "@shared/schema"; 
+import { BlogPost as BlogPostType, BlogPostsResponse, Product } from "@shared/schema"; 
+import ProductCard from "@/components/product/ProductCard"; 
 import { Button } from "@/components/ui/button";
 import { CalendarIcon, ArrowLeftIcon, ArrowRightIcon } from "@/lib/icons";
 import { format } from "date-fns";
@@ -19,6 +20,11 @@ export default function BlogPost() {
   const { data: relatedPosts } = useQuery<BlogPostsResponse>({
     queryKey: ['/api/blog-posts'],
     enabled: !!post // Only fetch when the main post is loaded
+  });
+
+  const { data: productsResponse } = useQuery<{ posts: Product[] }>({
+    queryKey: ['/api/products'],
+    enabled: !!post
   });
 
   const filteredRelatedPosts = relatedPosts?.posts?.filter(
@@ -142,6 +148,16 @@ export default function BlogPost() {
                 </div>
               </div>
             )}
+
+            {/* Product Recommendations */}
+            <div className="mt-12 border-t border-neutral-200 pt-8">
+              <h3 className="text-2xl font-bold font-poppins mb-6">Sản phẩm gợi ý</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {productsResponse?.posts?.slice(0, 3).map((product) => (
+                  <ProductCard key={product.id} product={product} variant="compact" />
+                ))}
+              </div>
+            </div>
           </article>
         </div>
       </section>
