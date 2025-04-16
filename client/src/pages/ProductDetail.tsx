@@ -71,8 +71,12 @@ export default function ProductDetail() {
 
   const handleAddToCart = () => {
     if (product && selectedVariant) {
+      // Tạo unique ID cho item dựa trên product ID và variant ID
+      const cartItemId = `${product.id}-${selectedVariant.id}`;
+      
       addItem({
-        id: product.id,
+        id: cartItemId,
+        productId: product.id,
         variantId: selectedVariant.id,
         name: `${product.name} - ${selectedVariant.name}`,
         price: selectedVariant.price,
