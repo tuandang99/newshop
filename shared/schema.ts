@@ -48,6 +48,7 @@ export const productsRelations = relations(products, ({ one, many }) => ({
     references: [categories.id],
   }),
   images: many(productImages),
+  variants: many(productVariants),
 }));
 
 export const insertProductSchema = createInsertSchema(products).omit({
@@ -57,6 +58,33 @@ export const insertProductSchema = createInsertSchema(products).omit({
 
 export type InsertProduct = z.infer<typeof insertProductSchema>;
 export type Product = typeof products.$inferSelect;
+
+// Product Variants
+export const productVariants = pgTable("product_variants", {
+  id: serial("id").primaryKey(),
+  productId: integer("product_id").notNull().references(() => products.id),
+  name: varchar("name", { length: 255 }).notNull(),
+  sku: varchar("sku", { length: 100 }).notNull().unique(),
+  price: doublePrecision("price").notNull(),
+  stockQuantity: integer("stock_quantity").notNull().default(0),
+  weight: varchar("weight", { length: 50 }),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const productVariantsRelations = relations(productVariants, ({ one }) => ({
+  product: one(products, {
+    fields: [productVariants.productId],
+    references: [products.id],
+  }),
+}));
+
+export const insertProductVariantSchema = createInsertSchema(productVariants).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertProductVariant = z.infer<typeof insertProductVariantSchema>;
+export type ProductVariant = typeof productVariants.$inferSelect;
 
 // Product Images
 export const productImages = pgTable("product_images", {

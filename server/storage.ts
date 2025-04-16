@@ -24,10 +24,19 @@ import {
   orders,
   contacts,
   adminKeys,
-  productImages
+  productImages,
+  type ProductVariant,
+  type InsertProductVariant,
+  productVariants
 } from "@shared/schema";
 
 export interface IStorage {
+  // Product Variants methods
+  getProductVariants(productId: number): Promise<ProductVariant[]>;
+  createProductVariant(variant: InsertProductVariant): Promise<ProductVariant>;
+  updateProductVariant(id: number, variant: Partial<InsertProductVariant>): Promise<ProductVariant | undefined>;
+  deleteProductVariant(id: number): Promise<boolean>;
+
   // Category methods
   getCategories(): Promise<Category[]>;
   getCategoryBySlug(slug: string): Promise<Category | undefined>;
@@ -253,6 +262,33 @@ export class DatabaseStorage implements IStorage {
       .set({ isMain: true })
       .where(eq(productImages.id, id));
     
+    return true;
+  }
+
+  // Product Variants Implementation
+  async getProductVariants(productId: number): Promise<ProductVariant[]> {
+    return await db.select()
+      .from(productVariants)
+      .where(eq(productVariants.productId, productId))
+      .orderBy(productVariants.name);
+  }
+
+  async createProductVariant(variant: InsertProductVariant): Promise<ProductVariant> {
+    const [newVariant] = await db.insert(productVariants).values(variant).returning();
+    return newVariant;
+  }
+
+  async updateProductVariant(id: number, variant: Partial<InsertProductVariant>): Promise<ProductVariant | undefined> {
+    const [updatedVariant] = await db
+      .update(productVariants)
+      .set(variant)
+      .where(eq(productVariants.id, id))
+      .returning();
+    return updatedVariant;
+  }
+
+  async deleteProductVariant(id: number): Promise<boolean> {
+    await db.delete(productVariants).where(eq(productVariants.id, id));
     return true;
   }
 
