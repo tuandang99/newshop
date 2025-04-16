@@ -196,14 +196,14 @@ export default function ProductDetail() {
                     <Button
                       key={variant.id}
                       variant={selectedVariant?.id === variant.id ? "default" : "outline"}
-                      className="w-full justify-start"
+                      className="w-full h-auto py-2 px-3 justify-start"
                       onClick={() => setSelectedVariant(variant)}
                     >
                       <div className="flex flex-col items-start">
-                        <span>{variant.name}</span>
-                        <span className="text-sm text-neutral-500">{variant.weight}</span>
+                        <span className="text-sm">{variant.name}</span>
+                        <span className="text-xs text-neutral-500">{variant.weight}</span>
                       </div>
-                      <span className="ml-auto font-semibold">
+                      <span className="ml-auto text-sm font-semibold">
                         {variant.price.toLocaleString("vi-VN")}₫
                       </span>
                     </Button>
