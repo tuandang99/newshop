@@ -1,4 +1,3 @@
-
 import { pgTable, serial, varchar, text, boolean, integer, timestamp, doublePrecision, jsonb } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
@@ -209,7 +208,9 @@ export type AdminKey = typeof adminKeys.$inferSelect;
 
 // Cart Item type (not stored in database, used for frontend)
 export const cartItemSchema = z.object({
-  id: z.number(),
+  id: z.string(),
+  productId: z.number(),
+  variantId: z.number(),
   name: z.string(),
   price: z.number(),
   image: z.string().min(1, "Image path is required"),
