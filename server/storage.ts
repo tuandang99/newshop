@@ -24,15 +24,24 @@ import {
   orders,
   contacts,
   adminKeys,
-  productImages
+  productImages,
+  type ProductVariant,
+  type InsertProductVariant,
+  productVariants
 } from "@shared/schema";
 
 export interface IStorage {
+  // Product Variants methods
+  getProductVariants(productId: number): Promise<ProductVariant[]>;
+  createProductVariant(variant: InsertProductVariant): Promise<ProductVariant>;
+  updateProductVariant(id: number, variant: Partial<InsertProductVariant>): Promise<ProductVariant | undefined>;
+  deleteProductVariant(id: number): Promise<boolean>;
+
   // Category methods
   getCategories(): Promise<Category[]>;
   getCategoryBySlug(slug: string): Promise<Category | undefined>;
   createCategory(category: InsertCategory): Promise<Category>;
-  
+
   // Product methods
   getProducts(): Promise<Product[]>;
   getProductsByCategory(categoryId: number): Promise<Product[]>;
@@ -43,14 +52,14 @@ export interface IStorage {
   updateProduct(id: number, product: Partial<InsertProduct>): Promise<Product | undefined>;
   deleteProduct(id: number): Promise<boolean>;
   searchProducts(query: string): Promise<Product[]>;
-  
+
   // Product Images methods
   getProductImages(productId: number): Promise<ProductImage[]>;
   addProductImage(image: InsertProductImage): Promise<ProductImage>;
   updateProductImage(id: number, image: Partial<InsertProductImage>): Promise<ProductImage | undefined>;
   deleteProductImage(id: number): Promise<boolean>;
   setMainProductImage(id: number, productId: number): Promise<boolean>;
-  
+
   // Blog methods
   getBlogPosts(): Promise<BlogPost[]>;
   getBlogPostBySlug(slug: string): Promise<BlogPost | undefined>;
@@ -58,16 +67,16 @@ export interface IStorage {
   createBlogPost(blogPost: InsertBlogPost): Promise<BlogPost>;
   updateBlogPost(id: number, blogPost: Partial<InsertBlogPost>): Promise<BlogPost | undefined>;
   deleteBlogPost(id: number): Promise<boolean>;
-  
+
   // Testimonial methods
   getTestimonials(): Promise<Testimonial[]>;
-  
+
   // Order methods
   createOrder(order: InsertOrder): Promise<Order>;
-  
+
   // Contact methods
   submitContactForm(contact: InsertContact): Promise<ContactSubmission>;
-  
+
   // Admin methods
   verifyAdminKey(key: string): Promise<boolean>;
   updateAdminKey(oldKey: string, newKey: string): Promise<boolean>;
@@ -146,7 +155,7 @@ export class DatabaseStorage implements IStorage {
       details: product.details,
       discount: product.discount
     };
-    
+
     const result = await db.insert(products).values(insertData);
     const [newProduct] = await db.select().from(products).where(eq(products.slug, product.slug));
     return normalizeProduct(newProduct);
@@ -155,7 +164,7 @@ export class DatabaseStorage implements IStorage {
   async updateProduct(id: number, product: Partial<InsertProduct>): Promise<Product | undefined> {
     // Extract actual fields to update and avoid type issues
     const updateData: Record<string, any> = {};
-    
+
     if (product.name !== undefined) updateData.name = product.name;
     if (product.slug !== undefined) updateData.slug = product.slug;
     if (product.description !== undefined) updateData.description = product.description;
@@ -169,7 +178,7 @@ export class DatabaseStorage implements IStorage {
     if (product.isBestseller !== undefined) updateData.isBestseller = product.isBestseller;
     if (product.details !== undefined) updateData.details = product.details;
     if (product.discount !== undefined) updateData.discount = product.discount;
-    
+
     const [updatedProduct] = await db
       .update(products)
       .set(updateData)
@@ -210,7 +219,7 @@ export class DatabaseStorage implements IStorage {
         .set({ isMain: false })
         .where(eq(productImages.productId, image.productId));
     }
-    
+
     const [newImage] = await db.insert(productImages).values(image).returning();
     return newImage;
   }
@@ -221,14 +230,14 @@ export class DatabaseStorage implements IStorage {
       const existingImage = await db.select()
         .from(productImages)
         .where(eq(productImages.id, id));
-      
+
       if (existingImage.length > 0) {
         await db.update(productImages)
           .set({ isMain: false })
           .where(eq(productImages.productId, existingImage[0].productId));
       }
     }
-    
+
     const [updatedImage] = await db
       .update(productImages)
       .set(image)
@@ -247,12 +256,39 @@ export class DatabaseStorage implements IStorage {
     await db.update(productImages)
       .set({ isMain: false })
       .where(eq(productImages.productId, productId));
-    
+
     // Then set the selected image as main
     await db.update(productImages)
       .set({ isMain: true })
       .where(eq(productImages.id, id));
-    
+
+    return true;
+  }
+
+  // Product Variants Implementation
+  async getProductVariants(productId: number): Promise<ProductVariant[]> {
+    return await db.select()
+      .from(productVariants)
+      .where(eq(productVariants.productId, productId))
+      .orderBy(productVariants.name);
+  }
+
+  async createProductVariant(variant: InsertProductVariant): Promise<ProductVariant> {
+    const [newVariant] = await db.insert(productVariants).values(variant).returning();
+    return newVariant;
+  }
+
+  async updateProductVariant(id: number, variant: Partial<InsertProductVariant>): Promise<ProductVariant | undefined> {
+    const [updatedVariant] = await db
+      .update(productVariants)
+      .set(variant)
+      .where(eq(productVariants.id, id))
+      .returning();
+    return updatedVariant;
+  }
+
+  async deleteProductVariant(id: number): Promise<boolean> {
+    await db.delete(productVariants).where(eq(productVariants.id, id));
     return true;
   }
 
@@ -317,7 +353,7 @@ export class DatabaseStorage implements IStorage {
     const results = await db.select()
       .from(adminKeys)
       .where(and(eq(adminKeys.key, oldKey), eq(adminKeys.active, true)));
-    
+
     if (results.length > 0) {
       await db.update(adminKeys)
         .set({ key: newKey })
