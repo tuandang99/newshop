@@ -32,7 +32,7 @@ export default function About() {
                 variant="outline"
                 className="border-primary text-primary hover:bg-primary/10"
               >
-                <Link href="/about#values">Giá trị màng </Link>
+                <Link href="/about#values">Giá trị mang lại</Link>
               </Button>
             </div>
           </div>
