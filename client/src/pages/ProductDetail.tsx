@@ -32,7 +32,7 @@ export default function ProductDetail() {
   const { toast } = useToast();
 
   const {
-    data: product,
+    data: productData,
     isLoading: productLoading,
     error: productError,
   } = useQuery<Product>({
