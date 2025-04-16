@@ -19,10 +19,15 @@ export default function ProductDetail() {
     window.scrollTo(0, 0);
   }, []);
 
+  const { data: product } = useQuery<Product>({
+    queryKey: [`/api/products/${slug}`],
+  });
+
   const { data: variants } = useQuery<ProductVariant[]>({
     queryKey: [`/api/products/${product?.id}/variants`],
     enabled: !!product?.id,
   });
+  
   const { addItem } = useCart();
   const { toast } = useToast();
 
