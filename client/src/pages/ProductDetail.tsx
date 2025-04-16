@@ -179,9 +179,9 @@ export default function ProductDetail() {
 
               <div className="flex items-center mb-6">
                 <span className="text-2xl font-bold mr-2">
-                  {product.price.toLocaleString("vi-VN")}₫
+                  {(selectedVariant ? selectedVariant.price : product.price).toLocaleString("vi-VN")}₫
                 </span>
-                {product.oldPrice && (
+                {product.oldPrice && !selectedVariant && (
                   <span className="text-neutral-500 line-through">
                     {product.oldPrice.toLocaleString("vi-VN")}₫
                   </span>
