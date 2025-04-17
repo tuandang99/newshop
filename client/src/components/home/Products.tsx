@@ -41,7 +41,7 @@ export default function Products() {
     if (!category) return false;
     
     return product.categoryId === category.id;
-  });
+  }).slice(0, 8); // Limit to 8 products
 
   if (!products || !categories) {
     return (
