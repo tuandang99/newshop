@@ -74,7 +74,7 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
 
       toast({
         title: "Đặt hàng thành công!",
-        description: "Chúng tôi sẽ gửi email xác nhận cho bạn trong thời gian sớm nhất.",
+        description: "Chúng tôi sẽ liên hệ để xác nhận đơn hàng.",
       });
 
       clearCart();
