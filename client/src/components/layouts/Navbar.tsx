@@ -75,7 +75,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center flex-shrink-0" onClick={closeMenu}>
             <img src="/logo.png" alt="TUHO Logo" className="h-8 sm:h-10 md:h-12 w-auto mr-2" />
-            <span className="text-base sm:text-lg md:text-xl font-bold text-black truncate" style={{ fontFamily: 'Chewy' }}>Tuho Healthy Foods</span>
+            <span className="text-base sm:text-lg md:text-xl font-bold truncate" style={{ fontFamily: 'Chewy', color: 'rgba(43,136,65,255)' }}>Tuho Healthy Foods</span>
           </Link>
 
           {/* Desktop Navigation */}
