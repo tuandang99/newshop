@@ -25,7 +25,7 @@ export default function Footer() {
                 alt="TUHO Logo"
                 className="h-8 w-auto mr-2"
               />
-              <span className="text-xl font-bold font-poppins text-white">
+              <span className="text-xl font-bold text-white" style={{ fontFamily: 'Chewy' }}>
                 TUHO
               </span>
             </div>
