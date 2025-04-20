@@ -32,6 +32,7 @@ import {
   Award,
   Filter,
   Youtube,
+  Linkedin,
 } from "lucide-react";
 
 export const LeafIcon = (props: LucideProps) => <Leaf {...props} />;
@@ -67,6 +68,7 @@ export const ShieldCheckIcon = (props: LucideProps) => <ShieldCheck {...props} /
 export const BringToFrontIcon = (props: LucideProps) => <BringToFront {...props} />;
 export const AwardIcon = (props: LucideProps) => <Award {...props} />;
 export const FilterIcon = (props: LucideProps) => <Filter {...props} />;
+export const LinkedInIcon = (props: LucideProps) => <Linkedin {...props} />;
 
 // Additional exports for direct usage
 export {
@@ -101,4 +103,5 @@ export {
   BringToFront,
   Award,
   Filter,
+  Linkedin,
 };

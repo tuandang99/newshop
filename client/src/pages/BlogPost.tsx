@@ -101,6 +101,37 @@ export default function BlogPost() {
               <MDEditor.Markdown source={post.content} skipHtml={false} />
             </div>
 
+            {/* Social Share */}
+            <div className="mt-8 border-t border-neutral-200 pt-6">
+              <h4 className="text-lg font-semibold mb-4">Chia sẻ bài viết</h4>
+              <div className="flex gap-3">
+                <a
+                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-[#1877f2] text-white p-2 rounded-full hover:bg-[#1877f2]/90 transition"
+                >
+                  <FacebookIcon className="h-5 w-5" />
+                </a>
+                <a
+                  href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(post.title)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-[#1da1f2] text-white p-2 rounded-full hover:bg-[#1da1f2]/90 transition"
+                >
+                  <TwitterIcon className="h-5 w-5" />
+                </a>
+                <a
+                  href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(window.location.href)}&title=${encodeURIComponent(post.title)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-[#0077b5] text-white p-2 rounded-full hover:bg-[#0077b5]/90 transition"
+                >
+                  <LinkedInIcon className="h-5 w-5" />
+                </a>
+              </div>
+            </div>
+
 
             {/* Related Posts */}
             {filteredRelatedPosts && filteredRelatedPosts.length > 0 && (
