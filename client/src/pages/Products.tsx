@@ -28,6 +28,11 @@ interface FilterState {
   isNew?: boolean;
 }
 
+const normalizeVietnameseText = (text: string): string => {
+  return text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+};
+
+
 export default function Products() {
   const [location] = useLocation();
   const searchParams = new URLSearchParams(location.split('?')[1] || '');
@@ -59,10 +64,10 @@ export default function Products() {
   const filteredProducts = products?.products.filter(product => {
     // Search filter
     if (filters.search) {
-      const searchLower = filters.search.toLowerCase();
-      const matchesSearch = 
-        product.name.toLowerCase().includes(searchLower) ||
-        product.description.toLowerCase().includes(searchLower);
+      const normalizedQuery = normalizeVietnameseText(filters.search);
+      const normalizedName = normalizeVietnameseText(product.name);
+      const normalizedDesc = normalizeVietnameseText(product.description);
+      const matchesSearch = normalizedName.includes(normalizedQuery) || normalizedDesc.includes(normalizedQuery);
       if (!matchesSearch) return false;
     }
 
@@ -77,7 +82,6 @@ export default function Products() {
 
     // Organic filter
     if (filters.isOrganic) {
-      console.log("Checking isOrganic:", product.name, product.isOrganic, (product as any).is_organic);
       if (!(product.isOrganic === true || (product as any).is_organic === true)) {
         return false;
       }
@@ -85,7 +89,6 @@ export default function Products() {
 
     // New product filter
     if (filters.isNew) {
-      console.log("Checking isNew:", product.name, product.isNew, (product as any).is_new);
       if (!(product.isNew === true || (product as any).is_new === true)) {
         return false;
       }
@@ -142,7 +145,7 @@ export default function Products() {
                 />
               </div>
             </div>
-            
+
             <div className="lg:w-3/4">
               {filteredProducts && filteredProducts.length > 0 ? (
                 <>

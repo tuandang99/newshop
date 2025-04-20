@@ -53,10 +53,12 @@ export default function Navbar() {
   };
 
   const filteredProducts = products 
-    ? products.filter(product => 
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()) && 
-        searchQuery.length > 0
-      ).slice(0, 5) 
+    ? products.filter(product => {
+        if (searchQuery.length === 0) return false;
+        const normalizedQuery = normalizeVietnameseText(searchQuery);
+        const normalizedName = normalizeVietnameseText(product.name);
+        return normalizedName.includes(normalizedQuery);
+      }).slice(0, 5) 
     : [];
 
   const isActive = (path: string) => {
