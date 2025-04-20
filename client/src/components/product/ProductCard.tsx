@@ -1,4 +1,3 @@
-
 import { Helmet } from "react-helmet";
 
 function generateProductSchema(product: any) {
@@ -60,7 +59,7 @@ export default function ProductCard({ product, variant = 'default' }: ProductCar
             -{Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)}%
           </span>
         )}
-        
+
         {/* Left side badge - priority order: bestseller > new > organic */}
         {product.isBestseller ? (
           <span className="absolute top-2 left-2 bg-amber-500 text-white text-xs px-2 py-1 rounded-full z-10">
@@ -82,7 +81,7 @@ export default function ProductCard({ product, variant = 'default' }: ProductCar
   return (
     <div className="product-card bg-white rounded-lg shadow-sm overflow-hidden relative hover:shadow-md transition-all group">
       {renderBadges()}
-      
+
       <Link href={`/products/${product.slug}`} onClick={() => window.scrollTo(0, 0)}>
         <div className="aspect-square overflow-hidden">
           <img
@@ -95,13 +94,15 @@ export default function ProductCard({ product, variant = 'default' }: ProductCar
           />
         </div>
       </Link>
-      
+
       <div className={variant === 'compact' ? 'p-2 sm:p-3' : 'p-4'}>
         {/* Title and rating */}
         <div className="flex justify-between items-start mb-1">
-          <h3 className={`font-semibold font-poppins ${variant === 'compact' ? 'text-sm line-clamp-1' : 'text-base'}`}>
-            {product.name}
-          </h3>
+          <Link href={`/products/${product.slug}`} className="hover:text-primary transition-colors">
+            <h3 className={`font-semibold font-poppins ${variant === 'compact' ? 'text-sm line-clamp-1' : 'text-base'}`}>
+              {product.name}
+            </h3>
+          </Link>
           {variant !== 'compact' && (
             <div className="flex items-center">
               <span className="text-amber-500 text-sm">
@@ -111,32 +112,36 @@ export default function ProductCard({ product, variant = 'default' }: ProductCar
             </div>
           )}
         </div>
-        
+
         {/* Description - hide in compact view */}
         {variant !== 'compact' && (
-          <p className="text-neutral-600 text-sm mb-3 line-clamp-2">{product.description}</p>
+          <Link href={`/products/${product.slug}`} className="hover:text-primary transition-colors">
+            <p className="text-neutral-600 text-sm mb-3 line-clamp-2">{product.description}</p>
+          </Link>
         )}
-        
+
         {/* Price area */}
         <div className="flex flex-wrap justify-between items-start">
-          <div className="flex flex-col mb-2 mr-2">
-            <div className="flex items-center gap-1">
-              <span className={`font-semibold text-red-500 ${variant === 'compact' ? 'text-sm' : 'text-lg'}`}>
-                {product.price.toLocaleString("vi-VN")}₫
-              </span>
+          <Link href={`/products/${product.slug}`} className="hover:text-primary transition-colors">
+            <div className="flex flex-col mb-2 mr-2">
+              <div className="flex items-center gap-1">
+                <span className={`font-semibold text-red-500 ${variant === 'compact' ? 'text-sm' : 'text-lg'}`}>
+                  {product.price.toLocaleString("vi-VN")}₫
+                </span>
+                {product.oldPrice && variant !== 'compact' && (
+                  <span className="text-sm line-through text-neutral-500 ml-1">
+                    {product.oldPrice.toLocaleString("vi-VN")}₫
+                  </span>
+                )}
+              </div>
               {product.oldPrice && variant !== 'compact' && (
-                <span className="text-sm line-through text-neutral-500 ml-1">
-                  {product.oldPrice.toLocaleString("vi-VN")}₫
+                <span className="text-xs text-red-500">
+                  Giảm {Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)}%
                 </span>
               )}
             </div>
-            {product.oldPrice && variant !== 'compact' && (
-              <span className="text-xs text-red-500">
-                Giảm {Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)}%
-              </span>
-            )}
-          </div>
-          
+          </Link>
+
           {/* Buy button - Always show on small screen, hover on desktop */}
           {variant !== 'compact' && (
             <div className="mt-1 sm:opacity-0 sm:group-hover:opacity-100 transition-all">
