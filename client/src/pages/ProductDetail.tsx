@@ -255,7 +255,7 @@ export default function ProductDetail() {
                   </div>
                   <div>
                     <h4 className="text-sm font-medium">Miễn phí vận chuyển</h4>
-                    <p className="text-xs text-neutral-600">đơn hàng từ 499k</p>
+                    <p className="text-xs text-neutral-600">Đơn hàng từ 499k</p>
                   </div>
                 </div>
 
@@ -265,7 +265,7 @@ export default function ProductDetail() {
                   </div>
                   <div>
                     <h4 className="text-sm font-medium">Giao hàng nhanh</h4>
-                    <p className="text-xs text-neutral-600">toàn quốc</p>
+                    <p className="text-xs text-neutral-600">Giao hàng toàn quốc</p>
                   </div>
                 </div>
 
@@ -275,7 +275,7 @@ export default function ProductDetail() {
                   </div>
                   <div>
                     <h4 className="text-sm font-medium">Mua nhanh chỉ cần</h4>
-                    <p className="text-xs text-neutral-600">số điện thoại</p>
+                    <p className="text-xs text-neutral-600">Số điện thoại</p>
                   </div>
                 </div>
 
@@ -284,8 +284,8 @@ export default function ProductDetail() {
                     <AwardIcon className="w-8 h-8 text-primary" strokeWidth={1.5} />
                   </div>
                   <div>
-                    <h4 className="text-sm font-medium">Tích điểm cho mọi giao dịch</h4>
-                    <p className="text-xs text-neutral-600">dùng điểm đổi ưu đãi hấp dẫn</p>
+                    <h4 className="text-sm font-medium">Voucher cho lần mua tiếp theo</h4>
+                    <p className="text-xs text-neutral-600">Ưu đãi hấp dẫn</p>
                   </div>
                 </div>
               </div>
