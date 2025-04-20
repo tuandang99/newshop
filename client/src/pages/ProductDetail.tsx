@@ -246,6 +246,49 @@ export default function ProductDetail() {
                   {selectedVariant ? 'Thêm vào giỏ hàng' : 'Vui lòng chọn loại sản phẩm'}
                 </Button>
               </div>
+
+              {/* Shipping and Service Info */}
+              <div className="mt-6 grid grid-cols-2 gap-4">
+                <div className="flex items-start space-x-3">
+                  <div className="flex-shrink-0">
+                    <img src="/images/delivery-truck.png" alt="Delivery" className="w-8 h-8" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-medium">Miễn phí vận chuyển</h4>
+                    <p className="text-xs text-neutral-600">đơn hàng từ 499k</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-3">
+                  <div className="flex-shrink-0">
+                    <img src="/images/fast-delivery.png" alt="Fast Delivery" className="w-8 h-8" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-medium">Giao hàng nhanh</h4>
+                    <p className="text-xs text-neutral-600">toàn quốc</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-3">
+                  <div className="flex-shrink-0">
+                    <img src="/images/phone-order.png" alt="Phone Order" className="w-8 h-8" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-medium">Mua nhanh chỉ cần</h4>
+                    <p className="text-xs text-neutral-600">số điện thoại</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-3">
+                  <div className="flex-shrink-0">
+                    <img src="/images/reward-points.png" alt="Reward Points" className="w-8 h-8" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-medium">Tích điểm cho mọi giao dịch</h4>
+                    <p className="text-xs text-neutral-600">dùng điểm đổi ưu đãi hấp dẫn</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
