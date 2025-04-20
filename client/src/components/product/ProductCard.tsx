@@ -84,14 +84,16 @@ export default function ProductCard({ product, variant = 'default' }: ProductCar
       {renderBadges()}
       
       <Link href={`/products/${product.slug}`} onClick={() => window.scrollTo(0, 0)}>
-        <img
-          src={product.image}
-          alt={product.name}
-          loading="lazy"
-          width={400}
-          height={224}
-          className={`w-full object-cover ${variant === 'compact' ? 'h-28 sm:h-32' : 'h-40 max-h-[200px]'}`}
-        />
+        <div className="aspect-square overflow-hidden">
+          <img
+            src={product.image}
+            alt={product.name}
+            loading="lazy"
+            width={400}
+            height={400}
+            className="w-full h-full object-cover"
+          />
+        </div>
       </Link>
       
       <div className={variant === 'compact' ? 'p-2 sm:p-3' : 'p-4'}>
