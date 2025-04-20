@@ -251,7 +251,7 @@ export default function ProductDetail() {
               <div className="mt-6 grid grid-cols-2 gap-4">
                 <div className="flex items-start space-x-3">
                   <div className="flex-shrink-0">
-                    <TruckIcon className="w-8 h-8 text-primary" />
+                    <TruckIcon className="w-8 h-8 text-primary" strokeWidth={1.5} />
                   </div>
                   <div>
                     <h4 className="text-sm font-medium">Miễn phí vận chuyển</h4>
@@ -261,7 +261,7 @@ export default function ProductDetail() {
 
                 <div className="flex items-start space-x-3">
                   <div className="flex-shrink-0">
-                    <Truck className="w-8 h-8 text-primary" strokeWidth={1.5} />
+                    <TruckIcon className="w-8 h-8 text-primary" strokeWidth={1.5} />
                   </div>
                   <div>
                     <h4 className="text-sm font-medium">Giao hàng nhanh</h4>
@@ -271,7 +271,7 @@ export default function ProductDetail() {
 
                 <div className="flex items-start space-x-3">
                   <div className="flex-shrink-0">
-                    <PhoneIcon className="w-8 h-8 text-primary" />
+                    <PhoneIcon className="w-8 h-8 text-primary" strokeWidth={1.5} />
                   </div>
                   <div>
                     <h4 className="text-sm font-medium">Mua nhanh chỉ cần</h4>
@@ -281,7 +281,7 @@ export default function ProductDetail() {
 
                 <div className="flex items-start space-x-3">
                   <div className="flex-shrink-0">
-                    <AwardIcon className="w-8 h-8 text-primary" />
+                    <AwardIcon className="w-8 h-8 text-primary" strokeWidth={1.5} />
                   </div>
                   <div>
                     <h4 className="text-sm font-medium">Tích điểm cho mọi giao dịch</h4>
