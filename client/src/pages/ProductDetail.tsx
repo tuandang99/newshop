@@ -294,7 +294,7 @@ export default function ProductDetail() {
         </div>
         
         {/* Product Details Section */}
-        <div className="mt-12 border-t border-neutral-200">
+        <div className="mt-20 border-t border-neutral-200">
           <div className="container mx-auto px-4 py-8">
             <h3 className="text-2xl font-bold mb-4">Chi tiết sản phẩm</h3>
             <ul className="list-disc list-inside text-neutral-700 space-y-2">
