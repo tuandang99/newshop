@@ -36,7 +36,7 @@ export const products = pgTable("products", {
   isNew: boolean("is_new").default(false),
   isOrganic: boolean("is_organic").default(true),
   isBestseller: boolean("is_bestseller").default(false),
-  details: jsonb("details").default('[]'),
+  details: text("details").default(''), // Changed to text type for markdown
   discount: integer("discount"),
   createdAt: timestamp("created_at").defaultNow(),
 });

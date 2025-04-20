@@ -4,6 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Product, Category, ProductImage } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { StarFilledIcon, Plus, Minus, ArrowLeftIcon, ChevronLeftIcon, ChevronRightIcon, TruckIcon, PhoneIcon, AwardIcon } from "@/lib/icons";
+import MDEditor from '@uiw/react-md-editor';
+import '@/components/ui/markdown-styles.css';
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
 import { Helmet } from "react-helmet";
@@ -297,15 +299,13 @@ export default function ProductDetail() {
         <div className="mt-20 border-t border-neutral-200">
           <div className="container mx-auto px-4 py-8">
             <h3 className="text-2xl font-bold mb-4">Chi tiết sản phẩm</h3>
-            <ul className="list-disc list-inside text-neutral-700 space-y-2">
-              {product.details && product.details.length > 0 ? (
-                product.details.map((detail, index) => (
-                  <li key={index}>{detail}</li>
-                ))
+            <div className="prose max-w-none">
+              {product.details ? (
+                <MDEditor.Markdown source={product.details} />
               ) : (
-                <li>Chưa có thông tin chi tiết</li>
+                <p>Chưa có thông tin chi tiết</p>
               )}
-            </ul>
+            </div>
           </div>
         </div>
 
