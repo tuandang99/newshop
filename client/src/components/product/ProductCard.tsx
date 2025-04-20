@@ -125,7 +125,7 @@ export default function ProductCard({ product, variant = 'default' }: ProductCar
           <Link href={`/products/${product.slug}`} className="hover:text-primary transition-colors">
             <div className="flex flex-col mb-2 mr-2">
               <div className="flex items-center gap-1">
-                <span className={`font-semibold text-red-500 ${variant === 'compact' ? 'text-sm' : 'text-lg'}`}>
+                <span className={`font-semibold ${variant === 'compact' ? 'text-sm' : 'text-lg'}`}>
                   {product.price.toLocaleString("vi-VN")}₫
                 </span>
                 {product.oldPrice && variant !== 'compact' && (
