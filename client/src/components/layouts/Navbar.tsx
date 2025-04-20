@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { cn, normalizeVietnameseText } from "@/lib/utils";
 import { useCart } from "@/context/CartContext";
 import { LeafIcon, SearchIcon, ShoppingCartIcon, MenuIcon, ChevronDownIcon } from "@/lib/icons";
 import { Category, Product } from "@shared/schema";
