@@ -247,19 +247,6 @@ export default function ProductDetail() {
                 </Button>
               </div>
 
-              <div className="border-t border-neutral-200 pt-6">
-                <h3 className="font-semibold mb-2">Chi tiết sản phẩm</h3>
-                <ul className="list-disc list-inside text-neutral-700 space-y-1">
-                  {product.details && product.details.length > 0 ? (
-                    product.details.map((detail, index) => (
-                      <li key={index}>{detail}</li>
-                    ))
-                  ) : (
-                    <li>Chưa có thông tin chi tiết</li>
-                  )}
-                </ul>
-              </div>
-
               {/* Related Products */}
               <div className="border-t border-neutral-200 pt-6 mt-6">
                 <h3 className="text-lg font-bold mb-4">Sản phẩm liên quan</h3>
@@ -277,6 +264,22 @@ export default function ProductDetail() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+        
+        {/* Product Details Section */}
+        <div className="mt-12 border-t border-neutral-200">
+          <div className="container mx-auto px-4 py-8">
+            <h3 className="text-2xl font-bold mb-4">Chi tiết sản phẩm</h3>
+            <ul className="list-disc list-inside text-neutral-700 space-y-2">
+              {product.details && product.details.length > 0 ? (
+                product.details.map((detail, index) => (
+                  <li key={index}>{detail}</li>
+                ))
+              ) : (
+                <li>Chưa có thông tin chi tiết</li>
+              )}
+            </ul>
           </div>
         </div>
       </section>
