@@ -3,9 +3,19 @@ import { useParams, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Product, Category, ProductImage } from "@shared/schema";
 import { Button } from "@/components/ui/button";
-import { StarFilledIcon, Plus, Minus, ArrowLeftIcon, ChevronLeftIcon, ChevronRightIcon, TruckIcon, PhoneIcon, AwardIcon } from "@/lib/icons";
-import MDEditor from '@uiw/react-md-editor';
-import '@/components/ui/markdown-styles.css';
+import {
+  StarFilledIcon,
+  Plus,
+  Minus,
+  ArrowLeftIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  TruckIcon,
+  PhoneIcon,
+  AwardIcon,
+} from "@/lib/icons";
+import MDEditor from "@uiw/react-md-editor";
+import "@/components/ui/markdown-styles.css";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
 import { Helmet } from "react-helmet";
@@ -15,7 +25,9 @@ import ProductGallery from "@/components/product/ProductGallery";
 export default function ProductDetail() {
   const { slug } = useParams();
   const [quantity, setQuantity] = useState(1);
-  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
+    null,
+  );
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -29,7 +41,7 @@ export default function ProductDetail() {
     queryKey: [`/api/products/${product?.id}/variants`],
     enabled: !!product?.id,
   });
-  
+
   const { addItem } = useCart();
   const { toast } = useToast();
 
@@ -41,16 +53,15 @@ export default function ProductDetail() {
     queryKey: [`/api/products/${slug}`],
   });
 
-  const {
-    data: productImages,
-    isLoading: imagesLoading,
-  } = useQuery<ProductImage[]>({
+  const { data: productImages, isLoading: imagesLoading } = useQuery<
+    ProductImage[]
+  >({
     queryKey: [`/api/products/${product?.id}/images`],
     enabled: !!product?.id, // Only fetch when product is loaded
   });
 
   const { data: productsResponse } = useQuery({
-    queryKey: ['/api/products'],
+    queryKey: ["/api/products"],
     enabled: !!product, // Only fetch when product data is available
   });
 
@@ -75,7 +86,7 @@ export default function ProductDetail() {
     if (product && selectedVariant) {
       // Tạo unique ID cho item dựa trên product ID và variant ID
       const cartItemId = `${product.id}-${selectedVariant.id}`;
-      
+
       addItem({
         id: cartItemId,
         productId: product.id,
@@ -142,7 +153,7 @@ export default function ProductDetail() {
               {imagesLoading ? (
                 <div className="bg-gray-100 animate-pulse rounded-lg w-full aspect-square"></div>
               ) : (
-                <ProductGallery 
+                <ProductGallery
                   productImages={productImages || []}
                   fallbackImage={product.image}
                 />
@@ -185,7 +196,11 @@ export default function ProductDetail() {
 
               <div className="flex items-center mb-6">
                 <span className="text-2xl font-bold mr-2">
-                  {(selectedVariant ? selectedVariant.price : product.price).toLocaleString("vi-VN")}₫
+                  {(selectedVariant
+                    ? selectedVariant.price
+                    : product.price
+                  ).toLocaleString("vi-VN")}
+                  ₫
                 </span>
                 {product.oldPrice && !selectedVariant && (
                   <span className="text-neutral-500 line-through">
@@ -201,13 +216,19 @@ export default function ProductDetail() {
                   {variants?.map((variant) => (
                     <Button
                       key={variant.id}
-                      variant={selectedVariant?.id === variant.id ? "default" : "outline"}
+                      variant={
+                        selectedVariant?.id === variant.id
+                          ? "default"
+                          : "outline"
+                      }
                       className="w-full h-auto py-2 px-3 justify-start"
                       onClick={() => setSelectedVariant(variant)}
                     >
                       <div className="flex flex-col items-start">
                         <span className="text-sm">{variant.name}</span>
-                        <span className="text-xs text-neutral-500">{variant.weight}</span>
+                        <span className="text-xs text-neutral-500">
+                          {variant.weight}
+                        </span>
                       </div>
                       <span className="ml-auto text-sm font-semibold">
                         {variant.price.toLocaleString("vi-VN")}₫
@@ -245,7 +266,9 @@ export default function ProductDetail() {
                   disabled={!selectedVariant}
                   className="bg-primary text-white hover:bg-primary/90 px-8"
                 >
-                  {selectedVariant ? 'Thêm vào giỏ hàng' : 'Vui lòng chọn loại sản phẩm'}
+                  {selectedVariant
+                    ? "Thêm vào giỏ hàng"
+                    : "Vui lòng chọn loại sản phẩm"}
                 </Button>
               </div>
 
@@ -253,7 +276,10 @@ export default function ProductDetail() {
               <div className="mt-6 grid grid-cols-2 gap-4">
                 <div className="flex items-start space-x-3">
                   <div className="flex-shrink-0">
-                    <TruckIcon className="w-8 h-8 text-primary" strokeWidth={1.5} />
+                    <TruckIcon
+                      className="w-8 h-8 text-primary"
+                      strokeWidth={1.5}
+                    />
                   </div>
                   <div>
                     <h4 className="text-sm font-medium">Miễn phí vận chuyển</h4>
@@ -263,17 +289,25 @@ export default function ProductDetail() {
 
                 <div className="flex items-start space-x-3">
                   <div className="flex-shrink-0">
-                    <TruckIcon className="w-8 h-8 text-primary" strokeWidth={1.5} />
+                    <TruckIcon
+                      className="w-8 h-8 text-primary"
+                      strokeWidth={1.5}
+                    />
                   </div>
                   <div>
                     <h4 className="text-sm font-medium">Giao hàng nhanh</h4>
-                    <p className="text-xs text-neutral-600">Giao hàng toàn quốc</p>
+                    <p className="text-xs text-neutral-600">
+                      Giao hàng toàn quốc
+                    </p>
                   </div>
                 </div>
 
                 <div className="flex items-start space-x-3">
                   <div className="flex-shrink-0">
-                    <PhoneIcon className="w-8 h-8 text-primary" strokeWidth={1.5} />
+                    <PhoneIcon
+                      className="w-8 h-8 text-primary"
+                      strokeWidth={1.5}
+                    />
                   </div>
                   <div>
                     <h4 className="text-sm font-medium">Mua nhanh chỉ cần</h4>
@@ -283,10 +317,15 @@ export default function ProductDetail() {
 
                 <div className="flex items-start space-x-3">
                   <div className="flex-shrink-0">
-                    <AwardIcon className="w-8 h-8 text-primary" strokeWidth={1.5} />
+                    <AwardIcon
+                      className="w-8 h-8 text-primary"
+                      strokeWidth={1.5}
+                    />
                   </div>
                   <div>
-                    <h4 className="text-sm font-medium">Voucher cho lần mua tiếp theo</h4>
+                    <h4 className="text-sm font-medium">
+                      Voucher cho lần mua tiếp theo
+                    </h4>
                     <p className="text-xs text-neutral-600">Ưu đãi hấp dẫn</p>
                   </div>
                 </div>
@@ -294,12 +333,12 @@ export default function ProductDetail() {
             </div>
           </div>
         </div>
-        
+
         {/* Product Details Section */}
         <div className="mt-20 border-t border-neutral-200">
           <div className="container mx-auto px-4 py-8">
             <h3 className="text-2xl font-bold mb-4">Chi tiết sản phẩm</h3>
-            <div className="prose max-w-none">
+            <div className="prose max-w-none" data-color-mode="light">
               {product.details ? (
                 <MDEditor.Markdown source={product.details} />
               ) : (
@@ -315,9 +354,12 @@ export default function ProductDetail() {
             <h3 className="text-2xl font-bold mb-6">Sản phẩm liên quan</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {productsResponse?.products
-                .filter(p => p.categoryId === product.categoryId && p.id !== product.id)
+                .filter(
+                  (p) =>
+                    p.categoryId === product.categoryId && p.id !== product.id,
+                )
                 .slice(0, 4)
-                .map(relatedProduct => (
+                .map((relatedProduct) => (
                   <div key={relatedProduct.id} className="w-full">
                     <ProductCard product={relatedProduct} />
                   </div>
