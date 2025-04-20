@@ -2,7 +2,7 @@ import { useParams, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { BlogPost as BlogPostType, BlogPostsResponse } from "@shared/schema"; 
 import { Button } from "@/components/ui/button";
-import { CalendarIcon, ArrowLeftIcon, ArrowRightIcon } from "@/lib/icons";
+import { CalendarIcon, ArrowLeftIcon, ArrowRightIcon, FacebookIcon, TwitterIcon, LinkedInIcon } from "@/lib/icons";
 import { format } from "date-fns";
 import { Helmet } from "react-helmet";
 import MDEditor from '@uiw/react-md-editor';
