@@ -97,9 +97,11 @@ export default function BlogPost() {
               loading="lazy"
             />
 
-            <div className="prose max-w-none sm:prose-lg md:prose-xl break-words" data-color-mode="light">
-              <MDEditor.Markdown source={post.content} skipHtml={false} />
-            </div>
+            <div 
+              className="prose max-w-none sm:prose-lg md:prose-xl break-words" 
+              data-color-mode="light"
+              dangerouslySetInnerHTML={{ __html: post.content }}
+            />
 
             {/* Social Share */}
             <div className="mt-8 border-t border-neutral-200 pt-6">
