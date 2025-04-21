@@ -17,7 +17,37 @@
   </url>
   <url>
     <loc>https://tuho.vn/blog</loc>
-    <changefreq>weekly</changefreq>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tuho.vn/products/hat-macca</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tuho.vn/products/hat-mix</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tuho.vn/products/hat-hanh-nhan-bo</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tuho.vn/products/hat-de-cuoi</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tuho.vn/products/granola</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tuho.vn/products/hat-oc-cho-do</loc>
+    <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
 </urlset>
