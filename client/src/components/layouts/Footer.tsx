@@ -185,8 +185,8 @@ export default function Footer() {
               © {new Date().getFullYear()} TUHO Healthy Food. Đã đăng ký bản
               quyền.
             </p>
-            <a href='http://online.gov.vn/Website/chi-tiet-131008'><img alt='' title='' src='http://online.gov.vn/Content/EndUser/LogoCCDVSaleNoti/logoSaleNoti.png'/></a>
           </div>
+            <a className="mt-4 block" href='http://online.gov.vn/Website/chi-tiet-131008'><img alt='' width={200} title='' src="/public/images/hero/bct.png"/></a>
         </div>
       </div>
     </footer>
