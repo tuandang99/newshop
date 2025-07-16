@@ -112,6 +112,9 @@ export default function Navbar() {
             <Link href="/blog" className={`${isActive("/blog")} font-medium transition px-2`}>
               Tin Tức
             </Link>
+            <Link href="/certificates" className={`${isActive("/certificates")} font-medium transition px-2`}>
+              Chứng Chỉ
+            </Link>
             <Link href="/contact" className={`${isActive("/contact")} font-medium transition px-2`}>
               Liên Hệ
             </Link>
@@ -261,6 +264,13 @@ export default function Navbar() {
                 onClick={closeMenu}
               >
                 Tin Tức
+              </Link>
+              <Link 
+                href="/certificates" 
+                className="block py-2 text-lg font-medium hover:text-primary transition"
+                onClick={closeMenu}
+              >
+                Chứng Chỉ
               </Link>
               <Link 
                 href="/contact" 
