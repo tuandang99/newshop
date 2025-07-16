@@ -91,6 +91,14 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                 <Link
+                  href="/certificates"
+                  className="text-neutral-400 hover:text-white transition"
+                >
+                  Chứng chỉ
+                </Link>
+              </li>
+              <li>
                 <Link
                   href="/blog"
                   className="text-neutral-400 hover:text-white transition"

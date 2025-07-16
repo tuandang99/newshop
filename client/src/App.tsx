@@ -14,7 +14,8 @@ const About = lazy(() => import(/* webpackPrefetch: true */ './pages/About'));
 const ShippingPolicy = lazy(() => import(/* webpackPrefetch: true */ './pages/support/ShippingPolicy'));
 const RefundPolicy = lazy(() => import(/* webpackPrefetch: true */ './pages/support/RefundPolicy'));
 const FAQ = lazy(() => import(/* webpackPrefetch: true */ './pages/support/FAQ'));
-const Privacy = lazy(() => import(/* webpackPrefetch: true */ './pages/support/Privacy')); 
+const Privacy = lazy(() => import(/* webpackPrefetch: true */ './pages/support/Privacy'));
+import Certificates from "./pages/Certificates";
 const Blog = lazy(() => import(/* webpackPrefetch: true */ './pages/Blog'));
 const BlogPost = lazy(() => import(/* webpackPrefetch: true */ './pages/BlogPost'));
 const Contact = lazy(() => import(/* webpackPrefetch: true */ './pages/Contact'));
@@ -39,6 +40,7 @@ function Router() {
           <Route path="/support/refund" component={RefundPolicy} />
           <Route path="/support/faq" component={FAQ} />
           <Route path="/support/privacy" component={Privacy} />
+          <Route path="/certificates" component={Certificates} />
           <Route component={NotFound} />
         </Switch>
       </Suspense>
