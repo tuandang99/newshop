@@ -38,12 +38,12 @@ export default function Certificates() {
               </div>
               
               <div className="certificate-image mb-6">
-                <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                  <AwardIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500 text-sm">
+                <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-12 text-center min-h-[300px] flex flex-col justify-center">
+                  <AwardIcon className="h-20 w-20 text-gray-400 mx-auto mb-6" />
+                  <p className="text-gray-500 text-base">
                     Hình ảnh chứng chỉ HACCP sẽ được hiển thị tại đây
                   </p>
-                  <p className="text-gray-400 text-xs mt-2">
+                  <p className="text-gray-400 text-sm mt-3">
                     Vui lòng upload hình ảnh chứng chỉ HACCP của bạn
                   </p>
                 </div>
@@ -67,12 +67,12 @@ export default function Certificates() {
               </div>
               
               <div className="certificate-image mb-6">
-                <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                  <AwardIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500 text-sm">
+                <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-12 text-center min-h-[300px] flex flex-col justify-center">
+                  <AwardIcon className="h-20 w-20 text-gray-400 mx-auto mb-6" />
+                  <p className="text-gray-500 text-base">
                     Hình ảnh chứng chỉ ISO 22000:2018 sẽ được hiển thị tại đây
                   </p>
-                  <p className="text-gray-400 text-xs mt-2">
+                  <p className="text-gray-400 text-sm mt-3">
                     Vui lòng upload hình ảnh chứng chỉ ISO 22000:2018 của bạn
                   </p>
                 </div>
