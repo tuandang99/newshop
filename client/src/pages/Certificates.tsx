@@ -38,14 +38,12 @@ export default function Certificates() {
               </div>
               
               <div className="certificate-image mb-6">
-                <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-12 text-center min-h-[300px] flex flex-col justify-center">
-                  <AwardIcon className="h-20 w-20 text-gray-400 mx-auto mb-6" />
-                  <p className="text-gray-500 text-base">
-                    Hình ảnh chứng chỉ HACCP sẽ được hiển thị tại đây
-                  </p>
-                  <p className="text-gray-400 text-sm mt-3">
-                    Vui lòng upload hình ảnh chứng chỉ HACCP của bạn
-                  </p>
+                <div className="bg-white border-2 border-gray-200 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                  <img 
+                    src="/images/certificate/haccp.jpg" 
+                    alt="Chứng chỉ HACCP - TUHO Foods"
+                    className="w-full h-auto object-contain max-h-[400px] mx-auto"
+                  />
                 </div>
               </div>
               
@@ -67,14 +65,12 @@ export default function Certificates() {
               </div>
               
               <div className="certificate-image mb-6">
-                <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-12 text-center min-h-[300px] flex flex-col justify-center">
-                  <AwardIcon className="h-20 w-20 text-gray-400 mx-auto mb-6" />
-                  <p className="text-gray-500 text-base">
-                    Hình ảnh chứng chỉ ISO 22000:2018 sẽ được hiển thị tại đây
-                  </p>
-                  <p className="text-gray-400 text-sm mt-3">
-                    Vui lòng upload hình ảnh chứng chỉ ISO 22000:2018 của bạn
-                  </p>
+                <div className="bg-white border-2 border-gray-200 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                  <img 
+                    src="/images/certificate/iso.jpg" 
+                    alt="Chứng chỉ ISO 22000:2018 - TUHO Foods"
+                    className="w-full h-auto object-contain max-h-[400px] mx-auto"
+                  />
                 </div>
               </div>
               
