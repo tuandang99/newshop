@@ -186,7 +186,7 @@ export default function Footer() {
               quyền.
             </p>
           </div>
-            <a className="mt-4 block" href='http://online.gov.vn/Website/chi-tiet-131008'><img alt='' width={200} title='' src="/public/images/hero/bct.png"/></a>
+            <a className="mt-4 block" href='http://online.gov.vn/Website/chi-tiet-131008'><img alt='' width={200} title='' src="images/hero/bct.png"/></a>
         </div>
       </div>
     </footer>
