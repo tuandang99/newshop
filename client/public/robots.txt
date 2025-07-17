@@ -1,4 +1,4 @@
 
 User-agent: *
 Allow: /
-Sitemap: https://tuho.com/sitemap.xml
+Sitemap: https://tuho.vn/sitemap.xml
