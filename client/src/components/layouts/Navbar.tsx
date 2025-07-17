@@ -78,7 +78,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center flex-shrink-0" onClick={closeMenu}>
             <img src="/logo.png" alt="TUHO Logo" className="h-8 sm:h-10 md:h-12 w-auto mr-2" />
-            <span className="text-base sm:text-lg md:text-xl font-bold truncate" style={{ fontFamily: 'Chewy', color: 'rgba(43,136,65,255)' }}>Tuho Healthy Foods</span>
+            <span className="text-base sm:text-lg md:text-xl font-bold truncate font-poppins" style={{ color: 'rgba(43,136,65,255)' }}>Tuho Healthy Foods</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -111,6 +111,9 @@ export default function Navbar() {
             </Link>
             <Link href="/blog" className={`${isActive("/blog")} font-medium transition px-2`}>
               Tin Tức
+            </Link>
+            <Link href="/certificates" className={`${isActive("/certificates")} font-medium transition px-2`}>
+              Chứng Chỉ
             </Link>
             <Link href="/contact" className={`${isActive("/contact")} font-medium transition px-2`}>
               Liên Hệ
@@ -261,6 +264,13 @@ export default function Navbar() {
                 onClick={closeMenu}
               >
                 Tin Tức
+              </Link>
+              <Link 
+                href="/certificates" 
+                className="block py-2 text-lg font-medium hover:text-primary transition"
+                onClick={closeMenu}
+              >
+                Chứng Chỉ
               </Link>
               <Link 
                 href="/contact" 
