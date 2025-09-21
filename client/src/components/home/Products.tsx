@@ -21,7 +21,7 @@ export default function Products() {
 
   // Thay đổi API endpoint từ featured-products sang products
   const { data: productsResponse } = useQuery<ProductsResponse>({
-    queryKey: ['/api/products'],
+    queryKey: ['/api/products', 'all'],
   });
 
   const { data: categories } = useQuery<Category[]>({
