@@ -1,20 +1,3 @@
-import { Helmet } from "react-helmet";
-
-function generateProductSchema(product: any) {
-  return {
-    "@context": "https://schema.org/",
-    "@type": "Product",
-    "name": product.name,
-    "description": product.description,
-    "image": product.image,
-    "offers": {
-      "@type": "Offer",
-      "price": product.price,
-      "priceCurrency": "VND"
-    }
-  };
-}
-
 import { Link } from "wouter";
 import { Product } from "@shared/schema";
 import { Button } from "@/components/ui/button";
@@ -35,7 +18,9 @@ export default function ProductCard({ product, variant = 'default' }: ProductCar
     e.preventDefault(); // Prevent navigation to product detail
 
     addItem({
-      id: product.id,
+      id: product.id.toString(),
+      productId: product.id,
+      variantId: 0, // Default variant for products without specific variants
       name: product.name,
       price: product.price,
       image: product.image,
@@ -106,7 +91,7 @@ export default function ProductCard({ product, variant = 'default' }: ProductCar
           {variant !== 'compact' && (
             <div className="flex items-center">
               <span className="text-amber-500 text-sm">
-                {product.rating.toFixed(1)}
+                {(product.rating || 0).toFixed(1)}
               </span>
               <StarFilledIcon className="text-amber-500 ml-1 h-4 w-4" />
             </div>

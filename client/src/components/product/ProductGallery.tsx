@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ProductImage } from "@shared/schema";
 import { ChevronLeftIcon, ChevronRightIcon } from "@/lib/icons";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,7 @@ export default function ProductGallery({ productImages, fallbackImage }: Product
   
   // If no product images, use the fallback
   const images = productImages.length > 0 
-    ? productImages.sort((a, b) => a.displayOrder - b.displayOrder) 
+    ? [...productImages].sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0)) 
     : (fallbackImage ? [{ id: 0, productId: 0, imagePath: fallbackImage, isMain: true, displayOrder: 1, createdAt: new Date() }] : []);
   
   // Find the main image
@@ -22,9 +22,9 @@ export default function ProductGallery({ productImages, fallbackImage }: Product
     : 0;
   
   // Initialize with main image
-  useState(() => {
+  useEffect(() => {
     setCurrentImageIndex(mainImageIndex);
-  });
+  }, [mainImageIndex]);
 
   if (images.length === 0) {
     return null;
@@ -50,6 +50,9 @@ export default function ProductGallery({ productImages, fallbackImage }: Product
           <img
             src={images[currentImageIndex]?.imagePath}
             alt="Product"
+            loading="lazy"
+            width="600"
+            height="600"
             className="w-full h-full object-contain rounded-lg"
           />
         </div>

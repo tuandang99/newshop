@@ -7,8 +7,8 @@ interface CartContextType {
   items: CartItem[];
   toggleCart: () => void;
   addItem: (item: CartItem) => void;
-  updateQuantity: (id: number, quantity: number) => void;
-  removeItem: (id: number) => void;
+  updateQuantity: (id: string, quantity: number) => void;
+  removeItem: (id: string) => void;
   clearCart: () => void;
   calculateTotal: () => number;
 }
@@ -59,7 +59,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   };
   
-  const updateQuantity = (id: number, quantity: number) => {
+  const updateQuantity = (id: string, quantity: number) => {
     if (quantity <= 0) {
       removeItem(id);
       return;
@@ -72,7 +72,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     );
   };
   
-  const removeItem = (id: number) => {
+  const removeItem = (id: string) => {
     setItems((currentItems) => currentItems.filter((item) => item.id !== id));
     
     toast({
