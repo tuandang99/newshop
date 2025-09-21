@@ -37,14 +37,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Products
   app.get("/api/products", async (req: Request, res: Response) => {
     try {
+      const allProducts = await storage.getProducts();
+      
+      // If no pagination parameters, return all products
+      if (!req.query.page && !req.query.limit) {
+        return res.json({
+          products: allProducts,
+          pagination: {
+            total: allProducts.length,
+            page: 1,
+            limit: allProducts.length,
+            totalPages: 1
+          }
+        });
+      }
+
+      // Otherwise, handle pagination
       const page = req.query.page ? parseInt(req.query.page as string) : 1;
       const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
 
       if (isNaN(page) || isNaN(limit) || page < 1 || limit < 1) {
         return res.status(400).json({ message: "Invalid pagination parameters" });
       }
-
-      const allProducts = await storage.getProducts();
 
       // Manual pagination since we're using in-memory storage
       const startIndex = (page - 1) * limit;
