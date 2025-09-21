@@ -123,23 +123,26 @@ export default function ProductDetail() {
   return (
     <>
       <Helmet>
-        <title>{product.name} - TUHO Healthy Food</title>
+        <title>{product.name} - TUHO Healthy Foods</title>
         <meta name="description" content={product.description} />
+        <link rel="canonical" href={`${window.location.origin}/products/${product.slug}`} />
         
         {/* Open Graph Tags */}
-        <meta property="og:title" content={`${product.name} - TUHO Healthy Food`} />
+        <meta property="og:title" content={`${product.name} - TUHO Healthy Foods`} />
         <meta property="og:description" content={product.description} />
         <meta property="og:type" content="product" />
-        <meta property="og:url" content={`https://tuho.vn/products/${product.slug}`} />
-        <meta property="og:image" content={product.image} />
+        <meta property="og:url" content={`${window.location.origin}/products/${product.slug}`} />
+        <meta property="og:image" content={`${window.location.origin}${product.image}`} />
+        <meta property="og:site_name" content="TUHO Healthy Foods" />
+        <meta property="og:locale" content="vi_VN" />
         <meta property="product:price:amount" content={product.price.toString()} />
         <meta property="product:price:currency" content="VND" />
         
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={`${product.name} - TUHO Healthy Food`} />
+        <meta name="twitter:title" content={`${product.name} - TUHO Healthy Foods`} />
         <meta name="twitter:description" content={product.description} />
-        <meta name="twitter:image" content={product.image} />
+        <meta name="twitter:image" content={`${window.location.origin}${product.image}`} />
         
         {/* Product Schema.org structured data */}
         <script type="application/ld+json">
@@ -148,26 +151,27 @@ export default function ProductDetail() {
             "@type": "Product",
             "name": product.name,
             "description": product.description,
-            "image": [product.image],
+            "image": [`${window.location.origin}${product.image}`],
             "brand": {
               "@type": "Brand",
-              "name": "TUHO"
+              "name": "TUHO Healthy Foods"
             },
+            "url": `${window.location.origin}/products/${product.slug}`,
             "offers": {
               "@type": "Offer",
-              "price": product.price,
+              "price": product.price.toString(),
               "priceCurrency": "VND",
               "availability": "https://schema.org/InStock",
               "seller": {
                 "@type": "Organization",
-                "name": "TUHO"
+                "name": "TUHO Healthy Foods"
               }
             },
             ...(product.rating ? {
               "aggregateRating": {
                 "@type": "AggregateRating",
                 "ratingValue": product.rating,
-                "ratingCount": 1
+                "ratingCount": 5
               }
             } : {})
           })}
@@ -183,19 +187,19 @@ export default function ProductDetail() {
                 "@type": "ListItem",
                 "position": 1,
                 "name": "Trang chủ",
-                "item": "https://tuho.vn"
+                "item": `${window.location.origin}`
               },
               {
                 "@type": "ListItem", 
                 "position": 2,
                 "name": "Sản phẩm",
-                "item": "https://tuho.vn/products"
+                "item": `${window.location.origin}/products`
               },
               {
                 "@type": "ListItem",
                 "position": 3,
                 "name": product.name,
-                "item": `https://tuho.vn/products/${product.slug}`
+                "item": `${window.location.origin}/products/${product.slug}`
               }
             ]
           })}

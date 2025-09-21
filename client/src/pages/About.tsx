@@ -6,7 +6,7 @@ export default function About() {
   return (
     <>
       <Helmet>
-        <title>Về chúng tôi - TUHO Foods</title>
+        <title>Về chúng tôi - TUHO Healthy Foods</title>
         <meta
           name="description"
           content="Công ty TUHO cung cấp các thực phẩm tốt cho sức khỏe, hướng đến chất lượng cao và cam kết vì sự bền vững."
