@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { Product, Category, ProductImage } from "@shared/schema";
+import { Product, Category, ProductImage, ProductVariant } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import {
   StarFilledIcon,
@@ -135,6 +135,81 @@ export default function ProductDetail() {
       <Helmet>
         <title>{product.name} - TUHO Healthy Food</title>
         <meta name="description" content={product.description} />
+        
+        {/* Open Graph Tags */}
+        <meta property="og:title" content={`${product.name} - TUHO Healthy Food`} />
+        <meta property="og:description" content={product.description} />
+        <meta property="og:type" content="product" />
+        <meta property="og:url" content={`https://tuho.vn/products/${product.slug}`} />
+        <meta property="og:image" content={product.image} />
+        <meta property="product:price:amount" content={product.price.toString()} />
+        <meta property="product:price:currency" content="VND" />
+        
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${product.name} - TUHO Healthy Food`} />
+        <meta name="twitter:description" content={product.description} />
+        <meta name="twitter:image" content={product.image} />
+        
+        {/* Product Schema.org structured data */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            "name": product.name,
+            "description": product.description,
+            "image": [product.image],
+            "brand": {
+              "@type": "Brand",
+              "name": "TUHO"
+            },
+            "offers": {
+              "@type": "Offer",
+              "price": product.price,
+              "priceCurrency": "VND",
+              "availability": "https://schema.org/InStock",
+              "seller": {
+                "@type": "Organization",
+                "name": "TUHO"
+              }
+            },
+            ...(product.rating ? {
+              "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": product.rating,
+                "ratingCount": 1
+              }
+            } : {})
+          })}
+        </script>
+        
+        {/* Breadcrumb structured data */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Trang chủ",
+                "item": "https://tuho.vn"
+              },
+              {
+                "@type": "ListItem", 
+                "position": 2,
+                "name": "Sản phẩm",
+                "item": "https://tuho.vn/products"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": product.name,
+                "item": `https://tuho.vn/products/${product.slug}`
+              }
+            ]
+          })}
+        </script>
       </Helmet>
 
       <section className="py-10 bg-white">
@@ -353,17 +428,8 @@ export default function ProductDetail() {
           <div className="container mx-auto px-4 py-8">
             <h3 className="text-2xl font-bold mb-6">Sản phẩm liên quan</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {productsResponse?.products
-                .filter(
-                  (p) =>
-                    p.categoryId === product.categoryId && p.id !== product.id,
-                )
-                .slice(0, 4)
-                .map((relatedProduct) => (
-                  <div key={relatedProduct.id} className="w-full">
-                    <ProductCard product={relatedProduct} />
-                  </div>
-                ))}
+              {/* Related products will be implemented later */}
+              <p className="text-neutral-600">Đang cập nhật sản phẩm liên quan...</p>
             </div>
           </div>
         </div>
