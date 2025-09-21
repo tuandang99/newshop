@@ -54,7 +54,7 @@ export default function Products() {
   });
 
   const { data: products } = useQuery<ProductsResponse>({
-    queryKey: ['/api/products'],
+    queryKey: ['/api/products', 'all'],
   });
 
   const handleFilter = useCallback((newFilters: Partial<FilterState>) => {
