@@ -45,6 +45,7 @@
     "@stripe/react-stripe-js": "^3.6.0",
     "@stripe/stripe-js": "^7.0.0",
     "@tanstack/react-query": "^5.60.5",
+    "@types/compression": "^1.8.1",
     "@types/node-telegram-bot-api": "^0.64.8",
     "@types/react-helmet": "^6.1.11",
     "@uiw/react-md-editor": "^4.0.5",
