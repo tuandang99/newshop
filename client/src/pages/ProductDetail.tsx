@@ -19,7 +19,6 @@ import "@/components/ui/markdown-styles.css";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
 import { Helmet } from "react-helmet";
-import ProductCard from "@/components/product/ProductCard";
 import ProductGallery from "@/components/product/ProductGallery";
 
 export default function ProductDetail() {
@@ -33,7 +32,11 @@ export default function ProductDetail() {
     window.scrollTo(0, 0);
   }, []);
 
-  const { data: product } = useQuery<Product>({
+  const {
+    data: product,
+    isLoading: productLoading,
+    error: productError,
+  } = useQuery<Product>({
     queryKey: [`/api/products/${slug}`],
   });
 
@@ -42,28 +45,15 @@ export default function ProductDetail() {
     enabled: !!product?.id,
   });
 
-  const { addItem } = useCart();
-  const { toast } = useToast();
-
-  const {
-    data: productData,
-    isLoading: productLoading,
-    error: productError,
-  } = useQuery<Product>({
-    queryKey: [`/api/products/${slug}`],
-  });
-
   const { data: productImages, isLoading: imagesLoading } = useQuery<
     ProductImage[]
   >({
     queryKey: [`/api/products/${product?.id}/images`],
-    enabled: !!product?.id, // Only fetch when product is loaded
+    enabled: !!product?.id,
   });
 
-  const { data: productsResponse } = useQuery({
-    queryKey: ["/api/products"],
-    enabled: !!product, // Only fetch when product data is available
-  });
+  const { addItem } = useCart();
+  const { toast } = useToast();
 
   const { data: categories } = useQuery<Category[]>({
     queryKey: ["/api/categories"],
@@ -255,7 +245,7 @@ export default function ProductDetail() {
                 <div className="flex items-center mr-2">
                   <StarFilledIcon className="text-amber-500 h-5 w-5" />
                   <span className="ml-1 font-medium">
-                    {product.rating.toFixed(1)}
+                    {(product.rating || 0).toFixed(1)}
                   </span>
                 </div>
                 {product.isOrganic && (
