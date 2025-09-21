@@ -246,7 +246,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const newOrder = await storage.createOrder({
         name: customerName,
-        email,
         phone,
         address,
         items: JSON.stringify(cart),

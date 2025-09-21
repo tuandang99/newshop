@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { Product, Category, ProductImage } from "@shared/schema";
+import { Product, Category, ProductImage, ProductVariant } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import {
   StarFilledIcon,
@@ -19,7 +19,6 @@ import "@/components/ui/markdown-styles.css";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
 import { Helmet } from "react-helmet";
-import ProductCard from "@/components/product/ProductCard";
 import ProductGallery from "@/components/product/ProductGallery";
 
 export default function ProductDetail() {
@@ -33,7 +32,11 @@ export default function ProductDetail() {
     window.scrollTo(0, 0);
   }, []);
 
-  const { data: product } = useQuery<Product>({
+  const {
+    data: product,
+    isLoading: productLoading,
+    error: productError,
+  } = useQuery<Product>({
     queryKey: [`/api/products/${slug}`],
   });
 
@@ -42,28 +45,15 @@ export default function ProductDetail() {
     enabled: !!product?.id,
   });
 
-  const { addItem } = useCart();
-  const { toast } = useToast();
-
-  const {
-    data: productData,
-    isLoading: productLoading,
-    error: productError,
-  } = useQuery<Product>({
-    queryKey: [`/api/products/${slug}`],
-  });
-
   const { data: productImages, isLoading: imagesLoading } = useQuery<
     ProductImage[]
   >({
     queryKey: [`/api/products/${product?.id}/images`],
-    enabled: !!product?.id, // Only fetch when product is loaded
+    enabled: !!product?.id,
   });
 
-  const { data: productsResponse } = useQuery({
-    queryKey: ["/api/products"],
-    enabled: !!product, // Only fetch when product data is available
-  });
+  const { addItem } = useCart();
+  const { toast } = useToast();
 
   const { data: categories } = useQuery<Category[]>({
     queryKey: ["/api/categories"],
@@ -133,8 +123,87 @@ export default function ProductDetail() {
   return (
     <>
       <Helmet>
-        <title>{product.name} - TUHO Healthy Food</title>
+        <title>{product.name} - TUHO Healthy Foods</title>
         <meta name="description" content={product.description} />
+        <link rel="canonical" href={`${window.location.origin}/products/${product.slug}`} />
+        
+        {/* Open Graph Tags */}
+        <meta property="og:title" content={`${product.name} - TUHO Healthy Foods`} />
+        <meta property="og:description" content={product.description} />
+        <meta property="og:type" content="product" />
+        <meta property="og:url" content={`${window.location.origin}/products/${product.slug}`} />
+        <meta property="og:image" content={`${window.location.origin}${product.image}`} />
+        <meta property="og:site_name" content="TUHO Healthy Foods" />
+        <meta property="og:locale" content="vi_VN" />
+        <meta property="product:price:amount" content={product.price.toString()} />
+        <meta property="product:price:currency" content="VND" />
+        
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${product.name} - TUHO Healthy Foods`} />
+        <meta name="twitter:description" content={product.description} />
+        <meta name="twitter:image" content={`${window.location.origin}${product.image}`} />
+        
+        {/* Product Schema.org structured data */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            "name": product.name,
+            "description": product.description,
+            "image": [`${window.location.origin}${product.image}`],
+            "brand": {
+              "@type": "Brand",
+              "name": "TUHO Healthy Foods"
+            },
+            "url": `${window.location.origin}/products/${product.slug}`,
+            "offers": {
+              "@type": "Offer",
+              "price": product.price.toString(),
+              "priceCurrency": "VND",
+              "availability": "https://schema.org/InStock",
+              "seller": {
+                "@type": "Organization",
+                "name": "TUHO Healthy Foods"
+              }
+            },
+            ...(product.rating ? {
+              "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": product.rating,
+                "ratingCount": 5
+              }
+            } : {})
+          })}
+        </script>
+        
+        {/* Breadcrumb structured data */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Trang chủ",
+                "item": `${window.location.origin}`
+              },
+              {
+                "@type": "ListItem", 
+                "position": 2,
+                "name": "Sản phẩm",
+                "item": `${window.location.origin}/products`
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": product.name,
+                "item": `${window.location.origin}/products/${product.slug}`
+              }
+            ]
+          })}
+        </script>
       </Helmet>
 
       <section className="py-10 bg-white">
@@ -180,7 +249,7 @@ export default function ProductDetail() {
                 <div className="flex items-center mr-2">
                   <StarFilledIcon className="text-amber-500 h-5 w-5" />
                   <span className="ml-1 font-medium">
-                    {product.rating.toFixed(1)}
+                    {(product.rating || 0).toFixed(1)}
                   </span>
                 </div>
                 {product.isOrganic && (
@@ -353,17 +422,8 @@ export default function ProductDetail() {
           <div className="container mx-auto px-4 py-8">
             <h3 className="text-2xl font-bold mb-6">Sản phẩm liên quan</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {productsResponse?.products
-                .filter(
-                  (p) =>
-                    p.categoryId === product.categoryId && p.id !== product.id,
-                )
-                .slice(0, 4)
-                .map((relatedProduct) => (
-                  <div key={relatedProduct.id} className="w-full">
-                    <ProductCard product={relatedProduct} />
-                  </div>
-                ))}
+              {/* Related products will be implemented later */}
+              <p className="text-neutral-600">Đang cập nhật sản phẩm liên quan...</p>
             </div>
           </div>
         </div>
