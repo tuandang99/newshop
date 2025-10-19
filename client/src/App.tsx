@@ -16,6 +16,9 @@ const RefundPolicy = lazy(() => import(/* webpackPrefetch: true */ './pages/supp
 const FAQ = lazy(() => import(/* webpackPrefetch: true */ './pages/support/FAQ'));
 const Privacy = lazy(() => import(/* webpackPrefetch: true */ './pages/support/Privacy'));
 import Certificates from "./pages/Certificates";
+const TermsOfService = lazy(() => import(/* webpackPrefetch: true */ './pages/TermsOfService'));
+const PrivacyPolicy = lazy(() => import(/* webpackPrefetch: true */ './pages/PrivacyPolicy'));
+const DataRemoval = lazy(() => import(/* webpackPrefetch: true */ './pages/DataRemoval'));
 const Blog = lazy(() => import(/* webpackPrefetch: true */ './pages/Blog'));
 const BlogPost = lazy(() => import(/* webpackPrefetch: true */ './pages/BlogPost'));
 const Contact = lazy(() => import(/* webpackPrefetch: true */ './pages/Contact'));
@@ -41,6 +44,9 @@ function Router() {
           <Route path="/support/faq" component={FAQ} />
           <Route path="/support/privacy" component={Privacy} />
           <Route path="/certificates" component={Certificates} />
+          <Route path="/terms-of-service" component={TermsOfService} />
+          <Route path="/privacy-policy" component={PrivacyPolicy} />
+          <Route path="/data-removal" component={DataRemoval} />
           <Route component={NotFound} />
         </Switch>
       </Suspense>
